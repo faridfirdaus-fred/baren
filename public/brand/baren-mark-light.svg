@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Baren">
+  <rect width="64" height="64" fill="#F2EDE4"/>
+  <path d="M11 27 L11 15 L20 15 L20 20 L27 20 L27 15 L37 15 L37 20 L44 20 L44 15 L53 15 L53 27 L56 27 L56 53 L8 53 L8 27 Z" fill="#0B1220"/>
+  <rect x="28" y="33" width="8" height="13" fill="#E4572E"/>
+  <rect x="8" y="53" width="48" height="3" fill="#E4572E"/>
+</svg>
