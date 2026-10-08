@@ -1,0 +1,3 @@
+NEXTJS_ENV=development
+NEON_DATABASE_URL=postgresql://user:password@ep-xxx.neon.tech/baren?sslmode=require
+R2_PUBLIC_URL=https://pub-xxx.r2.dev
