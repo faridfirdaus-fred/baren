@@ -51,3 +51,9 @@ next-env.d.ts
 # agent instruction files (local only)
 AGENTS.md
 CLAUDE.md
+
+# scraping reference material (third-party assets — reference only, never shipped)
+/scrape/
+
+# local verification screenshots
+/verify/

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><style>
+  html,body{margin:0;padding:0;background:#0B1220;overflow:hidden}
+  canvas{display:block}
+</style></head>
+<body>
+<canvas id="c" width="1280" height="720"></canvas>
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+const W = 1280, H = 720;
+
+// deterministic PRNG
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+const rnd = mulberry32(20261008);
+const embers = Array.from({length: 90}, () => ({
+  x: rnd()*W, y: rnd()*H,
+  r: 0.6 + rnd()*2.1,
+  vx: (rnd()-0.5)*0.28,
+  vy: -(0.14 + rnd()*0.5),
+  a: 0.14 + rnd()*0.5,
+  ph: rnd()*Math.PI*2,
+}));
+
+// fort / defense-line geometry (benteng-bentengan motif)
+const towers = [
+  {x: 250, y: 470, w: 120, h: 150},
+  {x: 1010, y: 440, w: 100, h: 180},
+  {x: 620, y: 520, w: 90, h: 110},
+];
+const dots = Array.from({length: 130}, () => ({x: rnd()*W, y: rnd()*H, s: rnd()<0.25?2:1}));
+
+function draw(t) {
+  // --- base gradient
+  const g = ctx.createRadialGradient(W*0.5, H*0.42, 40, W*0.5, H*0.5, W*0.78);
+  g.addColorStop(0, '#16233A');
+  g.addColorStop(0.45, '#101A2C');
+  g.addColorStop(1, '#070C15');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  // --- drifting smoke bands
+  for (let i = 0; i < 5; i++) {
+    const off = Math.sin(t*0.22 + i*1.3) * 90;
+    const y = H*0.30 + i*88 + Math.cos(t*0.17 + i)*26;
+    const sg = ctx.createLinearGradient(0, y, W, y + 120);
+    sg.addColorStop(0, 'rgba(228,87,46,0)');
+    sg.addColorStop(0.5, `rgba(228,87,46,${0.045 + i*0.012})`);
+    sg.addColorStop(1, 'rgba(228,87,46,0)');
+    ctx.fillStyle = sg;
+    ctx.beginPath();
+    ctx.ellipse(W/2 + off, y, W*0.72, 78 + i*10, Math.sin(t*0.1+i)*0.09, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // --- dot grid
+  ctx.save();
+  for (const d of dots) {
+    const tw = 0.10 + 0.13 * (0.5 + 0.5*Math.sin(t*1.1 + d.x*0.01));
+    ctx.fillStyle = `rgba(242,237,228,${tw*0.5})`;
+    ctx.fillRect(d.x, d.y, d.s, d.s);
+  }
+  ctx.restore();
+
+  // --- diagonal tactical lines
+  ctx.save();
+  ctx.lineWidth = 1;
+  for (let i = -8; i < 26; i++) {
+    const x = i*70 + ((t*22) % 70);
+    ctx.strokeStyle = `rgba(242,237,228,${0.026 + (i%3===0?0.02:0)})`;
+    ctx.beginPath(); ctx.moveTo(x, -40); ctx.lineTo(x + 420, H+40); ctx.stroke();
+  }
+  ctx.restore();
+
+  // --- fort silhouettes with ember rim light
+  for (const tw of towers) {
+    const pulse = 0.5 + 0.5*Math.sin(t*0.9 + tw.x*0.01);
+    ctx.save();
+    ctx.fillStyle = 'rgba(6,10,18,0.86)';
+    // battlement
+    const teeth = 5, tw2 = tw.w/ (teeth*2-1);
+    for (let i=0;i<teeth;i++) ctx.fillRect(tw.x + i*tw2*2, tw.y - 20, tw2, 20);
+    ctx.fillRect(tw.x, tw.y, tw.w, tw.h);
+    // rim light
+    ctx.strokeStyle = `rgba(228,87,46,${0.30 + pulse*0.42})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(tw.x, tw.y+tw.h); ctx.lineTo(tw.x, tw.y); ctx.lineTo(tw.x+tw.w, tw.y); ctx.stroke();
+    // window
+    ctx.fillStyle = `rgba(228,87,46,${0.24 + pulse*0.34})`;
+    ctx.fillRect(tw.x + tw.w*0.42, tw.y + tw.h*0.34, tw.w*0.16, tw.h*0.20);
+    ctx.restore();
+  }
+
+  // --- defense lines connecting towers
+  ctx.save();
+  ctx.setLineDash([9, 11]);
+  ctx.lineDashOffset = -(t*26) % 20;
+  ctx.strokeStyle = 'rgba(228,87,46,0.34)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(310, 520); ctx.lineTo(620, 560); ctx.lineTo(1010, 500);
+  ctx.stroke();
+  ctx.restore();
+
+  // --- embers
+  for (const e of embers) {
+    e.x += e.vx; e.y += e.vy;
+    if (e.y < -12) { e.y = H + 12; e.x = rnd()*W; }
+    if (e.x < -12) e.x = W + 12;
+    if (e.x > W + 12) e.x = -12;
+    const flick = 0.55 + 0.45*Math.sin(t*3.1 + e.ph);
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, e.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(255,${140 + Math.round(60*flick)},90,${e.a*flick})`;
+    ctx.fill();
+  }
+
+  // --- vignette + subtle scanline
+  const v = ctx.createRadialGradient(W/2, H/2, H*0.34, W/2, H/2, H*0.95);
+  v.addColorStop(0, 'rgba(0,0,0,0)');
+  v.addColorStop(1, 'rgba(0,0,0,0.62)');
+  ctx.fillStyle = v;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.018)';
+  for (let y = 0; y < H; y += 4) ctx.fillRect(0, y, W, 1);
+}
+
+window.__draw = draw;
+draw(0);
+</script>
+</body>
+</html>
