@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-ink: #0B1220;
+  --color-ink-800: #101A2C;
+  --color-ink-700: #16233A;
+  --color-sand: #F2EDE4;
+  --color-sand-600: #D8D2C6;
+  --color-ember: #E4572E;
+  --color-ember-600: #C6451F;
+  --color-ember-700: #B23A1A;
+  --color-ember-800: #9E3010;
+  --font-display: var(--font-anton);
+  --font-sans: var(--font-inter);
+  --radius-none: 0px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html { scroll-behavior: smooth; }
+
+.container-baren {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 24px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.display-xl {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  line-height: 0.92;
+  letter-spacing: 0.01em;
+  font-size: clamp(2.75rem, 6.6vw, 5.9rem);
+}
+
+.eyebrow {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pattern-grid {
+  background-image: radial-gradient(circle, rgb(242 237 228 / 0.16) 1px, transparent 1px);
+  background-size: 22px 22px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink);
+  color: var(--color-sand);
+  font-family: var(--font-sans);
+}
+
+@media (min-width: 1024px) {
+  .container-baren { padding-inline: 48px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
