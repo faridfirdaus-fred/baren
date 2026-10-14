@@ -11,18 +11,18 @@ Baca dulu: `docs/PRD.md` §11A, `docs/SRS.md` §3.6 (DG-01..DG-10) & §3.2 (FR-P
 
 ## 1. Stack & Aturan Wajib
 
-| Hal | Nilai |
-| --- | --- |
-| Framework | Next.js `16.3.8` App Router (RSC), React `19.2.8` |
-| Styling | **Tailwind CSS v4** — konfigurasi lewat CSS (`@import "tailwindcss"` + `@theme`), BUKAN `tailwind.config.js` |
-| Bahasa | TypeScript strict, tanpa `any` |
-| Font | `next/font/google` — **Inter** (body) + **Anton** (display) |
-| Gambar | `next/image` untuk semua `<img>`; aset lokal di `public/` |
-| Ikon | **Inline SVG sendiri** — JANGAN tambah dependency ikon baru |
-| Package baru | **DILARANG** menambah dependency apa pun (kecuali diminta eksplisit) |
-| Komponen | Server Component default. `"use client"` HANYA untuk: header scroll, accordion FAQ, carousel banner |
-| Aksesibilitas | `alt` bermakna, kontras AA, `aria-*` pada kontrol, fokus terlihat, hormati `prefers-reduced-motion` |
-| Bahasa konten | Bahasa Indonesia |
+| Hal           | Nilai                                                                                                        |
+| ------------- | ------------------------------------------------------------------------------------------------------------ |
+| Framework     | Next.js `16.3.8` App Router (RSC), React `19.2.8`                                                            |
+| Styling       | **Tailwind CSS v4** — konfigurasi lewat CSS (`@import "tailwindcss"` + `@theme`), BUKAN `tailwind.config.js` |
+| Bahasa        | TypeScript strict, tanpa `any`                                                                               |
+| Font          | `next/font/google` — **Inter** (body) + **Anton** (display)                                                  |
+| Gambar        | `next/image` untuk semua `<img>`; aset lokal di `public/`                                                    |
+| Ikon          | **Inline SVG sendiri** — JANGAN tambah dependency ikon baru                                                  |
+| Package baru  | **DILARANG** menambah dependency apa pun (kecuali diminta eksplisit)                                         |
+| Komponen      | Server Component default. `"use client"` HANYA untuk: header scroll, accordion FAQ, carousel banner          |
+| Aksesibilitas | `alt` bermakna, kontras AA, `aria-*` pada kontrol, fokus terlihat, hormati `prefers-reduced-motion`          |
+| Bahasa konten | Bahasa Indonesia                                                                                             |
 
 **Wajib lulus sebelum selesai:** `pnpm exec tsc --noEmit`, `pnpm lint`, `pnpm build`.
 
@@ -34,18 +34,19 @@ Ganti isi `globals.css`. Pertahankan `@import "tailwindcss";` di baris pertama.
 Definisikan token via `@theme` (Tailwind v4) memakai nilai berikut:
 
 ```css
---color-ink: #0B1220;        /* base gelap (pengganti #0F1923 referensi) */
---color-ink-800: #101A2C;    /* surface gelap sekunder */
---color-ink-700: #16233A;    /* surface gelap tersier / border */
---color-sand: #F2EDE4;       /* panel terang (pengganti #ECE8E1) */
---color-sand-600: #D8D2C6;   /* border di panel terang */
---color-ember: #E4572E;      /* AKSEN UTAMA (pengganti #FF4655) */
---color-ember-600: #C6451F;  /* hover aksen */
---font-display: var(--font-anton);  /* judul besar */
---font-sans: var(--font-inter);     /* body */
+--color-ink: #0b1220; /* base gelap (pengganti #0F1923 referensi) */
+--color-ink-800: #101a2c; /* surface gelap sekunder */
+--color-ink-700: #16233a; /* surface gelap tersier / border */
+--color-sand: #f2ede4; /* panel terang (pengganti #ECE8E1) */
+--color-sand-600: #d8d2c6; /* border di panel terang */
+--color-ember: #e4572e; /* AKSEN UTAMA (pengganti #FF4655) */
+--color-ember-600: #c6451f; /* hover aksen */
+--font-display: var(--font-anton); /* judul besar */
+--font-sans: var(--font-inter); /* body */
 ```
 
 Tambahkan juga:
+
 - `--radius-none: 0px` → **semua tombol/kartu bersudut siku** (kunci gaya, DG-04). Tidak ada `rounded-*` di CTA.
 - Utility `.container-baren` → `max-width: 1440px; margin-inline: auto; padding-inline: 24px;` dan `@media (min-width: 1024px){ padding-inline: 48px }`.
 - Utility `.display-xl` → `font-family: var(--font-display); text-transform: uppercase; line-height: 0.92; letter-spacing: 0.01em;` dengan ukuran fluid:
@@ -115,19 +116,20 @@ src/app/layout.tsx                      # UPDATE: font Inter + Anton, metadata B
 
 Header fixed 80px transparan → solid. Total 8 blok:
 
-| # | Komponen | Palet | Layout & detail |
-| --- | --- | --- | --- |
-| 1 | `Hero` | gelap `ink` | Full-bleed, `min-height: 720px` (`h-[calc(100svh-80px)] min-h-[560px] lg:min-h-[720px]`). `<video autoPlay muted loop playsInline poster>` + `<source>` mp4, `object-cover absolute inset-0`, `aria-hidden`. Overlay gradien gelap agar teks terbaca. Isi **terpusat**: wordmark `baren-wordmark.png` (lebar ~`clamp(200px,26vw,300px)`, pakai `next/image`), H1 tagline uppercase (`.display-xl`-ish, 28px di referensi → pakai `clamp(1.25rem,2.4vw,1.75rem)` uppercase), lalu CTA `MAIN GRATIS` (aksen ember). Di bawah, baris kecil "Segera Hadir di" + daftar platform (Steam/Play Store/App Store) sebagai teks, karena game belum rilis (A-07). |
-| 2 | `LatestNews` | terang `sand` | `padding: 48px 0`. Header baris: H2 `ARTIKEL TERBARU` (display, warna ink) kiri + link `BUKA HALAMAN ARTIKEL →` kanan (uppercase, ink, ikon panah). Grid `md:grid-cols-3 gap-8`. Kartu: `next/image` 16/9 (`cover-1..3`), lalu meta: label kategori **warna ember, bold, uppercase, 14px** + pemisah `|` + tanggal; lalu judul tebal ink. Seluruh kartu = `<Link>` dengan `hover:opacity-90` + `focus-visible` ring. |
-| 3 | `EventBanner` | gelap | Full-bleed `event-art.jpg` `object-cover` + overlay gradien dari kiri. Tinggi ~`min-h-[520px] lg:min-h-[640px]`, konten **kiri**, `justify-center`. Eyebrow `TURNAMEN`, judul display besar `TURNAMEN BENTENG NUSANTARA`, paragraf 18px, CTA `TONTON SEKARANG` (ember). |
-| 4 | `AboutGame` | terang `sand` | Grid `lg:grid-cols-2 gap-12 items-center`. Kiri: judul display `KAMI BAREN` + sub-judul 18px/500 `TAKUKAN BATAS, REBUT BENTENG` + 2 paragraf 18px `leading-7` + CTA `TONTON SEKARANG`. Kanan: `about-art.jpg` dalam rasio 16/9 (`aspect-video`) dengan border 2px `ink`. |
-| 5 | `GameFeatures` | terang `sand` (lanjutan) | Judul display `FITUR UTAMA` + eyebrow. Grid `md:grid-cols-3 gap-8`, kartu: gambar `feature-1..3` (`aspect-square`, `object-cover`), nomor urut `01/02/03` (display, ember), judul, deskripsi. Border 1px `sand-600`. |
-| 6 | `AgentsSection` | **aksen ember** | Full-bleed `bg-ember` + `pattern-grid` halus. Grid `lg:grid-cols-2 gap-12 items-center`. **Kiri:** `agents-art.jpg` (`aspect-square`). **Kanan:** judul display `PEMAIN`, sub 18px/500 `KREATIVITAS ADALAH SENJATA TERBAIKMU`, paragraf, CTA `LIHAT SEMUA PEMAIN` dengan **bg ink + teks sand**. Semua teks di panel ini warna `sand`. |
-| 7 | `MapsSection` | terang `sand` | Kebalikan dari #6: **kiri teks**, **kanan** `maps-art.jpg`. Judul display `ARENA`, sub `BERTEMPUR DI SELURUH BELAHAN DUNIA`, paragraf, CTA `LIHAT SEMUA ARENA` (bg ember). |
-| 8 | `FaqAccordion` | gelap `ink` | Judul display `PERTANYAAN UMUM`. Accordion: `<button aria-expanded aria-controls>` + panel `<div role="region" id>`. Hanya satu terbuka (state `openIndex`), transisi tinggi halus, ikon `+`/`−`. Default item pertama terbuka. |
-| 9 | `SiteFooter` | gelap `#111` → pakai `ink` | Grid: kolom brand (mark + nama + deskripsi singkat) + kolom tautan (Navigasi, Legal). Baris ikon sosial bulat (bg `ink-700`, ikon inline SVG: Instagram, YouTube, TikTok/Discord) — `target="_blank" rel="noopener noreferrer"` (EI-07). Lalu garis pemisah + blok copyright: `© 2026 BAREN. Seluruh merek dagang adalah milik pemegangnya.` + link legal `KEBIJAKAN PRIVASI`, `KETENTUAN PENGGUNAAN`, `PREFERENSI COOKIE`. |
+| #   | Komponen        | Palet                      | Layout & detail                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| --- | --------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | `Hero`          | gelap `ink`                | Full-bleed, `min-height: 720px` (`h-[calc(100svh-80px)] min-h-[560px] lg:min-h-[720px]`). `<video autoPlay muted loop playsInline poster>` + `<source>` mp4, `object-cover absolute inset-0`, `aria-hidden`. Overlay gradien gelap agar teks terbaca. Isi **terpusat**: wordmark `baren-wordmark.png` (lebar ~`clamp(200px,26vw,300px)`, pakai `next/image`), H1 tagline uppercase (`.display-xl`-ish, 28px di referensi → pakai `clamp(1.25rem,2.4vw,1.75rem)` uppercase), lalu CTA `MAIN GRATIS` (aksen ember). Di bawah, baris kecil "Segera Hadir di" + daftar platform (Steam/Play Store/App Store) sebagai teks, karena game belum rilis (A-07). |
+| 2   | `LatestNews`    | terang `sand`              | `padding: 48px 0`. Header baris: H2 `ARTIKEL TERBARU` (display, warna ink) kiri + link `BUKA HALAMAN ARTIKEL →` kanan (uppercase, ink, ikon panah). Grid `md:grid-cols-3 gap-8`. Kartu: `next/image` 16/9 (`cover-1..3`), lalu meta: label kategori **warna ember, bold, uppercase, 14px** + pemisah `                                                                                                                                                                                                                                                                                                                                                 | `+ tanggal; lalu judul tebal ink. Seluruh kartu =`<Link>`dengan`hover:opacity-90`+`focus-visible` ring. |
+| 3   | `EventBanner`   | gelap                      | Full-bleed `event-art.jpg` `object-cover` + overlay gradien dari kiri. Tinggi ~`min-h-[520px] lg:min-h-[640px]`, konten **kiri**, `justify-center`. Eyebrow `TURNAMEN`, judul display besar `TURNAMEN BENTENG NUSANTARA`, paragraf 18px, CTA `TONTON SEKARANG` (ember).                                                                                                                                                                                                                                                                                                                                                                                |
+| 4   | `AboutGame`     | terang `sand`              | Grid `lg:grid-cols-2 gap-12 items-center`. Kiri: judul display `KAMI BAREN` + sub-judul 18px/500 `TAKUKAN BATAS, REBUT BENTENG` + 2 paragraf 18px `leading-7` + CTA `TONTON SEKARANG`. Kanan: `about-art.jpg` dalam rasio 16/9 (`aspect-video`) dengan border 2px `ink`.                                                                                                                                                                                                                                                                                                                                                                               |
+| 5   | `GameFeatures`  | terang `sand` (lanjutan)   | Judul display `FITUR UTAMA` + eyebrow. Grid `md:grid-cols-3 gap-8`, kartu: gambar `feature-1..3` (`aspect-square`, `object-cover`), nomor urut `01/02/03` (display, ember), judul, deskripsi. Border 1px `sand-600`.                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| 6   | `AgentsSection` | **aksen ember**            | Full-bleed `bg-ember` + `pattern-grid` halus. Grid `lg:grid-cols-2 gap-12 items-center`. **Kiri:** `agents-art.jpg` (`aspect-square`). **Kanan:** judul display `PEMAIN`, sub 18px/500 `KREATIVITAS ADALAH SENJATA TERBAIKMU`, paragraf, CTA `LIHAT SEMUA PEMAIN` dengan **bg ink + teks sand**. Semua teks di panel ini warna `sand`.                                                                                                                                                                                                                                                                                                                 |
+| 7   | `MapsSection`   | terang `sand`              | Kebalikan dari #6: **kiri teks**, **kanan** `maps-art.jpg`. Judul display `ARENA`, sub `BERTEMPUR DI SELURUH BELAHAN DUNIA`, paragraf, CTA `LIHAT SEMUA ARENA` (bg ember).                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| 8   | `FaqAccordion`  | gelap `ink`                | Judul display `PERTANYAAN UMUM`. Accordion: `<button aria-expanded aria-controls>` + panel `<div role="region" id>`. Hanya satu terbuka (state `openIndex`), transisi tinggi halus, ikon `+`/`−`. Default item pertama terbuka.                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| 9   | `SiteFooter`    | gelap `#111` → pakai `ink` | Grid: kolom brand (mark + nama + deskripsi singkat) + kolom tautan (Navigasi, Legal). Baris ikon sosial bulat (bg `ink-700`, ikon inline SVG: Instagram, YouTube, TikTok/Discord) — `target="_blank" rel="noopener noreferrer"` (EI-07). Lalu garis pemisah + blok copyright: `© 2026 BAREN. Seluruh merek dagang adalah milik pemegangnya.` + link legal `KEBIJAKAN PRIVASI`, `KETENTUAN PENGGUNAAN`, `PREFERENSI COOKIE`.                                                                                                                                                                                                                            |
 
 **Header (`site-header.tsx`)** — sesuai DG-06 "transparan di atas hero → solid saat digulir":
+
 - `position: fixed; top: 0; height: 80px; z-index: 50`.
 - State `scrolled` dari `window.scrollY > 24` (listener di `useEffect` + `{ passive: true }`, dibersihkan saat unmount).
 - Transparan saat di atas; setelah scroll → `bg-ink/95 backdrop-blur border-b border-ink-700`.

@@ -1,69 +1,75 @@
 # Product Requirements Document (PRD)
+
 ## Website Landing Page Game BAREN Berbasis CMS
 
-| Field | Keterangan |
-| --- | --- |
-| Nama Produk | BAREN Web |
-| Jenis Produk | Website landing page + Content Management System (CMS) |
-| Versi Dokumen | 1.0 |
-| Tanggal | [Tanggal] |
-| Status | Draft |
-| Sumber Acuan | SRS BAREN Web (`SRS_BAREN_Web.txt`) |
-| Mitra | [Nama Perusahaan Mitra] |
-| Tim Penyusun | Sekar Ayu Fatmasari (237006054), Shelva Nur Fatimah (237006069), Farid Firdaus (237006081) |
-| Institusi | Jurusan Informatika, Fakultas Teknik, Universitas Siliwangi |
+| Field         | Keterangan                                                                                 |
+| ------------- | ------------------------------------------------------------------------------------------ |
+| Nama Produk   | BAREN Web                                                                                  |
+| Jenis Produk  | Website landing page + Content Management System (CMS)                                     |
+| Versi Dokumen | 1.0                                                                                        |
+| Tanggal       | [Tanggal]                                                                                  |
+| Status        | Draft                                                                                      |
+| Sumber Acuan  | SRS BAREN Web (`SRS_BAREN_Web.txt`)                                                        |
+| Mitra         | [Nama Perusahaan Mitra]                                                                    |
+| Tim Penyusun  | Sekar Ayu Fatmasari (237006054), Shelva Nur Fatimah (237006069), Farid Firdaus (237006081) |
+| Institusi     | Jurusan Informatika, Fakultas Teknik, Universitas Siliwangi                                |
 
 ---
 
 ## 1. Ringkasan Produk
 
-**BAREN** adalah game yang terinspirasi dari permainan tradisional *benteng-bentengan*. Mitra membutuhkan sebuah **website landing page** untuk mempromosikan game tersebut. Seluruh konten situs harus dapat dikelola secara dinamis oleh mitra melalui **Panel Admin (CMS)** tanpa mengubah kode program.
+**BAREN** adalah game yang terinspirasi dari permainan tradisional _benteng-bentengan_. Mitra membutuhkan sebuah **website landing page** untuk mempromosikan game tersebut. Seluruh konten situs harus dapat dikelola secara dinamis oleh mitra melalui **Panel Admin (CMS)** tanpa mengubah kode program.
 
 **BAREN Web** terdiri atas dua bagian utama:
+
 1. **Situs Publik** — landing page yang diakses pengunjung tanpa login.
 2. **Panel Admin (CMS)** — area terautentikasi untuk mengelola seluruh konten situs publik.
 
 ### 1.1 Tujuan Produk
+
 - Menyediakan kanal promosi resmi game BAREN yang menarik dan informatif.
 - Memungkinkan mitra mengelola seluruh konten secara mandiri (tanpa developer).
 - Menjaga konsistensi branding dan penyampaian informasi game.
 
 ### 1.2 Metrik Keberhasilan (Success Metrics)
-| Metrik | Target | Sumber |
-| --- | --- | --- |
-| Largest Contentful Paint halaman beranda (mobile, 4G) | ≤ 3 detik | NFR-PRF-01 |
-| Skor Lighthouse Performance (mobile) | ≥ 80 | NFR-PRF-02 |
-| Skor Lighthouse Accessibility | ≥ 90 | NFR-ACC-01 |
-| Waktu admin mengganti logo tanpa panduan | ≤ 5 menit (3/3 penguji) | NFR-USE-02 |
-| Waktu tayang perubahan konten di situs publik | ≤ 60 detik | FR-ADM-27 |
-| Bebas gulir horizontal (360 px – 1920 px) | 100% | NFR-USE-01 |
+
+| Metrik                                                | Target                  | Sumber     |
+| ----------------------------------------------------- | ----------------------- | ---------- |
+| Largest Contentful Paint halaman beranda (mobile, 4G) | ≤ 3 detik               | NFR-PRF-01 |
+| Skor Lighthouse Performance (mobile)                  | ≥ 80                    | NFR-PRF-02 |
+| Skor Lighthouse Accessibility                         | ≥ 90                    | NFR-ACC-01 |
+| Waktu admin mengganti logo tanpa panduan              | ≤ 5 menit (3/3 penguji) | NFR-USE-02 |
+| Waktu tayang perubahan konten di situs publik         | ≤ 60 detik              | FR-ADM-27  |
+| Bebas gulir horizontal (360 px – 1920 px)             | 100%                    | NFR-USE-01 |
 
 ---
 
 ## 2. Latar Belakang & Masalah
 
-| Masalah | Dampak | Solusi yang Diusulkan |
-| --- | --- | --- |
-| Game BAREN belum memiliki kanal promosi resmi terpusat | Sulit menjangkau calon pemain & membangun awareness | Landing page publik yang informatif |
-| Mitra tidak memiliki tim developer tetap | Perubahan konten bergantung pada developer | CMS yang dapat dikelola mandiri |
-| Konten promosi (event, berita, galeri) bersifat dinamis | Konten cepat usang | Manajemen konten real-time dari Panel Admin |
-| Promosi tersebar di banyak platform | Branding tidak konsisten | Satu sumber konten dengan branding terpusat |
+| Masalah                                                 | Dampak                                              | Solusi yang Diusulkan                       |
+| ------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------- |
+| Game BAREN belum memiliki kanal promosi resmi terpusat  | Sulit menjangkau calon pemain & membangun awareness | Landing page publik yang informatif         |
+| Mitra tidak memiliki tim developer tetap                | Perubahan konten bergantung pada developer          | CMS yang dapat dikelola mandiri             |
+| Konten promosi (event, berita, galeri) bersifat dinamis | Konten cepat usang                                  | Manajemen konten real-time dari Panel Admin |
+| Promosi tersebar di banyak platform                     | Branding tidak konsisten                            | Satu sumber konten dengan branding terpusat |
 
 ---
 
 ## 3. Target Pengguna & Persona
 
-| Persona | Deskripsi | Kebutuhan Utama | Keahlian Teknis |
-| --- | --- | --- | --- |
-| **Pengunjung** | Calon pemain, komunitas, dan publik umum yang mengakses Situs Publik tanpa login | Melihat informasi game, fitur, cara main, galeri, berita, FAQ, dan tautan unduhan | Tidak disyaratkan |
-| **Admin Mitra** | Staf mitra yang login ke Panel Admin untuk mengelola konten | CRUD konten, mengunggah aset, mengelola branding | Dapat mengoperasikan browser dan mengunggah berkas |
+| Persona         | Deskripsi                                                                        | Kebutuhan Utama                                                                   | Keahlian Teknis                                    |
+| --------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------- |
+| **Pengunjung**  | Calon pemain, komunitas, dan publik umum yang mengakses Situs Publik tanpa login | Melihat informasi game, fitur, cara main, galeri, berita, FAQ, dan tautan unduhan | Tidak disyaratkan                                  |
+| **Admin Mitra** | Staf mitra yang login ke Panel Admin untuk mengelola konten                      | CRUD konten, mengunggah aset, mengelola branding                                  | Dapat mengoperasikan browser dan mengunggah berkas |
 
 ---
 
 ## 4. Ruang Lingkup
 
 ### 4.1 In Scope
+
 **Situs Publik (9 modul):**
+
 - **Home (Hero)** — logo, nama/tagline, banner/video, tombol CTA.
 - **About Game** — deskripsi, konsep permainan, cuplikan gameplay.
 - **Game Features** — daftar fitur utama dengan ikon/gambar.
@@ -75,9 +81,11 @@
 - **Contact** — email dan tautan media sosial.
 
 **Panel Admin (9 modul):**
+
 - Dashboard, Branding Management, Hero/Banner Management, Game Content Management, Gallery & Video Management, News Management, FAQ Management, Social Media & Contact Management, Admin Account Management.
 
 ### 4.2 Out of Scope
+
 - Pembuatan/pengembangan game BAREN itu sendiri.
 - Sistem pembayaran / e-commerce.
 - Multi-bahasa (seluruh antarmuka berbahasa Indonesia).
@@ -85,8 +93,9 @@
 - Manajemen pengguna multi-role (hanya peran admin).
 
 ### 4.3 Batasan (Constraints)
+
 - **C-01** Seluruh teks antarmuka berbahasa Indonesia.
-- **C-02** Tampilan dirancang *mobile-first*.
+- **C-02** Tampilan dirancang _mobile-first_.
 - **C-03** Teknologi wajib sesuai Subbab 2.4 SRS.
 - **C-04** Seluruh kode server berjalan pada runtime Cloudflare Workers; tidak boleh memakai modul native Node.js.
 - **C-05** Koneksi Neon Postgres memakai driver kompatibel Workers.
@@ -109,22 +118,23 @@ Admin ───────┘        │
 ```
 
 **Stack Teknologi (SRS 2.4):**
-| Komponen | Teknologi |
-| --- | --- |
-| Framework aplikasi | Next.js 15 (App Router) + TypeScript |
-| Backend/API | Next.js Route Handlers |
+
+| Komponen            | Teknologi                                              |
+| ------------------- | ------------------------------------------------------ |
+| Framework aplikasi  | Next.js 16 (App Router) + TypeScript                   |
+| Backend/API         | Next.js Route Handlers                                 |
 | Platform deployment | Cloudflare Workers (@opennextjs/cloudflare + wrangler) |
-| Basis data | Neon Postgres |
-| ORM | Drizzle ORM + drizzle-kit |
-| Penyimpanan aset | Cloudflare R2 (presigned URL) |
-| Autentikasi | Auth.js v5 + Drizzle adapter |
-| Antarmuka | Tailwind CSS + shadcn/ui |
-| Validasi | Zod |
-| Formulir | react-hook-form + zodResolver |
-| Optimasi gambar | next/image + custom loader R2 |
-| Rahasia | wrangler secret / .dev.vars |
-| Pengelola paket | pnpm |
-| Kualitas kode | ESLint + Prettier |
+| Basis data          | Neon Postgres                                          |
+| ORM                 | Drizzle ORM + drizzle-kit                              |
+| Penyimpanan aset    | Cloudflare R2 (presigned URL)                          |
+| Autentikasi         | Auth.js v5 + Drizzle adapter                           |
+| Antarmuka           | Tailwind CSS + shadcn/ui                               |
+| Validasi            | Zod                                                    |
+| Formulir            | react-hook-form + zodResolver                          |
+| Optimasi gambar     | next/image + custom loader R2                          |
+| Rahasia             | wrangler secret / .dev.vars                            |
+| Pengelola paket     | pnpm                                                   |
+| Kualitas kode       | ESLint + Prettier                                      |
 
 **Pola unggah aset:** browser admin → presigned URL R2 (langsung). API hanya menerbitkan URL dan menyimpan alamat berkas di basis data.
 
@@ -133,151 +143,163 @@ Admin ───────┘        │
 ## 6. Kebutuhan Fungsional
 
 ### 6.1 Situs Publik
-| ID | Kebutuhan | Prioritas |
-| --- | --- | --- |
-| FR-PUB-01 | Hero: logo, nama/tagline, banner/video latar, tombol CTA sesuai data admin | Must |
-| FR-PUB-02 | Tombol CTA Hero mengarah ke tautan yang ditetapkan admin | Must |
-| FR-PUB-03 | Banner bergantian (carousel) jika ada lebih dari satu banner | Should |
-| FR-PUB-04 | Seksi About Game: judul, deskripsi (konsep), gambar gameplay | Must |
-| FR-PUB-05 | Seksi Game Features: kartu ikon/gambar + judul + deskripsi sesuai urutan admin | Must |
-| FR-PUB-06 | Seksi How to Play: langkah bernomor berurutan + gambar/video | Must |
-| FR-PUB-07 | Video demo game pada How to Play | Must |
-| FR-PUB-08 | Seksi Gallery: screenshot, artwork, banner, video | Must |
-| FR-PUB-09 | Pengunjung dapat memperbesar gambar & memutar video di Gallery | Should |
-| FR-PUB-10 | Daftar berita berstatus terbit, terbaru, paginasi 9/halaman | Must |
-| FR-PUB-11 | Halaman detail berita berbasis slug | Must |
-| FR-PUB-12 | FAQ accordion | Must |
-| FR-PUB-13 | Tombol unduhan per platform (Steam, Play Store, App Store, dll.) | Must |
-| FR-PUB-14 | Email kontak & tautan media sosial | Must |
-| FR-PUB-15 | Logo, favicon, nama game tampil di seluruh halaman | Must |
-| FR-PUB-16 | Menu navigasi sticky menuju seksi terkait | Should |
-| FR-PUB-17 | Menu navigasi berbentuk lipat (< 768 px) | Must |
+
+| ID        | Kebutuhan                                                                      | Prioritas |
+| --------- | ------------------------------------------------------------------------------ | --------- |
+| FR-PUB-01 | Hero: logo, nama/tagline, banner/video latar, tombol CTA sesuai data admin     | Must      |
+| FR-PUB-02 | Tombol CTA Hero mengarah ke tautan yang ditetapkan admin                       | Must      |
+| FR-PUB-03 | Banner bergantian (carousel) jika ada lebih dari satu banner                   | Should    |
+| FR-PUB-04 | Seksi About Game: judul, deskripsi (konsep), gambar gameplay                   | Must      |
+| FR-PUB-05 | Seksi Game Features: kartu ikon/gambar + judul + deskripsi sesuai urutan admin | Must      |
+| FR-PUB-06 | Seksi How to Play: langkah bernomor berurutan + gambar/video                   | Must      |
+| FR-PUB-07 | Video demo game pada How to Play                                               | Must      |
+| FR-PUB-08 | Seksi Gallery: screenshot, artwork, banner, video                              | Must      |
+| FR-PUB-09 | Pengunjung dapat memperbesar gambar & memutar video di Gallery                 | Should    |
+| FR-PUB-10 | Daftar berita berstatus terbit, terbaru, paginasi 9/halaman                    | Must      |
+| FR-PUB-11 | Halaman detail berita berbasis slug                                            | Must      |
+| FR-PUB-12 | FAQ accordion                                                                  | Must      |
+| FR-PUB-13 | Tombol unduhan per platform (Steam, Play Store, App Store, dll.)               | Must      |
+| FR-PUB-14 | Email kontak & tautan media sosial                                             | Must      |
+| FR-PUB-15 | Logo, favicon, nama game tampil di seluruh halaman                             | Must      |
+| FR-PUB-16 | Menu navigasi sticky menuju seksi terkait                                      | Should    |
+| FR-PUB-17 | Menu navigasi berbentuk lipat (< 768 px)                                       | Must      |
 
 ### 6.2 Panel Admin
+
 **3.3.1 Admin Account Management**
-| ID | Kebutuhan | Prioritas |
-| --- | --- | --- |
-| FR-ADM-01 | Autentikasi email+password; pesan error generik tanpa menyebut kolom salah | Must |
-| FR-ADM-02 | Logout mengakhiri sesi | Must |
-| FR-ADM-03 | Sesi berakhir otomatis 60 menit setelah login | Must |
-| FR-ADM-04 | Redirect ke login untuk akses `/admin` tanpa sesi valid | Must |
-| FR-ADM-05 | Admin dapat mengubah nama & email akun | Should |
-| FR-ADM-06 | Ubah password (perlu password lama); baru min. 8 karakter & berbeda dari lama | Must |
+
+| ID        | Kebutuhan                                                                     | Prioritas |
+| --------- | ----------------------------------------------------------------------------- | --------- |
+| FR-ADM-01 | Autentikasi email+password; pesan error generik tanpa menyebut kolom salah    | Must      |
+| FR-ADM-02 | Logout mengakhiri sesi                                                        | Must      |
+| FR-ADM-03 | Sesi berakhir otomatis 60 menit setelah login                                 | Must      |
+| FR-ADM-04 | Redirect ke login untuk akses `/admin` tanpa sesi valid                       | Must      |
+| FR-ADM-05 | Admin dapat mengubah nama & email akun                                        | Should    |
+| FR-ADM-06 | Ubah password (perlu password lama); baru min. 8 karakter & berbeda dari lama | Must      |
 
 **3.3.2 Dashboard**
-| ID | Kebutuhan | Prioritas |
-| --- | --- | --- |
-| FR-ADM-07 | Dashboard: jumlah fitur, item galeri, berita, FAQ, + waktu pembaruan terakhir | Should |
+
+| ID        | Kebutuhan                                                                     | Prioritas |
+| --------- | ----------------------------------------------------------------------------- | --------- |
+| FR-ADM-07 | Dashboard: jumlah fitur, item galeri, berita, FAQ, + waktu pembaruan terakhir | Should    |
 
 **3.3.3 Branding Management**
-| ID | Kebutuhan | Prioritas |
-| --- | --- | --- |
-| FR-ADM-08 | Ubah logo, favicon, nama game | Must |
+
+| ID        | Kebutuhan                     | Prioritas |
+| --------- | ----------------------------- | --------- |
+| FR-ADM-08 | Ubah logo, favicon, nama game | Must      |
 
 **3.3.4 Hero/Banner Management**
-| ID | Kebutuhan | Prioritas |
-| --- | --- | --- |
-| FR-ADM-09 | Ubah judul, subjudul, video latar, teks & tautan CTA Hero | Must |
-| FR-ADM-10 | Tambah/ubah/hapus banner Hero | Should |
+
+| ID        | Kebutuhan                                                 | Prioritas |
+| --------- | --------------------------------------------------------- | --------- |
+| FR-ADM-09 | Ubah judul, subjudul, video latar, teks & tautan CTA Hero | Must      |
+| FR-ADM-10 | Tambah/ubah/hapus banner Hero                             | Should    |
 
 **3.3.5 Game Content Management**
-| ID | Kebutuhan | Prioritas |
-| --- | --- | --- |
-| FR-ADM-11 | Ubah judul, deskripsi, gambar gameplay About Game | Must |
-| FR-ADM-12 | CRUD + urutkan Game Features | Must |
-| FR-ADM-13 | CRUD + urutkan langkah How to Play (dengan media) | Must |
-| FR-ADM-14 | Ubah video demo game How to Play | Must |
+
+| ID        | Kebutuhan                                         | Prioritas |
+| --------- | ------------------------------------------------- | --------- |
+| FR-ADM-11 | Ubah judul, deskripsi, gambar gameplay About Game | Must      |
+| FR-ADM-12 | CRUD + urutkan Game Features                      | Must      |
+| FR-ADM-13 | CRUD + urutkan langkah How to Play (dengan media) | Must      |
+| FR-ADM-14 | Ubah video demo game How to Play                  | Must      |
 
 **3.3.6 Gallery & Video Management**
-| ID | Kebutuhan | Prioritas |
-| --- | --- | --- |
-| FR-ADM-15 | Unggah screenshot, artwork, banner, video ke Gallery | Must |
-| FR-ADM-16 | Hapus aset Gallery | Must |
-| FR-ADM-17 | Tolak presigned URL gambar > 5 MB dan video > 50 MB | Must |
+
+| ID        | Kebutuhan                                            | Prioritas |
+| --------- | ---------------------------------------------------- | --------- |
+| FR-ADM-15 | Unggah screenshot, artwork, banner, video ke Gallery | Must      |
+| FR-ADM-16 | Hapus aset Gallery                                   | Must      |
+| FR-ADM-17 | Tolak presigned URL gambar > 5 MB dan video > 50 MB  | Must      |
 
 **3.3.7 News Management**
-| ID | Kebutuhan | Prioritas |
-| --- | --- | --- |
-| FR-ADM-18 | CRUD berita (judul, isi, thumbnail) | Must |
-| FR-ADM-19 | Status draf/terbit; draf tidak tampil di publik | Must |
+
+| ID        | Kebutuhan                                       | Prioritas |
+| --------- | ----------------------------------------------- | --------- |
+| FR-ADM-18 | CRUD berita (judul, isi, thumbnail)             | Must      |
+| FR-ADM-19 | Status draf/terbit; draf tidak tampil di publik | Must      |
 
 **3.3.8 FAQ Management**
-| ID | Kebutuhan | Prioritas |
-| --- | --- | --- |
-| FR-ADM-20 | CRUD + urutkan FAQ | Must |
+
+| ID        | Kebutuhan          | Prioritas |
+| --------- | ------------------ | --------- |
+| FR-ADM-20 | CRUD + urutkan FAQ | Must      |
 
 **3.3.9 Social Media & Contact Management**
-| ID | Kebutuhan | Prioritas |
-| --- | --- | --- |
-| FR-ADM-21 | CRUD tautan unduhan (platform + label) | Must |
-| FR-ADM-22 | CRUD tautan media sosial | Must |
-| FR-ADM-23 | Ubah email kontak | Must |
+
+| ID        | Kebutuhan                              | Prioritas |
+| --------- | -------------------------------------- | --------- |
+| FR-ADM-21 | CRUD tautan unduhan (platform + label) | Must      |
+| FR-ADM-22 | CRUD tautan media sosial               | Must      |
+| FR-ADM-23 | Ubah email kontak                      | Must      |
 
 **3.3.10 Kebutuhan Umum Panel Admin**
-| ID | Kebutuhan | Prioritas |
-| --- | --- | --- |
-| FR-ADM-24 | Validasi input (wajib, tipe & ukuran berkas) + pesan error per kolom | Must |
-| FR-ADM-25 | Tautan hanya format URL valid berawalan `https://` | Must |
-| FR-ADM-26 | Konfirmasi sebelum menghapus data/aset | Must |
-| FR-ADM-27 | Perubahan tampil di publik ≤ 60 detik, tanpa ubah kode/deploy ulang | Must |
+
+| ID        | Kebutuhan                                                            | Prioritas |
+| --------- | -------------------------------------------------------------------- | --------- |
+| FR-ADM-24 | Validasi input (wajib, tipe & ukuran berkas) + pesan error per kolom | Must      |
+| FR-ADM-25 | Tautan hanya format URL valid berawalan `https://`                   | Must      |
+| FR-ADM-26 | Konfirmasi sebelum menghapus data/aset                               | Must      |
+| FR-ADM-27 | Perubahan tampil di publik ≤ 60 detik, tanpa ubah kode/deploy ulang  | Must      |
 
 ---
 
 ## 7. Kebutuhan Nonfungsional
 
-| ID | Kategori | Kebutuhan |
-| --- | --- | --- |
-| NFR-PRF-01 | Performa | LCP beranda ≤ 3 detik (mobile Lighthouse, 4G terkontrol) |
-| NFR-PRF-02 | Performa | Lighthouse Performance (mobile) ≥ 80 |
-| NFR-PRF-03 | Performa | Gambar via next/image + custom loader R2; lazy loading di bawah fold |
-| NFR-USE-01 | Kegunaan | Bebas gulir horizontal 360 px – 1920 px |
-| NFR-USE-02 | Kegunaan | 3/3 calon admin ganti logo tanpa panduan ≤ 5 menit |
-| NFR-ACC-01 | Aksesibilitas | Lighthouse Accessibility ≥ 90; setiap gambar informatif punya alt |
-| NFR-CMP-01 | Kompatibilitas | Berfungsi di Chrome, Firefox, Edge, Safari (2 versi mayor terakhir) |
-| NFR-SEC-01 | Keamanan | Password di-hash dengan algoritma kompatibel Workers (mis. bcryptjs) |
-| NFR-SEC-02 | Keamanan | Validasi input dengan Zod di server; semua query via Drizzle ORM |
-| NFR-SEC-03 | Keamanan | Endpoint tulis menolak tanpa autentikasi dengan status 401 |
-| NFR-SEC-04 | Keamanan | Semua akses HTTPS; HTTP dialihkan ke HTTPS |
-| NFR-SEC-05 | Keamanan | Presigned URL kedaluwarsa ≤ 10 menit, hanya admin terautentikasi, hanya tipe berkas diizinkan |
-| NFR-SEC-06 | Keamanan | Rahasia disimpan sebagai secret Workers; `.dev.vars` tidak masuk repositori |
-| NFR-MNT-01 | Pemeliharaan | README berisi langkah instalasi, konfigurasi, deployment |
-| NFR-MNT-02 | Pemeliharaan | Perubahan skema via migrasi drizzle-kit |
-| NFR-MNT-03 | Pemeliharaan | Kode lolos ESLint & Prettier tanpa galat |
-| NFR-DEP-01 | Deployment | Dapat dipublikasikan ke Cloudflare Workers via wrangler deploy |
+| ID         | Kategori       | Kebutuhan                                                                                     |
+| ---------- | -------------- | --------------------------------------------------------------------------------------------- |
+| NFR-PRF-01 | Performa       | LCP beranda ≤ 3 detik (mobile Lighthouse, 4G terkontrol)                                      |
+| NFR-PRF-02 | Performa       | Lighthouse Performance (mobile) ≥ 80                                                          |
+| NFR-PRF-03 | Performa       | Gambar via next/image + custom loader R2; lazy loading di bawah fold                          |
+| NFR-USE-01 | Kegunaan       | Bebas gulir horizontal 360 px – 1920 px                                                       |
+| NFR-USE-02 | Kegunaan       | 3/3 calon admin ganti logo tanpa panduan ≤ 5 menit                                            |
+| NFR-ACC-01 | Aksesibilitas  | Lighthouse Accessibility ≥ 90; setiap gambar informatif punya alt                             |
+| NFR-CMP-01 | Kompatibilitas | Berfungsi di Chrome, Firefox, Edge, Safari (2 versi mayor terakhir)                           |
+| NFR-SEC-01 | Keamanan       | Password di-hash dengan algoritma kompatibel Workers (mis. bcryptjs)                          |
+| NFR-SEC-02 | Keamanan       | Validasi input dengan Zod di server; semua query via Drizzle ORM                              |
+| NFR-SEC-03 | Keamanan       | Endpoint tulis menolak tanpa autentikasi dengan status 401                                    |
+| NFR-SEC-04 | Keamanan       | Semua akses HTTPS; HTTP dialihkan ke HTTPS                                                    |
+| NFR-SEC-05 | Keamanan       | Presigned URL kedaluwarsa ≤ 10 menit, hanya admin terautentikasi, hanya tipe berkas diizinkan |
+| NFR-SEC-06 | Keamanan       | Rahasia disimpan sebagai secret Workers; `.dev.vars` tidak masuk repositori                   |
+| NFR-MNT-01 | Pemeliharaan   | README berisi langkah instalasi, konfigurasi, deployment                                      |
+| NFR-MNT-02 | Pemeliharaan   | Perubahan skema via migrasi drizzle-kit                                                       |
+| NFR-MNT-03 | Pemeliharaan   | Kode lolos ESLint & Prettier tanpa galat                                                      |
+| NFR-DEP-01 | Deployment     | Dapat dipublikasikan ke Cloudflare Workers via wrangler deploy                                |
 
 ---
 
 ## 8. Kebutuhan Antarmuka Eksternal
 
-| ID | Kebutuhan |
-| --- | --- |
-| EI-01 | UI dapat digunakan pada lebar layar 360 px – 1920 px |
+| ID    | Kebutuhan                                                                                 |
+| ----- | ----------------------------------------------------------------------------------------- |
+| EI-01 | UI dapat digunakan pada lebar layar 360 px – 1920 px                                      |
 | EI-02 | Situs Publik & Panel Admin berkomunikasi dengan backend via Route Handlers Next.js (JSON) |
-| EI-03 | Akses Neon Postgres via Drizzle ORM dengan driver kompatibel Workers |
-| EI-04 | Sistem menerbitkan presigned URL Cloudflare R2 untuk setiap unggahan aset |
-| EI-05 | Terima gambar JPG, PNG, WebP; SVG khusus logo/ikon |
-| EI-06 | Terima video MP4 |
-| EI-07 | Tautan keluar (unduhan & media sosial) terbuka di tab baru |
+| EI-03 | Akses Neon Postgres via Drizzle ORM dengan driver kompatibel Workers                      |
+| EI-04 | Sistem menerbitkan presigned URL Cloudflare R2 untuk setiap unggahan aset                 |
+| EI-05 | Terima gambar JPG, PNG, WebP; SVG khusus logo/ikon                                        |
+| EI-06 | Terima video MP4                                                                          |
+| EI-07 | Tautan keluar (unduhan & media sosial) terbuka di tab baru                                |
 
 ---
 
 ## 9. Model Data (Garis Besar)
 
-| Entitas | Atribut Utama |
-| --- | --- |
-| `users` | id, nama, email, password_hash, created_at (Auth.js + Drizzle adapter) |
-| `site_settings` | id, nama_game, tagline, logo_url, favicon_url, email_kontak |
-| `hero` | id, judul, subjudul, video_url, teks_cta, tautan_cta |
-| `hero_banners` | id, gambar_url, urutan |
-| `about` | id, judul, deskripsi, gambar_url |
-| `features` | id, judul, deskripsi, ikon_url, urutan |
-| `how_to_play_steps` | id, judul_langkah, deskripsi, media_url, urutan |
-| `how_to_play_video` | id, video_url |
-| `gallery_assets` | id, jenis, judul, file_url, urutan |
-| `news` | id, judul, slug, isi, thumbnail_url, status, published_at |
-| `faq` | id, pertanyaan, jawaban, urutan |
-| `social_links` | id, platform, url |
-| `download_links` | id, platform, label, url |
+| Entitas             | Atribut Utama                                                          |
+| ------------------- | ---------------------------------------------------------------------- |
+| `users`             | id, nama, email, password_hash, created_at (Auth.js + Drizzle adapter) |
+| `site_settings`     | id, nama_game, tagline, logo_url, favicon_url, email_kontak            |
+| `hero`              | id, judul, subjudul, video_url, teks_cta, tautan_cta                   |
+| `hero_banners`      | id, gambar_url, urutan                                                 |
+| `about`             | id, judul, deskripsi, gambar_url                                       |
+| `features`          | id, judul, deskripsi, ikon_url, urutan                                 |
+| `how_to_play_steps` | id, judul_langkah, deskripsi, media_url, urutan                        |
+| `how_to_play_video` | id, video_url                                                          |
+| `gallery_assets`    | id, jenis, judul, file_url, urutan                                     |
+| `news`              | id, judul, slug, isi, thumbnail_url, status, published_at              |
+| `faq`               | id, pertanyaan, jawaban, urutan                                        |
+| `social_links`      | id, platform, url                                                      |
+| `download_links`    | id, platform, label, url                                               |
 
 > Rancangan rinci dilakukan pada tahap perancangan.
 
@@ -285,19 +307,20 @@ Admin ───────┘        │
 
 ## 10. Asumsi & Ketergantungan
 
-| ID | Asumsi/Ketergantungan |
-| --- | --- |
+| ID   | Asumsi/Ketergantungan                                               |
+| ---- | ------------------------------------------------------------------- |
 | A-01 | Mitra menyediakan logo, artwork, screenshot, video, dan teks konten |
-| A-02 | Mitra menyediakan tautan unduhan dan media sosial |
-| A-03 | Akun Cloudflare (Workers & R2) dan Neon tersedia dan aktif |
-| A-04 | Domain situs disediakan/disetujui mitra |
-| A-05 | Ketersediaan sistem bergantung pada layanan Cloudflare dan Neon |
+| A-02 | Mitra menyediakan tautan unduhan dan media sosial                   |
+| A-03 | Akun Cloudflare (Workers & R2) dan Neon tersedia dan aktif          |
+| A-04 | Domain situs disediakan/disetujui mitra                             |
+| A-05 | Ketersediaan sistem bergantung pada layanan Cloudflare dan Neon     |
 
 ---
 
 ## 11. Alur Pengguna Utama
 
 **Pengunjung:**
+
 1. Membuka landing page → melihat Hero, About, Features, How to Play.
 2. Menelusuri Gallery, membaca News, membuka detail berita.
 3. Membaca FAQ (accordion).
@@ -305,6 +328,7 @@ Admin ───────┘        │
 5. Menghubungi via email/sosial media.
 
 **Admin:**
+
 1. Login dengan email & password → masuk Dashboard.
 2. Mengelola Branding, Hero, Game Content, Gallery, News, FAQ, Social & Contact.
 3. Mengunggah aset (gambar ≤ 5 MB, video ≤ 50 MB) langsung ke R2.
@@ -317,38 +341,37 @@ Admin ───────┘        │
 
 Sebuah fitur dinyatakan selesai apabila:
 
-
 - [ ] Memenuhi seluruh FR terkait (lihat §6) tanpa galat.
 - [ ] Lolos validasi Zod di sisi server dan menampilkan pesan error yang tepat.
 - [ ] Responsif 360 px – 1920 px, tanpa gulir horizontal.
 - [ ] Tautan keluar memakai `target="_blank"` dengan `rel="noopener noreferrer"`.
 - [ ] Lolos ESLint & Prettier.
-- [ ] Berhasil di-build OpenNext dan di-*deploy* ke Cloudflare Workers.
+- [ ] Berhasil di-build OpenNext dan di-_deploy_ ke Cloudflare Workers.
 - [ ] Perubahan konten tayang di publik ≤ 60 detik.
 
 ---
 
 ## 13. Risiko & Mitigasi
 
-| Risiko | Dampak | Mitigasi |
-| --- | --- | --- |
-| Ketergantungan pada Cloudflare/Neon (A-05) | Downtime | Monitoring + fallback error page |
-| Keterlambatan aset dari mitra (A-01/A-02) | Blokir konten | Placeholder konten + timeline aset |
-| Batasan runtime Workers (C-04) | Pustaka tidak kompatibel | Audit dependensi sejak awal |
-| Performa gambar/video besar | Gagal NFR performa | Batas ukuran (FR-ADM-17), next/image, lazy loading |
-| Keamanan kredensial | Kebocoran data | Secret Workers (NFR-SEC-06), HTTPS (NFR-SEC-04) |
+| Risiko                                     | Dampak                   | Mitigasi                                           |
+| ------------------------------------------ | ------------------------ | -------------------------------------------------- |
+| Ketergantungan pada Cloudflare/Neon (A-05) | Downtime                 | Monitoring + fallback error page                   |
+| Keterlambatan aset dari mitra (A-01/A-02)  | Blokir konten            | Placeholder konten + timeline aset                 |
+| Batasan runtime Workers (C-04)             | Pustaka tidak kompatibel | Audit dependensi sejak awal                        |
+| Performa gambar/video besar                | Gagal NFR performa       | Batas ukuran (FR-ADM-17), next/image, lazy loading |
+| Keamanan kredensial                        | Kebocoran data           | Secret Workers (NFR-SEC-06), HTTPS (NFR-SEC-04)    |
 
 ---
 
 ## 14. Milestone (Gambaran Tingkat Tinggi)
 
-| Fase | Fokus | Output |
-| --- | --- | --- |
-| M0 | Fondasi & Setup | Repo, CI, koneksi Neon, R2, auth dasar |
-| M1 | CMS Core & Autentikasi | Login, Dashboard, skema DB, API dasar |
-| M2 | Konten Statis Situs Publik | Hero, About, Features, How to Play, Branding |
-| M3 | Konten Dinamis | Gallery, News, FAQ, Download, Contact |
-| M4 | Penyempurnaan | Performa, aksesibilitas, SEO, kompatibilitas |
-| M5 | UAT & Deployment | Uji mitra, deploy produksi, dokumentasi |
+| Fase | Fokus                      | Output                                       |
+| ---- | -------------------------- | -------------------------------------------- |
+| M0   | Fondasi & Setup            | Repo, CI, koneksi Neon, R2, auth dasar       |
+| M1   | CMS Core & Autentikasi     | Login, Dashboard, skema DB, API dasar        |
+| M2   | Konten Statis Situs Publik | Hero, About, Features, How to Play, Branding |
+| M3   | Konten Dinamis             | Gallery, News, FAQ, Download, Contact        |
+| M4   | Penyempurnaan              | Performa, aksesibilitas, SEO, kompatibilitas |
+| M5   | UAT & Deployment           | Uji mitra, deploy produksi, dokumentasi      |
 
 > Rincian pekerjaan, estimasi, dan pemetaan kebutuhan tersedia pada dokumen **docs/TASK_BREAKDOWN.md**.

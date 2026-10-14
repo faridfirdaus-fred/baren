@@ -13,7 +13,7 @@ Situs referensi VALORANT di-scrape dengan **Playwright** untuk mengambil **pola 
 dan sebuah **brief implementasi**, lalu **opencode** dipakai untuk menulis kode landing page BAREN di proyek
 Next.js 16 (App Router) + Tailwind CSS v4 yang sudah ada.
 
-**Penting (kepatuhan):** hanya *pola layout & gaya umum* yang diadopsi. Aset berhak cipta Riot Games
+**Penting (kepatuhan):** hanya _pola layout & gaya umum_ yang diadopsi. Aset berhak cipta Riot Games
 (gambar, video, logo, teks, font proprietary) **tidak disalin**. Seluruh aset visual BAREN dibuat dari nol
 secara generatif (SVG/Canvas → JPG/MP4) sesuai catatan risiko pada `docs/PRD.md` §11A.
 
@@ -29,30 +29,31 @@ node scripts/bottom.mjs        # deteksi footer & blok bawah
 ```
 
 Teknik yang dipakai di `scripts/scrape.mjs`:
-- **Auto-scroll** bertahap sampai dasar halaman agar konten *lazy-load* ter-render.
+
+- **Auto-scroll** bertahap sampai dasar halaman agar konten _lazy-load_ ter-render.
 - **Penutupan otomatis** dialog cookie/consent (Osano/OneTrust) + pembersihan backdrop penghalang.
 - **Ekstraksi terstruktur** via `page.evaluate()`: heading, gambar, video, link, tombol, paragraf,
   `background-image`, dan outline per-`<section>`.
 - **Sampling design token**: frekuensi `font-family`, `color`, `background-color` dari seluruh elemen terlihat.
 - **Ekstraksi CSS custom properties** (`:root`) langsung dari `document.styleSheets`.
-- Screenshot `fullPage` + *fold* untuk dua viewport (1440×900 dan 390×844 iPhone 13).
+- Screenshot `fullPage` + _fold_ untuk dua viewport (1440×900 dan 390×844 iPhone 13).
 
 ---
 
 ## 3. Hasil Ekstraksi (angka terukur)
 
-| Metrik | Nilai |
-| --- | --- |
-| Tinggi dokumen referensi | 4507px (desktop) / 4192px (mobile) |
-| Jumlah seksi | 6 seksi konten + header + footer |
-| Warna dasar | `#0F1923` (gelap), `#ECE8E1` (terang) |
-| Warna aksen | `#FF4655` |
-| Display font | `Tungsten-Bold, "Riot Sans"` @ 94.84px |
-| Body font | `DINNextW1G` @ 18px / line-height 28px |
-| Nav font | `Inter` @ 13px / 600 / uppercase / ls 1.04px |
-| Tombol CTA | padding `18px 32px`, 18px/500 uppercase, **radius 0px** |
-| Container | max-width 1440px, padding horizontal 48px |
-| Grid artikel | 3 kolom, kartu 427px |
+| Metrik                   | Nilai                                                   |
+| ------------------------ | ------------------------------------------------------- |
+| Tinggi dokumen referensi | 4507px (desktop) / 4192px (mobile)                      |
+| Jumlah seksi             | 6 seksi konten + header + footer                        |
+| Warna dasar              | `#0F1923` (gelap), `#ECE8E1` (terang)                   |
+| Warna aksen              | `#FF4655`                                               |
+| Display font             | `Tungsten-Bold, "Riot Sans"` @ 94.84px                  |
+| Body font                | `DINNextW1G` @ 18px / line-height 28px                  |
+| Nav font                 | `Inter` @ 13px / 600 / uppercase / ls 1.04px            |
+| Tombol CTA               | padding `18px 32px`, 18px/500 uppercase, **radius 0px** |
+| Container                | max-width 1440px, padding horizontal 48px               |
+| Grid artikel             | 3 kolom, kartu 427px                                    |
 
 Detail lengkap: **`docs/DESIGN_SPEC_VALORANT_REF.md`**.
 
@@ -64,16 +65,16 @@ Dihasilkan oleh `scripts/gen-art.mjs` + `scripts/hero-scene.html` (Canvas → fr
 Motif khas: **benteng-bentengan** — siluet benteng bergerigi, garis pertahanan putus-putus,
 node rebutan, dot-grid taktis, ember melayang.
 
-| Aset | Ukuran | Ukuran file |
-| --- | --- | --- |
-| `public/media/hero-loop.mp4` | 1280×720, 6s, h264 | 82 KB |
-| `public/media/hero-poster.jpg` | 1920×1080 | 62 KB |
-| `public/art/event-art.jpg` | 3440×1020 | 50 KB |
-| `public/art/about-art.jpg` | 1600×900 | 32 KB |
-| `public/art/agents-art.jpg` / `maps-art.jpg` | 1232×1232 | ~35 KB |
-| `public/art/cover-1..3.jpg` | 1920×1080 | ~65 KB (komposisi berbeda) |
-| `public/art/feature-1..3.jpg` | 800×800 | ~20 KB |
-| `public/brand/baren-mark.svg`, `baren-wordmark.png` | 64×64 / 736×138 | kecil |
+| Aset                                                | Ukuran             | Ukuran file                |
+| --------------------------------------------------- | ------------------ | -------------------------- |
+| `public/media/hero-loop.mp4`                        | 1280×720, 6s, h264 | 82 KB                      |
+| `public/media/hero-poster.jpg`                      | 1920×1080          | 62 KB                      |
+| `public/art/event-art.jpg`                          | 3440×1020          | 50 KB                      |
+| `public/art/about-art.jpg`                          | 1600×900           | 32 KB                      |
+| `public/art/agents-art.jpg` / `maps-art.jpg`        | 1232×1232          | ~35 KB                     |
+| `public/art/cover-1..3.jpg`                         | 1920×1080          | ~65 KB (komposisi berbeda) |
+| `public/art/feature-1..3.jpg`                       | 800×800            | ~20 KB                     |
+| `public/brand/baren-mark.svg`, `baren-wordmark.png` | 64×64 / 736×138    | kecil                      |
 
 ---
 
@@ -111,22 +112,22 @@ src/app/layout.tsx                      font Inter + Anton, metadata, lang="id"
 
 ## 6. Hasil Verifikasi
 
-| Pemeriksaan | Hasil |
-| --- | --- |
-| `pnpm exec tsc --noEmit` | **0 error** |
-| `pnpm lint` | **0 error, 0 warning** |
-| `pnpm build` | **sukses** (route `/` statis) |
-| Dependency baru | **tidak ada** (`package.json` tidak berubah) |
-| Rujukan eksternal ke Riot | **0** (tidak ada `playvalorant`/`rgpub`) |
-| Error console browser | **0** (desktop & mobile) |
-| Semua gambar ter-decode | **13/13 OK**, 0 HTTP gagal |
-| Video hero | `readyState 4`, 1280×720 |
-| Radius tombol CTA | **0px** di semua tombol (sesuai DG-04) |
-| Kontras WCAG AA | **0 pelanggaran** (audit ter-render) |
-| Aksesibilitas | 1 `<h1>`, landmark header/main/footer/nav lengkap, 0 gambar tanpa `alt` (2 dekoratif `alt=""`), 0 tombol/link tanpa nama |
-| Header transparan→solid | **berfungsi** (bg berubah + border 1px + blur) |
-| Accordion FAQ | **berfungsi** (4 item, hanya satu terbuka, `aria-expanded` benar) |
-| Menu mobile | **berfungsi** (8 link, tutup via Escape) |
+| Pemeriksaan               | Hasil                                                                                                                    |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm exec tsc --noEmit`  | **0 error**                                                                                                              |
+| `pnpm lint`               | **0 error, 0 warning**                                                                                                   |
+| `pnpm build`              | **sukses** (route `/` statis)                                                                                            |
+| Dependency baru           | **tidak ada** (`package.json` tidak berubah)                                                                             |
+| Rujukan eksternal ke Riot | **0** (tidak ada `playvalorant`/`rgpub`)                                                                                 |
+| Error console browser     | **0** (desktop & mobile)                                                                                                 |
+| Semua gambar ter-decode   | **13/13 OK**, 0 HTTP gagal                                                                                               |
+| Video hero                | `readyState 4`, 1280×720                                                                                                 |
+| Radius tombol CTA         | **0px** di semua tombol (sesuai DG-04)                                                                                   |
+| Kontras WCAG AA           | **0 pelanggaran** (audit ter-render)                                                                                     |
+| Aksesibilitas             | 1 `<h1>`, landmark header/main/footer/nav lengkap, 0 gambar tanpa `alt` (2 dekoratif `alt=""`), 0 tombol/link tanpa nama |
+| Header transparan→solid   | **berfungsi** (bg berubah + border 1px + blur)                                                                           |
+| Accordion FAQ             | **berfungsi** (4 item, hanya satu terbuka, `aria-expanded` benar)                                                        |
+| Menu mobile               | **berfungsi** (8 link, tutup via Escape)                                                                                 |
 
 Skrip verifikasi: `scripts/verify-visual.mjs`, `scripts/audit-a11y.mjs`,
 `scripts/check-media.mjs`, `scripts/test-interactions.mjs`.
@@ -146,7 +147,7 @@ Verifikasi menemukan masalah nyata yang kemudian diperbaiki:
    Diperbaiki dengan field `eyebrow` pada konten (`LOKASI`, `KARAKTER`, `KEUNGGULAN`).
 4. **Kartu artikel tampak identik** — variasi komposisi ditambahkan pada generator agar
    `cover-1/2/3` benar-benar berbeda.
-5. **Tangkapan layar seksi kosong** — gambar *lazy-load* belum ter-decode saat screenshot;
+5. **Tangkapan layar seksi kosong** — gambar _lazy-load_ belum ter-decode saat screenshot;
    skrip verifikasi kini men-scroll penuh sebelum menangkap.
 
 ---
@@ -177,7 +178,7 @@ node scripts/gen-art.mjs
 
 ## 9. Catatan & Kelanjutan
 
-- Tombol **LOGIN** sudah ada di header sesuai mode *waiting list* (`FR-PUB-18`), namun masih
+- Tombol **LOGIN** sudah ada di header sesuai mode _waiting list_ (`FR-PUB-18`), namun masih
   menuju anchor `#daftar`. Integrasi Google OAuth + tabel `waitlist` (FR-PUB-19..25) belum dikerjakan.
 - Seksi **Galeri** (FR-PUB-08/09) dan **FAQ accordion** sudah tersedia; galeri media belum dibuat.
 - Konten masih berupa konstanta statis di `src/content/baren.ts`. Langkah berikutnya: ganti sumbernya
