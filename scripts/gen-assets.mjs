@@ -16,15 +16,24 @@ const ART = path.join(PUBLIC, "art");
 const BRAND = path.join(PUBLIC, "brand");
 const FRAMES = path.resolve(".asset-tmp/frames");
 
-for (const d of [MEDIA, ART, BRAND, FRAMES]) await fs.mkdir(d, { recursive: true });
+for (const d of [MEDIA, ART, BRAND, FRAMES])
+  await fs.mkdir(d, { recursive: true });
 
-const ff = (args) => execFileSync("ffmpeg", ["-y", "-loglevel", "error", ...args], { stdio: "inherit" });
+const ff = (args) =>
+  execFileSync("ffmpeg", ["-y", "-loglevel", "error", ...args], {
+    stdio: "inherit",
+  });
 
 /* ---------------------------------------------------------------- hero video */
-const FPS = 24, SECONDS = 6, FRAMES_N = FPS * SECONDS;
+const FPS = 24,
+  SECONDS = 6,
+  FRAMES_N = FPS * SECONDS;
 
 const browser = await chromium.launch({ args: ["--no-sandbox"] });
-const ctx = await browser.newContext({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
+const ctx = await browser.newContext({
+  viewport: { width: 1280, height: 720 },
+  deviceScaleFactor: 1,
+});
 const page = await ctx.newPage();
 await page.goto("file://" + path.resolve("scripts/hero-scene.html"));
 await page.waitForTimeout(500);
@@ -33,33 +42,89 @@ console.log(`→ rendering ${FRAMES_N} hero frames @ ${FPS}fps ...`);
 for (let i = 0; i < FRAMES_N; i++) {
   await page.evaluate((t) => window.__draw(t), i / FPS);
   const file = path.join(FRAMES, `f${String(i).padStart(4, "0")}.png`);
-  await page.screenshot({ path: file, clip: { x: 0, y: 0, width: 1280, height: 720 } });
+  await page.screenshot({
+    path: file,
+    clip: { x: 0, y: 0, width: 1280, height: 720 },
+  });
 }
 console.log("→ encoding mp4 ...");
-ff(["-framerate", String(FPS), "-i", path.join(FRAMES, "f%04d.png"),
-    "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p",
-    "-crf", "30", "-movflags", "+faststart", "-an",
-    path.join(MEDIA, "hero-loop.mp4")]);
+ff([
+  "-framerate",
+  String(FPS),
+  "-i",
+  path.join(FRAMES, "f%04d.png"),
+  "-c:v",
+  "libx264",
+  "-profile:v",
+  "high",
+  "-pix_fmt",
+  "yuv420p",
+  "-crf",
+  "30",
+  "-movflags",
+  "+faststart",
+  "-an",
+  path.join(MEDIA, "hero-loop.mp4"),
+]);
 console.log("→ poster + webp ...");
-ff(["-i", path.join(FRAMES, "f0000.png"), "-vf", "scale=1920:-2", "-q:v", "4", path.join(MEDIA, "hero-poster.jpg")]);
-ff(["-i", path.join(MEDIA, "hero-loop.mp4"), "-vf", "scale=1280:-2", "-c:v", "libwebp", "-q:v", "62", "-loop", "0", "-an", path.join(MEDIA, "hero-loop.webp")]);
+ff([
+  "-i",
+  path.join(FRAMES, "f0000.png"),
+  "-vf",
+  "scale=1920:-2",
+  "-q:v",
+  "4",
+  path.join(MEDIA, "hero-poster.jpg"),
+]);
+ff([
+  "-i",
+  path.join(MEDIA, "hero-loop.mp4"),
+  "-vf",
+  "scale=1280:-2",
+  "-c:v",
+  "libwebp",
+  "-q:v",
+  "62",
+  "-loop",
+  "0",
+  "-an",
+  path.join(MEDIA, "hero-loop.webp"),
+]);
 
 /* ------------------------------------------------- section art + card covers */
 const ART_SVG = (w, h, seed, accent, label) => {
-  const r = (s => () => (s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff)(seed);
-  const dots = Array.from({ length: 90 }, () => `<rect x="${(r()*w).toFixed(1)}" y="${(r()*h).toFixed(1)}" width="1.6" height="1.6" fill="#F2EDE4" opacity="${(0.05+r()*0.16).toFixed(2)}"/>`).join("");
+  const r = (
+    (s) => () =>
+      (s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff
+  )(seed);
+  const dots = Array.from(
+    { length: 90 },
+    () =>
+      `<rect x="${(r() * w).toFixed(1)}" y="${(r() * h).toFixed(1)}" width="1.6" height="1.6" fill="#F2EDE4" opacity="${(0.05 + r() * 0.16).toFixed(2)}"/>`,
+  ).join("");
   const shards = Array.from({ length: 9 }, () => {
-    const x = r()*w, y = r()*h, s = 60 + r()*230;
-    return `<polygon points="${x.toFixed(0)},${y.toFixed(0)} ${(x+s).toFixed(0)},${(y+s*0.42).toFixed(0)} ${(x+s*0.62).toFixed(0)},${(y+s).toFixed(0)}" fill="${accent}" opacity="${(0.04+r()*0.10).toFixed(2)}"/>`;
+    const x = r() * w,
+      y = r() * h,
+      s = 60 + r() * 230;
+    return `<polygon points="${x.toFixed(0)},${y.toFixed(0)} ${(x + s).toFixed(0)},${(y + s * 0.42).toFixed(0)} ${(x + s * 0.62).toFixed(0)},${(y + s).toFixed(0)}" fill="${accent}" opacity="${(0.04 + r() * 0.1).toFixed(2)}"/>`;
   }).join("");
   const towers = Array.from({ length: 4 }, (_, i) => {
-    const bw = 46 + r()*70, bh = 90 + r()*180, bx = 40 + i*(w/4.4) + r()*40, by = h - bh - 24;
-    const teeth = 5, tw = bw/(teeth*2-1);
+    const bw = 46 + r() * 70,
+      bh = 90 + r() * 180,
+      bx = 40 + i * (w / 4.4) + r() * 40,
+      by = h - bh - 24;
+    const teeth = 5,
+      tw = bw / (teeth * 2 - 1);
     let t = "";
-    for (let k = 0; k < teeth; k++) t += `<rect x="${(bx+k*tw*2).toFixed(1)}" y="${(by-16).toFixed(1)}" width="${tw.toFixed(1)}" height="16" fill="#080D16"/>`;
-    return `<g opacity="0.9"><rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="#080D16"/>${t}<rect x="${(bx+2).toFixed(1)}" y="${by.toFixed(1)}" width="2.4" height="${bh.toFixed(1)}" fill="${accent}" opacity="0.75"/></g>`;
+    for (let k = 0; k < teeth; k++)
+      t += `<rect x="${(bx + k * tw * 2).toFixed(1)}" y="${(by - 16).toFixed(1)}" width="${tw.toFixed(1)}" height="16" fill="#080D16"/>`;
+    return `<g opacity="0.9"><rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="#080D16"/>${t}<rect x="${(bx + 2).toFixed(1)}" y="${by.toFixed(1)}" width="2.4" height="${bh.toFixed(1)}" fill="${accent}" opacity="0.75"/></g>`;
   }).join("");
-  const lines = Array.from({ length: 16 }, (_, i) => `<line x1="${-80+i*(w/13)}" y1="-30" x2="${-80+i*(w/13)+h*0.72}" y2="${h+30}" stroke="#F2EDE4" stroke-width="1" opacity="0.05"/>`).join("");
+  const lines = Array.from(
+    { length: 16 },
+    (_, i) =>
+      `<line x1="${-80 + i * (w / 13)}" y1="-30" x2="${-80 + i * (w / 13) + h * 0.72}" y2="${h + 30}" stroke="#F2EDE4" stroke-width="1" opacity="0.05"/>`,
+  ).join("");
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
@@ -76,7 +141,7 @@ const ART_SVG = (w, h, seed, accent, label) => {
 <rect width="${w}" height="${h}" fill="url(#glow)"/>
 ${lines}${shards}${dots}${towers}
 <rect width="${w}" height="${h}" fill="url(#vig)"/>
-<g opacity="0.5"><text x="${w/2}" y="${h/2}" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="${Math.round(h*0.16)}" font-weight="900" letter-spacing="${Math.round(h*0.02)}" fill="#F2EDE4" opacity="0.07">${label}</text></g>
+<g opacity="0.5"><text x="${w / 2}" y="${h / 2}" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="${Math.round(h * 0.16)}" font-weight="900" letter-spacing="${Math.round(h * 0.02)}" fill="#F2EDE4" opacity="0.07">${label}</text></g>
 </svg>`;
 };
 
@@ -99,10 +164,16 @@ for (const [name, w, h, seed, accent, label] of stills) {
   const svgPath = path.join(ART, `${name}.svg`);
   await fs.writeFile(svgPath, svg);
   await svgPage.setViewportSize({ width: w, height: h });
-  await svgPage.goto("data:text/html," + encodeURIComponent(
-    `<body style="margin:0">${svg}</body>`));
+  await svgPage.goto(
+    "data:text/html," +
+      encodeURIComponent(`<body style="margin:0">${svg}</body>`),
+  );
   await svgPage.waitForTimeout(120);
-  await svgPage.screenshot({ path: path.join(ART, `${name}.jpg`), type: "jpeg", quality: 82 });
+  await svgPage.screenshot({
+    path: path.join(ART, `${name}.jpg`),
+    type: "jpeg",
+    quality: 82,
+  });
   console.log("  art:", name, `${w}x${h}`);
 }
 
@@ -121,17 +192,25 @@ const mark = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width=
 await fs.writeFile(path.join(BRAND, "baren-wordmark.svg"), wordmark);
 await fs.writeFile(path.join(BRAND, "baren-mark.svg"), mark);
 const markLight = mark
-  .replace(/fill="#0B1220"/g, "fill=\"#TMP\"")
-  .replace(/fill="#F2EDE4"/g, "fill=\"#0B1220\"")
-  .replace(/fill="#TMP"/g, "fill=\"#F2EDE4\"");
+  .replace(/fill="#0B1220"/g, 'fill="#TMP"')
+  .replace(/fill="#F2EDE4"/g, 'fill="#0B1220"')
+  .replace(/fill="#TMP"/g, 'fill="#F2EDE4"');
 await fs.writeFile(path.join(BRAND, "baren-mark-light.svg"), markLight);
 
 // wordmark png (for hero, transparent bg)
 const wmPage = await ctx.newPage();
 await wmPage.setViewportSize({ width: 736, height: 138 });
-await wmPage.goto("data:text/html," + encodeURIComponent(`<body style="margin:0;background:transparent">${wordmark}</body>`));
+await wmPage.goto(
+  "data:text/html," +
+    encodeURIComponent(
+      `<body style="margin:0;background:transparent">${wordmark}</body>`,
+    ),
+);
 await wmPage.waitForTimeout(150);
-await wmPage.screenshot({ path: path.join(BRAND, "baren-wordmark.png"), omitBackground: true });
+await wmPage.screenshot({
+  path: path.join(BRAND, "baren-wordmark.png"),
+  omitBackground: true,
+});
 
 // favicon
 await fs.writeFile(path.join(PUBLIC, "icon.svg"), mark);
@@ -143,6 +222,8 @@ console.log("\n=== generated ===");
 for (const d of [BRAND, MEDIA, ART]) {
   for (const f of await fs.readdir(d)) {
     const s = await fs.stat(path.join(d, f));
-    console.log(`  ${path.relative(PUBLIC, path.join(d, f))}  ${(s.size / 1024).toFixed(1)} KB`);
+    console.log(
+      `  ${path.relative(PUBLIC, path.join(d, f))}  ${(s.size / 1024).toFixed(1)} KB`,
+    );
   }
 }

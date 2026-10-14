@@ -1,21 +1,21 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react";
 
 export function CtaButton({
   href,
   children,
-  variant = 'ember',
-  className = '',
+  variant = "ember",
+  className = "",
 }: {
-  href: string
-  children: ReactNode
-  variant?: 'ember' | 'ink' | 'ghost'
-  className?: string
+  href: string;
+  children: ReactNode;
+  variant?: "ember" | "ink" | "ghost";
+  className?: string;
 }) {
   const variantClass = {
-    ember: 'bg-ember-700 text-sand hover:bg-ember-800',
-    ink: 'bg-ink text-sand hover:bg-ink-800',
-    ghost: 'border border-current bg-transparent hover:bg-sand/10',
-  }[variant]
+    ember: "bg-ember-700 text-sand hover:bg-ember-800",
+    ink: "bg-ink text-sand hover:bg-ink-800",
+    ghost: "border border-current bg-transparent hover:bg-sand/10",
+  }[variant];
 
   return (
     <a
@@ -24,5 +24,5 @@ export function CtaButton({
     >
       {children}
     </a>
-  )
+  );
 }

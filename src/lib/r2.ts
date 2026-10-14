@@ -9,7 +9,11 @@ export function getR2Bucket() {
   return bucket;
 }
 
-export async function putAsset(key: string, body: ArrayBuffer, contentType: string) {
+export async function putAsset(
+  key: string,
+  body: ArrayBuffer,
+  contentType: string,
+) {
   const bucket = getR2Bucket();
   await bucket.put(key, body, {
     httpMetadata: { contentType },

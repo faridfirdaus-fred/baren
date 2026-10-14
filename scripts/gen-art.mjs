@@ -12,11 +12,14 @@ const ART = path.join(PUBLIC, "art");
 const BRAND = path.join(PUBLIC, "brand");
 for (const d of [ART, BRAND]) await fs.mkdir(d, { recursive: true });
 
-const INK = "#0B1220", SAND = "#F2EDE4", EMBER = "#E4572E";
+const INK = "#0B1220",
+  SAND = "#F2EDE4",
+  EMBER = "#E4572E";
 
 /** Fort (benteng) silhouette with crenellations + rim light. */
 function fort(cx, baseY, w, h, side, accent) {
-  const teeth = 7, tw = w / (teeth * 2 - 1);
+  const teeth = 7,
+    tw = w / (teeth * 2 - 1);
   let cren = "";
   for (let i = 0; i < teeth; i++) {
     cren += `<rect x="${(cx - w / 2 + i * tw * 2).toFixed(1)}" y="${(baseY - h - 22).toFixed(1)}" width="${tw.toFixed(1)}" height="22" fill="${INK}"/>`;
@@ -35,7 +38,10 @@ function fort(cx, baseY, w, h, side, accent) {
 }
 
 function art(w, h, seed, accent, variant = 0) {
-  const R = (s => () => (s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff)(seed);
+  const R = (
+    (s) => () =>
+      (s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff
+  )(seed);
   // variant shifts composition so cards never look like the same image
   const horizon = h * (variant === 1 ? 0.62 : variant === 2 ? 0.84 : 0.74);
   const glowY = variant === 2 ? 0.34 : variant === 1 ? 0.66 : 0.5;
@@ -46,7 +52,7 @@ function art(w, h, seed, accent, variant = 0) {
   let dots = "";
   for (let x = gap; x < w; x += gap) {
     for (let y = gap; y < h; y += gap) {
-      const o = 0.05 + R() * 0.10;
+      const o = 0.05 + R() * 0.1;
       dots += `<rect x="${x}" y="${y}" width="1.7" height="1.7" fill="${SAND}" opacity="${o.toFixed(2)}"/>`;
     }
   }
@@ -62,39 +68,60 @@ function art(w, h, seed, accent, variant = 0) {
   // low-poly shards
   let shards = "";
   for (let i = 0; i < 11; i++) {
-    const x = R() * w, y = R() * horizon * 0.95, s = (0.10 + R() * 0.22) * Math.min(w, h);
+    const x = R() * w,
+      y = R() * horizon * 0.95,
+      s = (0.1 + R() * 0.22) * Math.min(w, h);
     shards += `<polygon points="${x.toFixed(0)},${y.toFixed(0)} ${(x + s).toFixed(0)},${(y + s * 0.4).toFixed(0)} ${(x + s * 0.6).toFixed(0)},${(y + s).toFixed(0)}" fill="${accent}" opacity="${(0.05 + R() * 0.09).toFixed(2)}"/>`;
   }
 
   // ground bands
   let ground = "";
   for (let i = 0; i < 4; i++) {
-    const y = horizon + i * (h - horizon) / 4;
+    const y = horizon + (i * (h - horizon)) / 4;
     ground += `<rect x="0" y="${y.toFixed(1)}" width="${w}" height="1.4" fill="${SAND}" opacity="${(0.05 - i * 0.008).toFixed(3)}"/>`;
   }
 
   // two opposing forts + contested middle
-  const fw = Math.round(w * 0.20), fh = Math.round(h * 0.30);
+  const fw = Math.round(w * 0.2),
+    fh = Math.round(h * 0.3);
   const forts =
     fort(w * 0.17, horizon + h * 0.05, fw, fh, "left", accent) +
     fort(w * 0.83, horizon + h * 0.02, fw * 0.92, fh * 0.88, "right", accent);
 
   // defense line + capture nodes (benteng-bentengan motif)
-  const y1 = horizon - h * 0.10, y2 = horizon - h * 0.16, y3 = horizon - h * 0.11;
+  const y1 = horizon - h * 0.1,
+    y2 = horizon - h * 0.16,
+    y3 = horizon - h * 0.11;
   const nodes = [
-    [w * 0.17, y1], [w * 0.38, y2], [w * 0.5, y2 - h * 0.03], [w * 0.62, y2], [w * 0.83, y3],
-  ].map(([x, y], i) =>
-    `<g><circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${i === 2 ? 9 : 6}" fill="none" stroke="${accent}" stroke-width="2" opacity="0.85"/>
-     <circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${i === 2 ? 3.4 : 2.2}" fill="${accent}" opacity="0.95"/></g>`
-  ).join("");
+    [w * 0.17, y1],
+    [w * 0.38, y2],
+    [w * 0.5, y2 - h * 0.03],
+    [w * 0.62, y2],
+    [w * 0.83, y3],
+  ]
+    .map(
+      ([x, y], i) =>
+        `<g><circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${i === 2 ? 9 : 6}" fill="none" stroke="${accent}" stroke-width="2" opacity="0.85"/>
+     <circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${i === 2 ? 3.4 : 2.2}" fill="${accent}" opacity="0.95"/></g>`,
+    )
+    .join("");
 
-  const poly = [[w * 0.17, y1], [w * 0.38, y2], [w * 0.5, y2 - h * 0.03], [w * 0.62, y2], [w * 0.83, y3]]
-    .map(([x, y]) => `${x.toFixed(0)},${y.toFixed(0)}`).join(" ");
+  const poly = [
+    [w * 0.17, y1],
+    [w * 0.38, y2],
+    [w * 0.5, y2 - h * 0.03],
+    [w * 0.62, y2],
+    [w * 0.83, y3],
+  ]
+    .map(([x, y]) => `${x.toFixed(0)},${y.toFixed(0)}`)
+    .join(" ");
 
   // embers
   let embers = "";
   for (let i = 0; i < 70; i++) {
-    const x = R() * w, y = R() * h, r = 0.8 + R() * 2.2;
+    const x = R() * w,
+      y = R() * h,
+      r = 0.8 + R() * 2.2;
     embers += `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(1)}" fill="#FF9A6B" opacity="${(0.16 + R() * 0.5).toFixed(2)}"/>`;
   }
 
@@ -150,9 +177,16 @@ for (const [name, w, h, seed, accent, variant = 0] of stills) {
   const svg = art(w, h, seed, accent, variant);
   await fs.writeFile(path.join(ART, `${name}.svg`), svg);
   await page.setViewportSize({ width: w, height: h });
-  await page.goto("data:text/html," + encodeURIComponent(`<body style="margin:0">${svg}</body>`));
+  await page.goto(
+    "data:text/html," +
+      encodeURIComponent(`<body style="margin:0">${svg}</body>`),
+  );
   await page.waitForTimeout(140);
-  await page.screenshot({ path: path.join(ART, `${name}.jpg`), type: "jpeg", quality: 84 });
+  await page.screenshot({
+    path: path.join(ART, `${name}.jpg`),
+    type: "jpeg",
+    quality: 84,
+  });
   console.log("  art:", name, `${w}x${h}`);
 }
 
@@ -181,9 +215,17 @@ await fs.writeFile(path.join(BRAND, "baren-mark-light.svg"), markLight);
 await fs.writeFile(path.join(PUBLIC, "icon.svg"), mark);
 
 await page.setViewportSize({ width: 760, height: 140 });
-await page.goto("data:text/html," + encodeURIComponent(`<body style="margin:0;background:transparent">${wordmark}</body>`));
+await page.goto(
+  "data:text/html," +
+    encodeURIComponent(
+      `<body style="margin:0;background:transparent">${wordmark}</body>`,
+    ),
+);
 await page.waitForTimeout(160);
-await page.screenshot({ path: path.join(BRAND, "baren-wordmark.png"), omitBackground: true });
+await page.screenshot({
+  path: path.join(BRAND, "baren-wordmark.png"),
+  omitBackground: true,
+});
 
 await browser.close();
 
