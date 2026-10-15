@@ -1,3 +1,9 @@
 NEXTJS_ENV=development
 NEON_DATABASE_URL=postgresql://user:password@ep-xxx.neon.tech/baren?sslmode=require
 R2_PUBLIC_URL=https://pub-xxx.r2.dev
+AUTH_SECRET=ganti-dengan-secret-minimal-32-karakter
+AUTH_GOOGLE_ID=xxx.apps.googleusercontent.com
+AUTH_GOOGLE_SECRET=xxx
+ADMIN_EMAIL=admin@contoh.id
+ADMIN_PASSWORD=minimal-8-karakter
+ADMIN_NAME=Administrator
