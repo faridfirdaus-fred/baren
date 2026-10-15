@@ -19,8 +19,8 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 > 1. **Sebelum mulai kerja**, baca `docs/PRD.md` (kenapa & apa) dan `docs/SRS.md` (kebutuhan detail), lalu dokumen ini (bagaimana & urutannya).
 > 2. **Pilih task** dari tabel epik yang relevan. Perhatikan kolom **Dep** (dependency) — jangan mulai task yang dependensinya belum `Done`.
 > 3. **Saat mulai**, ubah kolom **Status** task tersebut dari `Todo` → `In Progress`.
-> 4. **Saat selesai**, ubah **Status** menjadi `Done`, isi kolom **Catatan** (tanggal, ringkasan, atau tautan commit/PR), lalu perbarui **Progress Epik** pada §1 dan **Log Progress** pada §5.
-> 5. **Jangan menandai `Done`** sebelum kriteria "Definition of Done" (§6) terpenuhi dan sudah diverifikasi.
+> 4. **Saat selesai**, ubah **Status** menjadi `Done`, isi kolom **Catatan** (tanggal, ringkasan, atau tautan commit/PR), lalu perbarui **Progress Epik** pada §1 dan **Log Progress** pada §4.
+> 5. **Jangan menandai `Done`** sebelum kriteria "Definition of Done" (§5) terpenuhi dan sudah diverifikasi.
 > 6. Bila scope berubah, perbarui `docs/PRD.md`/`docs/SRS.md` terlebih dahulu agar dokumen tetap sinkron.
 > 7. Setelah semua task dalam sebuah plan di `docs/superpowers/plans/` berstatus `Done` dan verifikasinya lulus, pindahkan plan tersebut ke `docs/superpowers/plans/archive/` dan perbarui tautan yang merujuk ke path lamanya. Jangan arsipkan plan yang masih aktif atau terblokir.
 
@@ -128,14 +128,14 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 
 **Tujuan:** Unggah langsung dari browser admin ke R2 via presigned URL.
 
-| ID   | Task                              | Detail                                                         | FR/Terkait               | Prio | SP  | Dep        | Status | Catatan |
-| ---- | --------------------------------- | -------------------------------------------------------------- | ------------------------ | ---- | --- | ---------- | ------ | ------- |
-| E4-1 | Helper R2 & presigned URL         | `getR2Bucket`, generate presigned URL (kedaluwarsa ≤ 10 menit) | EI-04, NFR-SEC-05, C-06  | P0   | 5   | E0-3       | Todo   |         |
-| E4-2 | Endpoint penerbitan presigned URL | Hanya admin terautentikasi; validasi tipe & ukuran             | FR-ADM-17, NFR-SEC-03/05 | P0   | 3   | E4-1, E2-4 | Todo   |         |
-| E4-3 | Validasi tipe & ukuran berkas     | Gambar JPG/PNG/WebP (+SVG logo/ikon) ≤ 5 MB; video MP4 ≤ 50 MB | EI-05/06, FR-ADM-17      | P0   | 3   | E4-1       | Todo   |         |
-| E4-4 | Custom loader next/image untuk R2 | Loader gambar R2 + lazy loading                                | NFR-PRF-03               | P0   | 3   | E4-1       | Todo   |         |
-| E4-5 | Hapus aset dari R2                | Hapus objek + record DB dengan konfirmasi                      | FR-ADM-16, FR-ADM-26     | P0   | 2   | E4-1       | Todo   |         |
-| E4-6 | Komponen uploader (drag & drop)   | Progress, validasi klien, preview                              | FR-ADM-15, FR-ADM-24     | P0   | 3   | E4-2, E0-2 | Todo   |         |
+| ID   | Task                              | Detail                                                         | FR/Terkait               | Prio | SP  | Dep              | Status | Catatan |
+| ---- | --------------------------------- | -------------------------------------------------------------- | ------------------------ | ---- | --- | ---------------- | ------ | ------- |
+| E4-1 | Helper R2 & presigned URL         | `getR2Bucket`, generate presigned URL (kedaluwarsa ≤ 10 menit) | EI-04, NFR-SEC-05, C-06  | P0   | 5   | E0-3             | Todo   |         |
+| E4-2 | Endpoint penerbitan presigned URL | Hanya admin terautentikasi; validasi tipe & ukuran             | FR-ADM-17, NFR-SEC-03/05 | P0   | 3   | E4-1, E2-4       | Todo   |         |
+| E4-3 | Validasi tipe & ukuran berkas     | Gambar JPG/PNG/WebP (+SVG logo/ikon) ≤ 5 MB; video MP4 ≤ 50 MB | EI-05/06, FR-ADM-17      | P0   | 3   | E4-1             | Todo   |         |
+| E4-4 | Custom loader next/image untuk R2 | Loader gambar R2 + lazy loading                                | NFR-PRF-03               | P0   | 3   | E4-1             | Todo   |         |
+| E4-5 | Hapus aset dari R2                | Hapus objek + record DB dengan konfirmasi                      | FR-ADM-16, FR-ADM-26     | P0   | 2   | E4-1, E2-4, E3-5 | Todo   |         |
+| E4-6 | Komponen uploader (drag & drop)   | Progress, validasi klien, preview                              | FR-ADM-15, FR-ADM-24     | P0   | 3   | E4-2, E0-2       | Todo   |         |
 
 **Kriteria Selesai E4:** Admin dapat mengunggah/hapus aset; presigned URL kedaluwarsa ≤ 10 menit; berkas tidak melewati Workers.
 
@@ -198,20 +198,20 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 
 **Tujuan:** Seluruh modul CRUD CMS.
 
-| ID    | Task                           | Detail                                                                         | FR/Terkait      | Prio | SP  | Dep            | Status | Catatan |
-| ----- | ------------------------------ | ------------------------------------------------------------------------------ | --------------- | ---- | --- | -------------- | ------ | ------- |
-| E8-1  | Dashboard ringkasan            | Jumlah fitur, galeri, berita, FAQ, **waiting list** + waktu pembaruan terakhir | FR-ADM-07       | P1   | 3   | E3-2..8, E11-3 | Todo   |         |
-| E8-2  | Branding Management UI         | Ubah logo, favicon, nama game                                                  | FR-ADM-08       | P0   | 3   | E3-2, E4-6     | Todo   |         |
-| E8-3  | Hero/Banner Management UI      | Ubah judul, subjudul, video, CTA; CRUD banner                                  | FR-ADM-09/10    | P0   | 5   | E3-3, E4-6     | Todo   |         |
-| E8-4  | About & Features Management UI | Ubah About; CRUD+urut Features                                                 | FR-ADM-11/12    | P0   | 5   | E3-4, E4-6     | Todo   |         |
-| E8-5  | How to Play Management UI      | CRUD+urut langkah + media; ubah video demo                                     | FR-ADM-13/14    | P0   | 5   | E3-4, E4-6     | Todo   |         |
-| E8-6  | Gallery Management UI          | Unggah & hapus aset, atur urutan                                               | FR-ADM-15/16    | P0   | 5   | E3-5, E4-6     | Todo   |         |
-| E8-7  | News Management UI             | CRUD berita, status draf/terbit, thumbnail                                     | FR-ADM-18/19    | P0   | 5   | E3-6, E4-6     | Todo   |         |
-| E8-8  | FAQ Management UI              | CRUD + urut FAQ                                                                | FR-ADM-20       | P0   | 3   | E3-7           | Todo   |         |
-| E8-9  | Social & Contact Management UI | CRUD download & social; ubah email                                             | FR-ADM-21/22/23 | P0   | 3   | E3-8           | Todo   |         |
-| E8-10 | Konfirmasi hapus               | Dialog konfirmasi sebelum hapus data/aset                                      | FR-ADM-26       | P0   | 2   | E8-6..9        | Todo   |         |
-| E8-11 | Feedback & pesan error         | Toast/notifikasi sukses-gagal; pesan error per kolom                           | FR-ADM-24       | P0   | 3   | E8-1..9        | Todo   |         |
-| E8-12 | Pengurutan drag & drop         | Urutkan Features, How to Play, Gallery, FAQ                                    | FR-ADM-12/13/20 | P1   | 3   | E8-4/5/6/8     | Todo   |         |
+| ID    | Task                           | Detail                                                                         | FR/Terkait      | Prio | SP  | Dep              | Status | Catatan |
+| ----- | ------------------------------ | ------------------------------------------------------------------------------ | --------------- | ---- | --- | ---------------- | ------ | ------- |
+| E8-1  | Dashboard ringkasan            | Jumlah fitur, galeri, berita, FAQ, **waiting list** + waktu pembaruan terakhir | FR-ADM-07       | P1   | 3   | E3-2..8, E11-3   | Todo   |         |
+| E8-2  | Branding Management UI         | Ubah logo, favicon, nama game                                                  | FR-ADM-08       | P0   | 3   | E3-2, E4-6       | Todo   |         |
+| E8-3  | Hero/Banner Management UI      | Ubah judul, subjudul, video, CTA; CRUD banner                                  | FR-ADM-09/10    | P0   | 5   | E3-3, E4-6       | Todo   |         |
+| E8-4  | About & Features Management UI | Ubah About; CRUD+urut Features                                                 | FR-ADM-11/12    | P0   | 5   | E3-4, E4-6       | Todo   |         |
+| E8-5  | How to Play Management UI      | CRUD+urut langkah + media; ubah video demo                                     | FR-ADM-13/14    | P0   | 5   | E3-4, E4-6       | Todo   |         |
+| E8-6  | Gallery Management UI          | Unggah & hapus aset, atur urutan                                               | FR-ADM-15/16    | P0   | 5   | E3-5, E4-5, E4-6 | Todo   |         |
+| E8-7  | News Management UI             | CRUD berita, status draf/terbit, thumbnail                                     | FR-ADM-18/19    | P0   | 5   | E3-6, E4-6       | Todo   |         |
+| E8-8  | FAQ Management UI              | CRUD + urut FAQ                                                                | FR-ADM-20       | P0   | 3   | E3-7             | Todo   |         |
+| E8-9  | Social & Contact Management UI | CRUD download & social; ubah email                                             | FR-ADM-21/22/23 | P0   | 3   | E3-8             | Todo   |         |
+| E8-10 | Konfirmasi hapus               | Dialog konfirmasi sebelum hapus data/aset                                      | FR-ADM-26       | P0   | 2   | E8-6..9          | Todo   |         |
+| E8-11 | Feedback & pesan error         | Toast/notifikasi sukses-gagal; pesan error per kolom                           | FR-ADM-24       | P0   | 3   | E8-1..9          | Todo   |         |
+| E8-12 | Pengurutan drag & drop         | Urutkan Features, How to Play, Gallery, FAQ                                    | FR-ADM-12/13/20 | P1   | 3   | E8-4/5/6/8       | Todo   |         |
 
 **Kriteria Selesai E8:** Seluruh modul CMS berfungsi; validasi & konfirmasi hapus berjalan.
 
@@ -256,18 +256,18 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 
 **Tujuan:** Pengunjung dapat bergabung waiting list via login Google; admin dapat mengelola data pendaftar.
 
-| ID     | Task                                   | Detail                                                                      | FR/Terkait              | Prio | SP  | Dep         | Status | Catatan |
-| ------ | -------------------------------------- | --------------------------------------------------------------------------- | ----------------------- | ---- | --- | ----------- | ------ | ------- |
-| E11-1  | Konfigurasi Google Provider (Auth.js)  | Client ID/Secret via env/secret, redirect URI, scope `openid email profile` | EI-08, A-06, NFR-SEC-06 | P0   | 3   | E2-1        | Todo   |         |
-| E11-2  | Handler login Google → simpan waitlist | Pada callback signIn, upsert email (+nama, foto) ke tabel `waitlist`        | FR-PUB-19/20            | P0   | 5   | E11-1, E1-4 | Todo   |         |
-| E11-3  | Logika idempoten & cek status          | Cegah duplikat email; sediakan query status "sudah terdaftar"               | FR-PUB-21               | P0   | 3   | E11-2       | Todo   |         |
-| E11-4  | Tombol Login di header                 | Tombol Login/Join Waiting List pada header (state: belum login/sudah login) | FR-PUB-18               | P0   | 3   | E5-1, E11-1 | Todo   |         |
-| E11-5  | Menu akun pengunjung                   | Tampilkan email yang login + tombol logout                                  | FR-PUB-23/24            | P0   | 3   | E11-4       | Todo   |         |
-| E11-6  | UI status keikutsertaan                | Pesan terima kasih & status terdaftar setelah login                         | FR-PUB-22               | P0   | 3   | E11-2       | Todo   |         |
-| E11-7  | API daftar waiting list                | GET dengan paginasi + pencarian (admin only)                                | FR-ADM-28, NFR-SEC-03   | P0   | 3   | E3-1, E11-2 | Todo   |         |
-| E11-8  | API ekspor CSV                         | Endpoint ekspor data waiting list ke CSV                                    | FR-ADM-29               | P1   | 2   | E11-7       | Todo   |         |
-| E11-9  | UI Waiting List Management             | Tabel pendaftar, pencarian, paginasi, tombol ekspor, jumlah total           | FR-ADM-28/29/30         | P0   | 5   | E11-7       | Todo   |         |
-| E11-10 | Verifikasi keamanan OAuth              | Verifikasi email, tidak menyimpan token di klien, uji alur login            | NFR-SEC-07, NFR-USE-03  | P0   | 3   | E11-2..6    | Todo   |         |
+| ID     | Task                                   | Detail                                                                      | FR/Terkait              | Prio | SP  | Dep          | Status | Catatan |
+| ------ | -------------------------------------- | --------------------------------------------------------------------------- | ----------------------- | ---- | --- | ------------ | ------ | ------- |
+| E11-1  | Konfigurasi Google Provider (Auth.js)  | Client ID/Secret via env/secret, redirect URI, scope `openid email profile` | EI-08, A-06, NFR-SEC-06 | P0   | 3   | E2-1         | Todo   |         |
+| E11-2  | Handler login Google → simpan waitlist | Pada callback signIn, upsert email (+nama, foto) ke tabel `waitlist`        | FR-PUB-19/20            | P0   | 5   | E11-1, E1-4  | Todo   |         |
+| E11-3  | Logika idempoten & cek status          | Cegah duplikat email; sediakan query status "sudah terdaftar"               | FR-PUB-21               | P0   | 3   | E11-2        | Todo   |         |
+| E11-4  | Tombol Login di header                 | Tombol Login/Join Waiting List pada header (state: belum login/sudah login) | FR-PUB-18               | P0   | 3   | E5-1, E11-1  | Todo   |         |
+| E11-5  | Menu akun pengunjung                   | Tampilkan email yang login + tombol logout                                  | FR-PUB-23/24            | P0   | 3   | E11-4        | Todo   |         |
+| E11-6  | UI status keikutsertaan                | Pesan terima kasih & status terdaftar setelah login                         | FR-PUB-22               | P0   | 3   | E11-2        | Todo   |         |
+| E11-7  | API daftar waiting list                | GET dengan paginasi + pencarian (admin only)                                | FR-ADM-28, NFR-SEC-03   | P0   | 3   | E3-1, E11-2  | Todo   |         |
+| E11-8  | API ekspor CSV                         | Endpoint ekspor data waiting list ke CSV                                    | FR-ADM-29               | P1   | 2   | E11-7        | Todo   |         |
+| E11-9  | UI Waiting List Management             | Tabel pendaftar, pencarian, paginasi, tombol ekspor, jumlah total           | FR-ADM-28/29/30         | P0   | 5   | E11-7, E11-8 | Todo   |         |
+| E11-10 | Verifikasi keamanan OAuth              | Verifikasi email, tidak menyimpan token di klien, uji alur login            | NFR-SEC-07, NFR-USE-03  | P0   | 3   | E11-2..6     | Todo   |         |
 
 **Kriteria Selesai E11:** Pengunjung dapat login Google & masuk waiting list tanpa duplikat; admin dapat melihat, mencari, dan mengekspor data; alur ≤ 3 langkah.
 
