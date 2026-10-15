@@ -1,3 +1,9 @@
 NEXTJS_ENV=development
 NEON_DATABASE_URL=postgresql://user:password@ep-xxx.neon.tech/baren?sslmode=require
 R2_PUBLIC_URL=https://pub-xxx.r2.dev
+# Kredensial presign R2 (E4-1): isi di .dev.vars lokal / wrangler secret, jangan commit nilai nyata.
+R2_ACCOUNT_ID=contoh-account-id-32-karakter
+R2_BUCKET_NAME=baren-assets
+R2_ACCESS_KEY_ID=contoh-access-key-id
+R2_SECRET_ACCESS_KEY=contoh-secret-access-key
+
