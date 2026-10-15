@@ -22,6 +22,16 @@ export const IMAGE_MIME_TYPES = [
 export const SVG_MIME_TYPE = "image/svg+xml" as const;
 export const VIDEO_MIME_TYPE = "video/mp4" as const;
 
+/** Peta ekstensi → MIME untuk cek silang nama file vs MIME deklarasi. */
+export const EXTENSION_TO_MIME: Record<string, string> = {
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  svg: "image/svg+xml",
+  mp4: "video/mp4",
+};
+
 /** Purpose yang boleh memakai SVG (logo/ikon saja). */
 export const SVG_ALLOWED_PURPOSES = [
   "logo",
@@ -51,11 +61,12 @@ export function maxBytesForMime(mimeType: string): number | null {
   return null;
 }
 
-/** Cek MIME + purpose + ukuran; kembalikan pesan error Indonesia atau null. */
+/** Cek MIME + purpose + ukuran + konsistensi ekstensi; kembalikan pesan error Indonesia atau null. */
 export function validateAssetRequest(input: {
   purpose: string;
   mimeType: string;
   bytes: number;
+  fileName?: string;
 }): string | null {
   const purpose = input.purpose.trim().toLowerCase();
   if (!/^[a-z0-9-]{1,32}$/.test(purpose)) {
@@ -75,6 +86,15 @@ export function validateAssetRequest(input: {
     return input.mimeType === VIDEO_MIME_TYPE
       ? "Video melebihi batas 50 MB."
       : "Gambar melebihi batas 5 MB.";
+  }
+  // Jangan percaya ekstensi/nama file saja: bila nama file tersedia,
+  // ekstensinya harus konsisten dengan MIME yang dideklarasikan.
+  if (input.fileName) {
+    const ext = input.fileName.split(".").pop()?.toLowerCase() ?? "";
+    const mimeFromName = EXTENSION_TO_MIME[ext];
+    if (mimeFromName && mimeFromName !== input.mimeType) {
+      return "Ekstensi nama berkas tidak sesuai dengan tipe berkas.";
+    }
   }
   return null;
 }
