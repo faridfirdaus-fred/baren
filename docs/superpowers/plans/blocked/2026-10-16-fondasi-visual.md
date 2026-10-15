@@ -1,6 +1,12 @@
 # Fondasi Visual — E5, E12-1..4/6
 
-> Ikuti [peta worktree](2026-10-16-peta-worktree-baren.md), PRD §7, SRS C-01/02/10, DG-01..10, EI-01, NFR-USE-01/ACC-01. Tiap task baru aktif jika `Dep` di breakdown sudah `Done` di main; status, DoD, log/progress menurut §4–5. Baca docs Next.js 16 sebelum edit layout/metadata.
+> **STATUS: TERBLOKIR SEBAGIAN** — 10/11 task `Done` (terverifikasi 2026-10-16, commit `94fdd5a` di `faridfirdaus-fred/feat-visual`). Plan dipindah ke `blocked/` karena satu task belum bisa selesai.
+>
+> | Task tertunda                                                        | Terblokir oleh                                                                                          | Pemilik blocker                                                                             | Syarat buka blokir                                                                                                                                                 |
+> | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+> | **E5-2** Branding dinamis (`site_settings` → logo/favicon/nama game) | **E3-2** API Settings/Branding (GET/PUT `site_settings`) masih `Todo` — dependensi belum `Done` di main | Jalur [API konten](../2026-10-16-api-konten.md) (butuh E1-1 skema + E3-1 utilitas API dulu) | E3-2 `Done` di main → E5-2 tinggal menyambung query DB ke slot branding + fallback yang sudah disiapkan di `site-header.tsx`/`site-footer.tsx`/`(site)/layout.tsx` |
+>
+> Ikuti [peta worktree](../2026-10-16-peta-worktree-baren.md), PRD §7, SRS C-01/02/10, DG-01..10, EI-01, NFR-USE-01/ACC-01. Tiap task baru aktif jika `Dep` di breakdown sudah `Done` di main; status, DoD, log/progress menurut §4–5. Baca docs Next.js 16 sebelum edit layout/metadata.
 
 **Tujuan:** Token, primitives, layout publik/admin, navigasi inklusif. **File:** `src/app/globals.css` (token), `src/app/layout.tsx`, `src/app/(site)/layout.tsx`, `src/app/admin/layout.tsx`, `src/components/site/site-header.tsx`, `site-footer.tsx`, CTA/kartu shared yang sudah ada atau baru di `src/components/`. Jangan edit `src/app/(site)/page.tsx`/`hero.tsx` (Publik), atau admin login/CMS page. Komponen UI statis dari baseline dapat dipakai ulang; jaga tampilan yang bekerja, ubah hanya untuk requirement.
 
