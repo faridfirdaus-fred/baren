@@ -1,6 +1,6 @@
 # BAREN Web
 
-Landing page and content management system for **BAREN**, a game inspired by *benteng-bentengan*, a traditional Indonesian capture-the-flag game.
+Landing page and content management system for **BAREN**, a game inspired by _benteng-bentengan_, a traditional Indonesian capture-the-flag game.
 
 Built with Next.js 16 and deployed on Cloudflare Workers. All page content is managed through an admin panel instead of being hardcoded in components.
 
@@ -14,16 +14,16 @@ Built with Next.js 16 and deployed on Cloudflare Workers. All page content is ma
 
 ## Tech stack
 
-| Layer | Choice |
-| --- | --- |
-| Framework | Next.js 16 (App Router), React 19 |
-| Language | TypeScript |
-| Database | Neon Postgres (serverless) |
-| ORM | Drizzle ORM + drizzle-kit |
-| Deployment | Cloudflare Workers via OpenNext |
-| Object storage | Cloudflare R2 |
-| Validation | Zod |
-| Styling | Tailwind CSS |
+| Layer          | Choice                            |
+| -------------- | --------------------------------- |
+| Framework      | Next.js 16 (App Router), React 19 |
+| Language       | TypeScript                        |
+| Database       | Neon Postgres (serverless)        |
+| ORM            | Drizzle ORM + drizzle-kit         |
+| Deployment     | Cloudflare Workers via OpenNext   |
+| Object storage | Cloudflare R2                     |
+| Validation     | Zod                               |
+| Styling        | Tailwind CSS                      |
 
 ## Getting started
 
@@ -45,24 +45,50 @@ Open http://localhost:3000 for the site and http://localhost:3000/admin for the 
 
 `.dev.vars` is Cloudflare's local equivalent of `.env`:
 
-| Variable | Purpose |
-| --- | --- |
-| `NEXTJS_ENV` | `development` or `production` |
-| `NEON_DATABASE_URL` | Neon Postgres connection string |
-| `R2_PUBLIC_URL` | Public base URL for R2-hosted assets |
+| Variable            | Purpose                              |
+| ------------------- | ------------------------------------ |
+| `NEXTJS_ENV`        | `development` or `production`        |
+| `NEON_DATABASE_URL` | Neon Postgres connection string      |
+| `R2_PUBLIC_URL`     | Public base URL for R2-hosted assets |
 
 ### Scripts
 
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Start the dev server |
-| `pnpm build` | Production build |
-| `pnpm preview` | Build and preview the Cloudflare Worker locally |
-| `pnpm deploy` | Build and deploy to Cloudflare Workers |
-| `pnpm db:generate` | Generate Drizzle migrations |
-| `pnpm db:migrate` | Apply migrations |
-| `pnpm db:push` | Push the schema directly to the database |
-| `pnpm cf-typegen` | Regenerate `cloudflare-env.d.ts` from `wrangler.jsonc` |
+| Command            | Description                                            |
+| ------------------ | ------------------------------------------------------ |
+| `pnpm dev`         | Start the dev server                                   |
+| `pnpm build`       | Production build                                       |
+| `pnpm preview`     | Build and preview the Cloudflare Worker locally        |
+| `pnpm deploy`      | Build and deploy to Cloudflare Workers                 |
+| `pnpm db:generate` | Generate Drizzle migrations                            |
+| `pnpm db:migrate`  | Apply migrations                                       |
+| `pnpm db:push`     | Push the schema directly to the database               |
+| `pnpm cf-typegen`  | Regenerate `cloudflare-env.d.ts` from `wrangler.jsonc` |
+
+### Cloudflare setup
+
+The Worker binds two R2 buckets (application assets and the incremental cache),
+an image optimization binding, and a self-reference service binding. Create the
+buckets once per Cloudflare account:
+
+```bash
+pnpm exec wrangler r2 bucket create baren-assets
+pnpm exec wrangler r2 bucket create baren-opennext-cache
+```
+
+Runtime secrets are **never** committed. `.dev.vars` holds local values and is
+ignored by git (`.dev.vars.example` is the tracked placeholder template). For
+production, set each secret with `wrangler secret put` when prompted:
+
+```bash
+pnpm exec wrangler secret put NEON_DATABASE_URL
+pnpm exec wrangler secret put R2_PUBLIC_URL
+```
+
+`NEXTJS_ENV` is a non-secret variable configured in `wrangler.jsonc` / local
+`.dev.vars`. The example file contains placeholders only — replace them with your
+own non-production credentials and never paste real secrets into the repository,
+issue trackers, or logs. HTTPS access and production redirects are verified once
+a custom domain is available.
 
 ## Project structure
 
@@ -79,14 +105,14 @@ public/              # Static art, brand marks, icons
 
 ## Documentation
 
-| File | Contents |
-| --- | --- |
-| `docs/PRD.md` | Product requirements |
-| `docs/SRS.md` | Software requirements specification |
-| `docs/DESIGN_SPEC_VALORANT_REF.md` | Visual design specification |
-| `docs/BRIEF_LANDING_PAGE.md` | Landing page brief |
-| `docs/TASK_BREAKDOWN.md` | Work breakdown |
-| `docs/LAPORAN_SCRAPING_DAN_IMPLEMENTASI.md` | Scraping and implementation report |
+| File                                        | Contents                            |
+| ------------------------------------------- | ----------------------------------- |
+| `docs/PRD.md`                               | Product requirements                |
+| `docs/SRS.md`                               | Software requirements specification |
+| `docs/DESIGN_SPEC_VALORANT_REF.md`          | Visual design specification         |
+| `docs/BRIEF_LANDING_PAGE.md`                | Landing page brief                  |
+| `docs/TASK_BREAKDOWN.md`                    | Work breakdown                      |
+| `docs/LAPORAN_SCRAPING_DAN_IMPLEMENTASI.md` | Scraping and implementation report  |
 
 ## Team
 
