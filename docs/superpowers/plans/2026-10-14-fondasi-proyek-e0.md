@@ -183,9 +183,9 @@ jobs:
       - run: pnpm build
 ```
 
-- [ ] **Step 3: Verifikasi lokal** dengan urutan yang sama; pastikan workflow terbaca GitHub Actions dan run benar-benar hijau sebelum menandai E0-7 `Done`. Untuk setiap task yang selesai, isi catatan tanggal + bukti, tambahkan log terbaru di §4, lalu hitung E0 `Progress = SP Done / 21 × 100%`. Jalankan ulang `pnpm preview` dan health setelah perubahan akhir. Jangan mengklaim E0 tuntas jika koneksi Neon/secret/review/merge/CI masih terblokir. Commit hanya jika diminta.
+- [x] **Step 3: Verifikasi lokal** dengan urutan yang sama; pastikan workflow terbaca GitHub Actions dan run benar-benar hijau sebelum menandai E0-7 `Done`. Untuk setiap task yang selesai, isi catatan tanggal + bukti, tambahkan log terbaru di §4, lalu hitung E0 `Progress = SP Done / 21 × 100%`. Jalankan ulang `pnpm preview` dan health setelah perubahan akhir. Jangan mengklaim E0 tuntas jika koneksi Neon/secret/review/merge/CI masih terblokir. Commit hanya jika diminta.
 
-> **Hasil 2026-10-15 (sebagian):** E0-6 `Done`: `pnpm preview` di :8787; `curl --fail-with-body -i /api/health` → HTTP 200, `content-type: application/json`, body `{"ok":true,"service":"baren"}` (assert ok:true & service:baren PASS); route health tidak menyentuh DB. E0-7 `In Progress`: `.github/workflows/ci.yml` dibuat (push/PR; checkout, pnpm/action-setup, setup-node 22 + cache pnpm; install --frozen-lockfile, lint, tsc, format:check, build); verifikasi lokal dengan urutan CI lolos (install/lint/tsc/format/build ✅). **Belum**: workflow terbaca & run hijau di GitHub Actions (butuh push ke remote; tidak ada commit atas permintaan), sehingga E0-7 belum `Done`. E0 keseluruhan **belum tuntas**: E0-4 (Neon), E0-5 (secret produksi), E0-7 (CI run) masih terblokir; Progress E0 = 14/21 = 67%.
+> **Hasil 2026-10-15:** E0-6 `Done` (preview :8787, `/api/health` 200 JSON `{"ok":true,"service":"baren"}`; route tidak menyentuh DB). E0-7 `Done`: `.github/workflows/ci.yml` di-push ke `main` (`71b92cb`); run GitHub Actions `CI` **hijau** (job `check` 40s, semua step ✓: install frozen, lint, tsc, format:check, build). Perubahan E0-1/E0-2/E0-3/E0-6 di-merge ke `main` sehingga blocker review/merge teratasi. E0 **belum tuntas**: E0-4 (kredensial Neon) dan E0-5 (secret produksi) masih `Blocked`; Progress E0 = 16/21 = 76%.
 
 ## Review sebelum eksekusi
 
