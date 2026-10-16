@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 
 import { auth, normalizeEmail } from "@/auth";
 import { getDb } from "@/db";
-import { waitlist } from "@/db/schema";
+import { wishlist } from "@/db/schema";
 
 export const dynamic = "force-dynamic";
 
@@ -19,8 +19,8 @@ export async function GET() {
   if (!email) return NextResponse.json({ registered: false }, { status: 401 });
   const rows = await getDb()
     .select()
-    .from(waitlist)
-    .where(eq(waitlist.email, email))
+    .from(wishlist)
+    .where(eq(wishlist.email, email))
     .limit(1);
   const row = rows[0];
   if (!row) return NextResponse.json({ registered: false, email });

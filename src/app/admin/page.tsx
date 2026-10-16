@@ -18,7 +18,7 @@ import {
   news,
   siteSettings,
   socialLinks,
-  waitlist,
+  wishlist,
 } from "@/db/schema";
 import { readDashboardSummary } from "@/lib/admin/dashboard";
 
@@ -43,7 +43,7 @@ export default async function AdminDashboardPage() {
     galleryCount,
     newsCount,
     faqCount,
-    waitlistCount,
+    wishlistCount,
     siteSettingsUpdate,
     heroUpdate,
     heroBannersUpdate,
@@ -61,7 +61,7 @@ export default async function AdminDashboardPage() {
     db.select({ count: count() }).from(galleryAssets),
     db.select({ count: count() }).from(news),
     db.select({ count: count() }).from(faq),
-    db.select({ count: count() }).from(waitlist),
+    db.select({ count: count() }).from(wishlist),
     db.select({ updatedAt: max(siteSettings.updatedAt) }).from(siteSettings),
     db.select({ updatedAt: max(hero.updatedAt) }).from(hero),
     db.select({ updatedAt: max(heroBanners.updatedAt) }).from(heroBanners),
@@ -86,7 +86,7 @@ export default async function AdminDashboardPage() {
     galleryAssets: galleryCount[0]?.count ?? 0,
     news: newsCount[0]?.count ?? 0,
     faq: faqCount[0]?.count ?? 0,
-    waitlist: waitlistCount[0]?.count ?? 0,
+    wishlist: wishlistCount[0]?.count ?? 0,
     contentUpdates: [
       siteSettingsUpdate[0]?.updatedAt ?? null,
       heroUpdate[0]?.updatedAt ?? null,
@@ -126,7 +126,7 @@ export default async function AdminDashboardPage() {
         </div>
         <div>
           <dt>Waitlist</dt>
-          <dd>{dashboard.waitlist}</dd>
+          <dd>{dashboard.wishlist}</dd>
         </div>
         <div>
           <dt>Pembaruan konten terakhir</dt>
@@ -167,7 +167,7 @@ export default async function AdminDashboardPage() {
           </li>
           <li>
             <Link
-              href="/admin/waitlist"
+              href="/admin/wishlist"
               className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
             >
               Kelola Waitlist

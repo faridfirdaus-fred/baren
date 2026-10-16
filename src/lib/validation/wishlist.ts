@@ -7,7 +7,7 @@ import { z } from "zod";
  * - search: optional, trim whitespace, ubah empty string ke undefined, max 320 karakter
  * - strict: tolak unknown keys
  */
-export const waitlistQuerySchema = z
+export const wishlistQuerySchema = z
   .object({
     page: z.coerce
       .number()
@@ -23,4 +23,4 @@ export const waitlistQuerySchema = z
   })
   .strict();
 
-export type WaitlistQuery = z.infer<typeof waitlistQuerySchema>;
+export type WishlistQuery = z.infer<typeof wishlistQuerySchema>;

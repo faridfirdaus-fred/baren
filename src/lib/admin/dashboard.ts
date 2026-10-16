@@ -6,7 +6,7 @@ export interface DashboardStore {
   galleryAssets: number;
   news: number;
   faq: number;
-  waitlist: number;
+  wishlist: number;
   contentUpdates: (Date | null)[];
 }
 
@@ -18,7 +18,7 @@ export interface DashboardCounts {
   galleryAssets: number;
   news: number;
   faq: number;
-  waitlist: number;
+  wishlist: number;
 }
 
 /**
@@ -40,7 +40,7 @@ export interface DashboardSummary extends DashboardCounts {
  * @returns Dashboard summary dengan latest content timestamp
  */
 export function readDashboardSummary(store: DashboardStore): DashboardSummary {
-  const { features, galleryAssets, news, faq, waitlist, contentUpdates } =
+  const { features, galleryAssets, news, faq, wishlist, contentUpdates } =
     store;
 
   // Filter null values dan cari timestamp terbesar
@@ -60,7 +60,7 @@ export function readDashboardSummary(store: DashboardStore): DashboardSummary {
     galleryAssets,
     news,
     faq,
-    waitlist,
+    wishlist,
     latestContentUpdatedAt,
   };
 }

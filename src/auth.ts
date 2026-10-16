@@ -15,7 +15,7 @@ import {
   sessions,
   users,
   verificationTokens,
-  waitlist,
+  wishlist,
 } from "@/db/schema";
 
 export const SESSION_MAX_AGE_SECONDS = 60 * 60; // E2-3: sesi 60 menit
@@ -145,14 +145,14 @@ function buildAuth() {
     ],
     callbacks: {
       async signIn({ user, account, profile }) {
-        // E11-2: hanya email Google terverifikasi yang masuk waitlist,
+        // E11-2: hanya email Google terverifikasi yang masuk wishlist,
         // upsert atomik idempoten; kegagalan DB menolak login.
         if (account?.provider === "google") {
           const email = verifiedGoogleEmail(profile);
           if (!email) return false;
           try {
             await getDb()
-              .insert(waitlist)
+              .insert(wishlist)
               .values({
                 email,
                 name: user.name ?? null,
@@ -160,7 +160,7 @@ function buildAuth() {
                 provider: "google",
               })
               .onConflictDoUpdate({
-                target: waitlist.email,
+                target: wishlist.email,
                 set: {
                   name: user.name ?? null,
                   photoUrl: user.image ?? null,

@@ -199,7 +199,7 @@ export const downloadLinks = pgTable("download_links", {
 });
 
 // Waiting list E1-4: email unik DB; tanpa token OAuth (NFR-SEC-07).
-export const waitlist = pgTable("waitlist", {
+export const wishlist = pgTable("wishlist", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   email: text("email").notNull().unique(),
   name: text("name"),
