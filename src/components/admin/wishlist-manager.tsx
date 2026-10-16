@@ -202,7 +202,7 @@ export function AdminWaitlistManager() {
 
         {loading && !data ? (
           <p className="py-8 text-center text-sm text-sand/60">
-              Memuat data wishlist...
+            Memuat data wishlist...
           </p>
         ) : null}
 
@@ -210,7 +210,7 @@ export function AdminWaitlistManager() {
           <div className="border border-ink-700 bg-ink-800/40 py-12 text-center text-sm text-sand/60">
             {search
               ? `Tidak ditemukan pendaftar yang cocok dengan kata kunci "${search}".`
-                  : "Belum ada pendaftar wishlist."}
+              : "Belum ada pendaftar wishlist."}
           </div>
         ) : null}
 
