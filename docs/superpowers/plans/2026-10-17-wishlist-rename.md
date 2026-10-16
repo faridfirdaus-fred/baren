@@ -1,6 +1,8 @@
 # Wishlist Rename + Alur Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+>
+> **CONTEXT (2026-10-17):** Waitlist API + admin sudah exist dari E11-7/8/9 (Done 2026-10-16). File ada: `src/app/api/waitlist/*`, `src/app/admin/waitlist/*`, `src/components/admin/waitlist-manager.tsx`. Plan ini **rename total**: tabel `waitlist` → `wishlist`, route `/api/waitlist` → `/api/wishlist`, UI label "waiting list" → "wishlist", tanpa kehilangan data.
 
 **Goal:** Seluruh istilah waiting list menjadi wishlist tanpa kehilangan data email, dan alur Google OAuth tampil di landing serta bisa dikelola admin.
 
