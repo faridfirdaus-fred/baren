@@ -1,6 +1,6 @@
 # CMS + Mutu Landing Baru Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 >
 > **CONTEXT (2026-10-17):** API sudah exist dari plan sebelumnya (`/api/hero`, `/api/landing-cards`, `/api/news`, `/api/faq`, `/api/how-to-play`, `/api/comments`, `/api/wishlist`). E8-2/6/8/9 Done (branding, gallery, FAQ UI, social/links UI). Plan ini fokus ke **UI admin yang belum ada**: E8-3/4/5/7 (hero/about/features/news/how-to-play UI) + E8-10/11/12 (shared components: konfirmasi hapus, toast, drag-drop).
 
@@ -43,7 +43,7 @@
 - Consumes: API plan A/B/C (`landing-cards`, `news?limit`, `faq`, `how-to-play`, uploader R2).
 - Produces: konten terbit untuk Task 2 (dashboard + mutu).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/lib/cms-landing.test.mjs
@@ -59,23 +59,23 @@ describe("CMS landing baru", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test src/lib/cms-landing.test.mjs`
 Expected: FAIL with ENOENT `src/app/admin/news/page.tsx` atau teks belum ada.
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 **UI admin saja** (API sudah exist). Hero UI (`/admin/hero/page.tsx`): form edit title/subtitle/videoUrl/backgroundUrl/CTA + preview + validasi URL + simpan (consume `PUT /api/hero`). Landing-cards UI (`/admin/landing-cards/page.tsx`): tabel urut + tambah/ubah/hapus + toggle terbit + reorder (drag-drop + tombol naik/turun keyboard) + tone selector (consume `/api/landing-cards` GET/POST/PUT/DELETE). News UI (`/admin/news/page.tsx`): CRUD + cover + excerpt + tanggal + link opsional + status; helper teks "Hanya 3 terbaru tampil; kosong = seksi hilang; belum ada halaman detail" (consume `/api/news`). FAQ UI sudah exist (E8-8 Done), skip. How-to-play UI (`/admin/how-to-play/page.tsx`): langkah + media opsional + video demo URL (consume `/api/how-to-play`).
 
 **Shared components** (`src/components/admin/`): `DeleteConfirmDialog` (Escape/batal aman), `Toast` (sukses/gagal), form error per kolom + loading + pertahankan input saat error. Reuse `AssetUploader` (E4-6 Done) untuk cover/media.
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test src/lib/cms-landing.test.mjs && pnpm exec tsc --noEmit && pnpm lint`
 Expected: PASS; preview Worker: tiap modul CRUD → publik berubah; hapus selalu konfirmasi; URL `http://` ditolak dengan pesan kolom.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/app/admin src/components/admin src/lib/cms-landing.test.mjs
@@ -96,7 +96,7 @@ git commit -m "feat(cms): kelola hero, kartu, news-3, faq, how-to-play"
 - Consumes: Task 1 + `GET /api/wishlist` + CSV + `GET /api/comments?admin=1`.
 - Produces: angka + tabel untuk Task 3 (UAT/mutu).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/lib/cms-landing.test.mjs — tambah
@@ -114,21 +114,21 @@ describe("dashboard baru", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test src/lib/cms-landing.test.mjs`
 Expected: FAIL (masih waiting list / belum ada komentar).
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 Dashboard: hitung `features, gallery_assets, news(published), faq, wishlist, comments` + waktu update terakhir; loading/error/kosong; tanpa fetch sensitif dari klien anonim (server fetch). Wishlist admin: tabel email/nama/tanggal + cari + paginasi + total + ekspor CSV + label wishlist. Komentar admin: daftar + hapus + info akun; tanpa edit body.
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test src/lib/cms-landing.test.mjs && pnpm exec tsc --noEmit && pnpm lint && pnpm build`
 Expected: PASS; preview: angka cocok dengan DB; CSV header wishlist; hapus komentar butuh konfirmasi.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/app/admin/page.tsx src/app/admin/wishlist src/app/admin/komentar src/lib/cms-landing.test.mjs
@@ -150,7 +150,7 @@ git commit -m "feat(admin): dashboard wishlist-komentar + tabel admin"
 - Consumes: Task 1–2 + plan A–C selesai.
 - Produces: bukti mutu untuk UAT (E10-5) dan deploy; menandai E7-2/E9-5 lama sebagai ditunda di breakdown.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```bash
 # scripts/test-cms-landing.mjs — Playwright: login admin → ubah hero/kartu/news/faq →
@@ -160,21 +160,21 @@ node scripts/test-cms-landing.mjs http://localhost:3000
 
 Expected awal: FAIL (script belum ada / selektor belum cocok).
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node scripts/test-cms-landing.mjs http://localhost:3000`
 Expected: FAIL dengan "Cannot find module" atau timeout selektor.
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 Sitemap: hanya `/` + anchor `#berita #fitur #cara-main #faq #komentar` (tanpa `/news/[slug]` sampai E7-2 dikerjakan). Metadata/OG: judul/deskripsi dinamis + cover hero. Performa: hero `priority`, gambar bawah-fold `lazy`, video `preload="none"` kecuali hero; audit Lighthouse mobile 4G terkendali (LCP ≤3s, Performance ≥80). Aksesibilitas: axe ≥90, alt, keyboard penuh, kontras, zoom 200%, reduced motion. Tulis hasil di `docs/LAPORAN-MUTU-LANDING-BARU.md` (tanggal, build, viewport, metrik, temuan).
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `pnpm lint && pnpm exec tsc --noEmit && pnpm format:check && pnpm build && node scripts/test-cms-landing.mjs http://localhost:3000`
 Expected: PASS semua + laporan terisi angka nyata (bukan asumsi).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/app/layout.tsx src/app/sitemap.ts src/app/robots.ts docs/LAPORAN-MUTU-LANDING-BARU.md scripts/test-cms-landing.mjs
@@ -185,5 +185,5 @@ git commit -m "test(mutu): audit landing baru + sitemap tanpa detail berita"
 
 ## Verifikasi akhir plan
 
-- [ ] Matriks E10-1 (FR-PUB) dan E10-2 (FR-ADM) diperbarui untuk news-3/kartu/wishlist/komentar; E7-2/E9-5 ditandai Ditunda di breakdown.
-- [ ] Update `docs/TASK_BREAKDOWN.md` §E8, §E9, §E10 + log.
+- [x] Matriks E10-1 (FR-PUB) dan E10-2 (FR-ADM) diperbarui untuk news-3/kartu/wishlist/komentar; E7-2/E9-5 ditandai Ditunda di breakdown.
+- [x] Update `docs/TASK_BREAKDOWN.md` §E8, §E9, §E10 + log.
