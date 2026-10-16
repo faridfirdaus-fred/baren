@@ -1,4 +1,5 @@
 import { count, max } from "drizzle-orm";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { auth, signOut } from "@/auth";
@@ -131,6 +132,45 @@ export default async function AdminDashboardPage() {
           </dd>
         </div>
       </dl>
+      <nav aria-label="Navigasi Modul Admin" className="my-6">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-sand-600">
+          Modul Konten
+        </h2>
+        <ul className="mt-2 flex flex-wrap gap-3">
+          <li>
+            <Link
+              href="/admin/branding"
+              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+            >
+              Kelola Branding
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/admin/faq"
+              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+            >
+              Kelola FAQ
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/admin/links"
+              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+            >
+              Kelola Tautan & Kontak
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/admin/waitlist"
+              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+            >
+              Kelola Waitlist
+            </Link>
+          </li>
+        </ul>
+      </nav>
       <AdminAccountForm
         name={session.user.name ?? ""}
         email={(session.user as { email?: string }).email ?? ""}

@@ -2,13 +2,13 @@
 
 > ⚠️ **SUPERSEDED SEBAGIAN (2026-10-17):** plan ini digantikan sebagian oleh `2026-10-17-wishlist-rename.md` dan `2026-10-17-cms-mutu-landing.md` (lihat spec `docs/superpowers/specs/2026-10-17-landing-dinamis-wishlist-komentar-design.md`). **JANGAN** kerjakan task bertanda SUPERSEDED — kerjakan plan penggantinya.
 >
-> | Task plan ini                                                   | Status                                                | Pengganti                                                                                 |
-> | --------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-> | E8-1 (label waitlist, tanpa count komentar)                     | SUPERSEDED SEBAGIAN (revisi label)                    | `2026-10-17-cms-mutu-landing.md` Task 2                                                   |
-> | E8-3/4/5/7 (hero, about/features, how-to-play, news versi lama) | SUPERSEDED                                            | `2026-10-17-cms-mutu-landing.md` Task 1 (hero video, landing-cards, news-3, tanpa detail) |
-> | E8-10/11/12 (konfirmasi, toast, drag-drop)                      | SUPERSEDED (cakupan pindah)                           | `2026-10-17-cms-mutu-landing.md` Task 1                                                   |
-> | E11-7/8/9 (`/api/waitlist`, `/admin/waitlist`)                  | SUPERSEDED (rename total → `wishlist`)                | `2026-10-17-wishlist-rename.md` Task 1–3                                                  |
-> | E8-2, E8-6, E8-8, E8-9                                          | TETAP BERLAKU (E8-6/8/9 Done; E8-2 sedang dikerjakan) | kerjakan dari plan ini                                                                    |
+> | Task plan ini                                                   | Status                                 | Pengganti                                                                                 |
+> | --------------------------------------------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------- |
+> | E8-1 (label waitlist, tanpa count komentar)                     | SUPERSEDED SEBAGIAN (revisi label)     | `2026-10-17-cms-mutu-landing.md` Task 2                                                   |
+> | E8-3/4/5/7 (hero, about/features, how-to-play, news versi lama) | SUPERSEDED                             | `2026-10-17-cms-mutu-landing.md` Task 1 (hero video, landing-cards, news-3, tanpa detail) |
+> | E8-10/11/12 (konfirmasi, toast, drag-drop)                      | SUPERSEDED (cakupan pindah)            | `2026-10-17-cms-mutu-landing.md` Task 1                                                   |
+> | E11-7/8/9 (`/api/waitlist`, `/admin/waitlist`)                  | SUPERSEDED (rename total → `wishlist`) | `2026-10-17-wishlist-rename.md` Task 1–3                                                  |
+> | E8-2, E8-6, E8-8, E8-9                                          | TETAP BERLAKU (E8-2/6/8/9 Done)        | kerjakan dari plan ini                                                                    |
 
 > Ikuti [peta worktree](2026-10-16-peta-worktree-baren.md), SRS FR-ADM-07..30, NFR-SEC-02/03, EI-02 dan tabel `Dep` breakdown. Tiap task dimulai hanya setelah semua dependensi `Done` di main. Sebelum coding `In Progress`; setelah DoD/verifikasi `Done` + catatan/progress/log §4–5. Docs Next.js 16 wajib dibaca saat edit page/route.
 
@@ -17,7 +17,7 @@
 ## Langkah konten (E8-3/4/5/7 dan E8-10/11/12 SUPERSEDED → `2026-10-17-cms-mutu-landing.md` Task 1–2; E8-2/E8-6/E8-8/E8-9 tetap di sini)
 
 - [x] **E8-1** (Dep E3-2..8 dan E11-3): dashboard hitung features, gallery, news, FAQ, waitlist dan waktu update terakhir dari DB/API; tampilkan loading/error/kosong, tidak ada fetch sensitif dari klien anonim.
-- [ ] **E8-2** (Dep E3-2, E4-6): branding nama/logo/favicon dengan uploader, preview, validasi dan simpan; uji perubahan nyata di header/favicon setelah revalidate. (In Progress — sedang dikerjakan.)
+- [x] **E8-2** (Dep E3-2, E4-6): branding nama/logo/favicon dengan uploader, preview, validasi dan simpan; uji perubahan nyata di header/favicon setelah revalidate.
 - [ ] **E8-3** (Dep E3-3, E4-6): edit hero judul/subjudul/video/CTA, CRUD banner termasuk urutan; uji hapus/update dan tampilan publik.
 - [ ] **E8-4** (Dep E3-4, E4-6): edit About + CRUD Features dengan gambar/ikon dan urutan; uji wajib, data kosong, admin lain melihat perubahan.
 - [ ] **E8-5** (Dep E3-4, E4-6): langkah How to Play dan video demo; CRUD/urut media; uji hasil publik.

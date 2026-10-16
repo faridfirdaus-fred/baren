@@ -10,10 +10,7 @@
 import { getDb } from "@/db";
 import { siteSettings, socialLinks } from "@/db/schema";
 import { toBranding } from "@/lib/api/settings";
-import {
-  readSocialLinks,
-  type SocialRow,
-} from "@/lib/api/links";
+import { readSocialLinks, type SocialRow } from "@/lib/api/links";
 import { site, social as fallbackSocial } from "@/content/baren";
 import {
   IconArrowUpRight,
@@ -79,7 +76,9 @@ async function getContactFromDb(): Promise<{
   try {
     const db = getDb();
     const [settingRows, socialRows] = await Promise.all([
-      db.select({ key: siteSettings.key, value: siteSettings.value }).from(siteSettings),
+      db
+        .select({ key: siteSettings.key, value: siteSettings.value })
+        .from(siteSettings),
       db.select().from(socialLinks),
     ]);
     const branding = toBranding(
@@ -116,8 +115,7 @@ export async function ContactSection({
   const needsFetch = contactEmail === undefined || socials === undefined;
   const fetched = needsFetch ? await getContactFromDb() : null;
 
-  const email =
-    contactEmail ?? fetched?.email ?? site.email;
+  const email = contactEmail ?? fetched?.email ?? site.email;
   const list: ContactSocialItem[] =
     socials ??
     fetched?.socials ??

@@ -8,10 +8,7 @@
 
 import { getDb } from "@/db";
 import { downloadLinks } from "@/db/schema";
-import {
-  readDownloadLinks,
-  type DownloadRow,
-} from "@/lib/api/links";
+import { readDownloadLinks, type DownloadRow } from "@/lib/api/links";
 import { CtaButton } from "./cta-button";
 import { IconArrowUpRight } from "./icon";
 import { SectionShell } from "./section-shell";
@@ -65,11 +62,7 @@ export async function DownloadSection({ items }: DownloadSectionProps) {
   const list = (fetched ?? []).filter((item) => isHttpsUrl(item.url));
 
   return (
-    <SectionShell
-      id="unduh"
-      tone="dark"
-      className="border-t border-sand/15"
-    >
+    <SectionShell id="unduh" tone="dark" className="border-t border-sand/15">
       <div className="max-w-3xl">
         <p className="eyebrow text-ember">Unduh</p>
         <h2 className="display-lg mt-4 text-sand">Unduh Baren</h2>
