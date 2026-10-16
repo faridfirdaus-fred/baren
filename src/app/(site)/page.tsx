@@ -13,6 +13,8 @@ import { getFaqItems } from "@/lib/faq-content";
 
 // E7-3: FAQ dari DB (kosong = seksi hilang, gagal = fallback statis di
 // komponen). Hero dinamis diurus di dalam <Hero /> (E6-1).
+// E6-7/8: Galeri & Lightbox dari DB gallery_assets.
+// E7-4..6: Download & Kontak per platform / Segera Hadir dari DB.
 export default async function SiteHomePage() {
   const faqs = await getFaqItems();
 
@@ -25,8 +27,8 @@ export default async function SiteHomePage() {
       <GameFeatures />
       <AgentsSection />
       <MapsSection />
-      <FaqAccordion items={faqs ?? undefined} />
       <GallerySection />
+      <FaqAccordion items={faqs ?? undefined} />
       <DownloadSection />
       <ContactSection />
     </>

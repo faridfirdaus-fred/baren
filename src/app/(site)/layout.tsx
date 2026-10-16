@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { getSiteBranding } from "@/lib/branding";
+import { getSocialItems } from "@/lib/links-content";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { WishlistMenu } from "@/components/site/wishlist-menu";
@@ -38,7 +39,10 @@ export default async function SiteLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const branding = await getSiteBranding();
+  const [branding, socialLinks] = await Promise.all([
+    getSiteBranding(),
+    getSocialItems(),
+  ]);
 
   return (
     <div
@@ -68,6 +72,7 @@ export default async function SiteLayout({
         brandDescription={branding.tagline}
         contactEmail={branding.contactEmail}
         logoSrc={branding.logoSrc}
+        socialLinks={socialLinks}
       />
     </div>
   );

@@ -17,22 +17,22 @@
 ## Langkah situs utama (E6-1, E6-3..6 SUPERSEDED → `2026-10-17-landing-kartu-dinamis.md`; E6-2, E6-7/8 tetap di sini)
 
 - [ ] **E6-1** (Dep E3-3, E5-1): hero dari API/DB published: logo/tagline/banner/video/CTA yang valid; fallback jika belum ada konten, judul dan tombol Indonesia. Uji admin edit lalu pengunjung melihat perubahan; jaga LCP/gambar di fold.
-- [ ] **E6-2** (Dep E6-1): carousel hanya bila banner >1; kontrol manual keyboard/label, pause untuk reduced motion/interaksi, alt gambar; uji 0/1/2 banner.
+- [x] **E6-2** (Dep E6-1): carousel hanya bila banner >1; kontrol manual keyboard/label, pause untuk reduced motion/interaksi, alt gambar; uji 0/1/2 banner.
 - [ ] **E6-3** (Dep E3-4): About judul/deskripsi/gambar gameplay dari admin; uji data kosong, teks panjang, alt.
 - [ ] **E6-4** (Dep E3-4): kartu Features dari data terurut, ikon/gambar dan deskripsi; uji urutan hasil perubahan admin.
 - [ ] **E6-5** (Dep E3-4): langkah How to Play bernomor urut dengan media gambar/video; uji urutan, langkah hilang, media gagal.
 - [ ] **E6-6** (Dep E3-4): player video demo dengan kontrol, judul/teks alternatif, tidak autoplay bersuara; uji ketika URL kosong dan invalid.
-- [ ] **E6-7** (Dep E3-5): gallery grid foto/banner/video dari CMS terurut, placeholder bila kosong, media optimal; uji tiap jenis dan ukuran layar.
-- [ ] **E6-8** (Dep E6-7): lightbox gambar/video dengan keyboard Escape, fokus balik, close button, label/alt, scroll lock dan video berhenti saat tutup; uji mouse/touch/keyboard.
+- [x] **E6-7** (Dep E3-5): gallery grid foto/banner/video dari CMS terurut, placeholder bila kosong, media optimal; uji tiap jenis dan ukuran layar.
+- [x] **E6-8** (Dep E6-7): lightbox gambar/video dengan keyboard Escape, fokus balik, close button, label/alt, scroll lock dan video berhenti saat tutup; uji mouse/touch/keyboard.
 
 ## Langkah berita, FAQ, download, kontak (E7-1/2 SUPERSEDED → kartu-dinamis + cms-mutu; E7-3 dinamis ikut kartu-dinamis; E7-4/5/6 tetap di sini)
 
 - [ ] **E7-1** (Dep E3-6): daftar published terbaru, 9/halaman, link paging valid dan empty state; uji 0/9/10 item, halaman tidak valid, draf tak bocor.
 - [ ] **E7-2** (Dep E3-6): detail `/news/[slug]` sesuai kontrak API (atau path tunggal yang disepakati), metadata SEO per berita, 404 untuk slug/draf, konten aman dan thumbnail alt.
 - [ ] **E7-3** (Dep E3-7): FAQ accordion label/keyboard/aria-expanded, daftar urut, data dari admin dan empty state.
-- [ ] **E7-4** (Dep E3-8): download per platform dengan state `Segera Hadir` ketika belum dirilis, link aktif hanya jika tersedia; uji URL/status dan layar sempit.
-- [ ] **E7-5** (Dep E3-8): email kontak dan tautan sosial dari settings/links, label terakses, validasi output bila data kosong.
-- [ ] **E7-6** (Dep E7-4 dan E7-5): semua tautan eksternal download/sosial memakai `target="_blank" rel="noopener noreferrer"`; uji render semua link, jangan menerapkan pada anchor internal.
+- [x] **E7-4** (Dep E3-8): download per platform dengan state `Segera Hadir` ketika belum dirilis, link aktif hanya jika tersedia; uji URL/status dan layar sempit.
+- [x] **E7-5** (Dep E3-8): email kontak dan tautan sosial dari settings/links, label terakses, validasi output bila data kosong.
+- [x] **E7-6** (Dep E7-4 dan E7-5): semua tautan eksternal download/sosial memakai `target="_blank" rel="noopener noreferrer"`; uji render semua link, jangan menerapkan pada anchor internal.
 
 ## Waiting list dan penyelesaian visual (E11-4..6 SUPERSEDED → `2026-10-17-wishlist-rename.md`; E12-5/7/8 ikut `2026-10-17-cms-mutu-landing.md` Task 3)
 
