@@ -16,14 +16,15 @@
 
 ## Langkah situs utama (E6-1, E6-3..6 SUPERSEDED → `2026-10-17-landing-kartu-dinamis.md`; E6-2, E6-7/8 tetap di sini)
 
-- [ ] **E6-1** (Dep E3-3, E5-1): hero dari API/DB published: logo/tagline/banner/video/CTA yang valid; fallback jika belum ada konten, judul dan tombol Indonesia. Uji admin edit lalu pengunjung melihat perubahan; jaga LCP/gambar di fold.
+- [x] **E6-1** (Dep E3-3, E5-1): hero dari API/DB published: logo/tagline/banner/video/CTA yang valid; fallback jika belum ada konten, judul dan tombol Indonesia. Uji admin edit lalu pengunjung melihat perubahan; jaga LCP/gambar di fold. **SUPERSEDED** → dikerjakan di `2026-10-17-landing-kartu-dinamis.md`.
 - [x] **E6-2** (Dep E6-1): carousel hanya bila banner >1; kontrol manual keyboard/label, pause untuk reduced motion/interaksi, alt gambar; uji 0/1/2 banner.
-- [ ] **E6-3** (Dep E3-4): About judul/deskripsi/gambar gameplay dari admin; uji data kosong, teks panjang, alt.
-- [ ] **E6-4** (Dep E3-4): kartu Features dari data terurut, ikon/gambar dan deskripsi; uji urutan hasil perubahan admin.
-- [ ] **E6-5** (Dep E3-4): langkah How to Play bernomor urut dengan media gambar/video; uji urutan, langkah hilang, media gagal.
-- [ ] **E6-6** (Dep E3-4): player video demo dengan kontrol, judul/teks alternatif, tidak autoplay bersuara; uji ketika URL kosong dan invalid.
+- [x] **E6-3** (Dep E3-4): About judul/deskripsi/gambar gameplay dari admin; uji data kosong, teks panjang, alt. **DONE 2026-10-17:** Removed hardcoded AboutGame, LandingCards handles via admin.
+- [x] **E6-4** (Dep E3-4): kartu Features dari data terurut, ikon/gambar dan deskripsi; uji urutan hasil perubahan admin. **DONE 2026-10-17:** GameFeatures CMS-driven, commit f300867.
+- [x] **E6-5** (Dep E3-4): langkah How to Play bernomor urut dengan media gambar/video; uji urutan, langkah hilang, media gagal. **DONE 2026-10-17:** HowToPlay component dari DB.
+- [x] **E6-6** (Dep E3-4): player video demo dengan kontrol, judul/teks alternatif, tidak autoplay bersuara; uji ketika URL kosong dan invalid. **DONE 2026-10-17:** Video player in HowToPlay.
 - [x] **E6-7** (Dep E3-5): gallery grid foto/banner/video dari CMS terurut, placeholder bila kosong, media optimal; uji tiap jenis dan ukuran layar.
 - [x] **E6-8** (Dep E6-7): lightbox gambar/video dengan keyboard Escape, fokus balik, close button, label/alt, scroll lock dan video berhenti saat tutup; uji mouse/touch/keyboard.
+- [x] **E6-9** (Dep E1-6, E3-11): LandingCards fleksibel pengganti Event/About/Agents/Maps. **DONE 2026-10-17:** Removed 4 hardcoded sections, commit a12ce6b.
 
 ## Langkah berita, FAQ, download, kontak (E7-1/2 SUPERSEDED → kartu-dinamis + cms-mutu; E7-3 dinamis ikut kartu-dinamis; E7-4/5/6 tetap di sini)
 
