@@ -4,13 +4,20 @@
 
 import type { ApiResult } from "./response";
 
-/** Deteksi pelanggaran unique constraint Postgres (Neon/Drizzle: code 23505). */
+/** Deteksi pelanggaran unique constraint Postgres (Neon/Drizzle: code 23505).
+ * Drizzle membungkus error driver dalam DrizzleQueryError sehingga kode
+ * berada di `.cause`; keduanya diperiksa (maksimal dua lapis). */
 export function isUniqueViolation(error: unknown): boolean {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    (error as { code?: unknown }).code === "23505"
-  );
+  const codeOf = (e: unknown): unknown =>
+    typeof e === "object" && e !== null
+      ? (e as { code?: unknown }).code
+      : undefined;
+  if (codeOf(error) === "23505") return true;
+  const cause =
+    typeof error === "object" && error !== null
+      ? (error as { cause?: unknown }).cause
+      : undefined;
+  return codeOf(cause) === "23505";
 }
 
 /**

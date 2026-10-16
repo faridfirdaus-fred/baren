@@ -8,6 +8,13 @@ describe("isUniqueViolation", () => {
     assert.equal(isUniqueViolation({ code: "23505" }), true);
   });
 
+  it("true untuk bungkusan DrizzleQueryError (kode di cause)", () => {
+    assert.equal(
+      isUniqueViolation({ message: "Failed query", cause: { code: "23505" } }),
+      true,
+    );
+  });
+
   it("false untuk error lain, null, dan Error biasa", () => {
     assert.equal(isUniqueViolation({ code: "42P01" }), false);
     assert.equal(isUniqueViolation({}), false);
