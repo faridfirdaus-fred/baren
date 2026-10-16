@@ -5,7 +5,7 @@
 | Field         | Keterangan                                                                                 |
 | ------------- | ------------------------------------------------------------------------------------------ |
 | Nama Produk   | BAREN Web                                                                                  |
-| Versi Dokumen | 1.2                                                                                        |
+| Versi Dokumen | 1.3                                                                                        |
 | Status        | Draft                                                                                      |
 | Mitra         | Cikara Studio                                                                              |
 | Tim Penyusun  | Sekar Ayu Fatmasari (237006054), Shelva Nur Fatimah (237006069), Farid Firdaus (237006081) |
@@ -14,11 +14,12 @@
 
 **Riwayat Revisi**
 
-| Versi | Tanggal         | Perubahan                                                                                                                                                                         |
-| ----- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.0   | —               | Versi awal SRS BAREN Web.                                                                                                                                                         |
-| 1.1   | 8 Oktober 2026  | Penambahan mode **Waiting List** dengan login **Google OAuth**, entitas `waitlist`, kebutuhan fungsional terkait (FR-PUB-18..25, FR-ADM-28..30), dan **acuan desain** (Valorant). |
-| 1.2   | 14 Oktober 2026 | Menetapkan Next.js 16 (App Router) sesuai baseline proyek.                                                                                                                        |
+| Versi | Tanggal         | Perubahan                                                                                                                                                                                                                        |
+| ----- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0   | —               | Versi awal SRS BAREN Web.                                                                                                                                                                                                        |
+| 1.1   | 8 Oktober 2026  | Penambahan mode **Waiting List** dengan login **Google OAuth**, entitas `waitlist`, kebutuhan fungsional terkait (FR-PUB-18..25, FR-ADM-28..30), dan **acuan desain** (Valorant).                                                |
+| 1.2   | 14 Oktober 2026 | Menetapkan Next.js 16 (App Router) sesuai baseline proyek.                                                                                                                                                                       |
+| 1.3   | 17 Oktober 2026 | Rename **Waiting List → Wishlist** (`waitlist` → `wishlist`); news landing **maks 3 tanpa halaman detail** (E7-2 DITUNDA); tambah `landing_cards`, `comments`, FR-PUB-26, FR-ADM-31; nav dipangkas (tanpa ESPORTS/LEBIH BANYAK). |
 
 ---
 
@@ -32,59 +33,63 @@ Dokumen Spesifikasi Kebutuhan Perangkat Lunak (SRS) ini menetapkan kebutuhan sis
 
 BAREN adalah game yang terinspirasi dari permainan tradisional benteng-bentengan (Baren/Bebentengan). Game ini dikembangkan oleh mitra. Mitra membutuhkan website landing page yang mempromosikan game tersebut. Seluruh kontennya harus dapat dikelola secara dinamis oleh mitra tanpa perubahan kode program.
 
-Pada tahap ini game BAREN **belum dirilis** sehingga situs berjalan dalam **mode Waiting List**: pengunjung dapat mendaftar untuk mendapat kabar peluncuran. Pendaftaran dilakukan melalui **login Google OAuth** yang menyimpan email pendaftar ke basis data.
+Pada tahap ini game BAREN **belum dirilis** sehingga situs berjalan dalam **mode Wishlist** (sebelumnya "Waiting List"): pengunjung dapat mendaftar untuk mendapat kabar peluncuran. Pendaftaran dilakukan melalui **login Google OAuth** yang menyimpan email pendaftar ke basis data. Istilah publik selalu "wishlist".
 
 Sistem BAREN Web terdiri atas dua bagian.
 
 **1. Situs Publik (landing page)**
 
-| Modul         | Isi                                                                              |
-| ------------- | -------------------------------------------------------------------------------- |
-| Home (Hero)   | Logo, nama/tagline, banner/video, tombol CTA, dan tombol Login/Join Waiting List |
-| About Game    | Deskripsi, konsep permainan, dan cuplikan gameplay                               |
-| Game Features | Daftar fitur utama beserta ikon atau gambar                                      |
-| How to Play   | Langkah-langkah bermain dan video demo                                           |
-| Gallery       | Screenshot, artwork, banner, dan video                                           |
-| News/Updates  | Berita, event, dan pengumuman                                                    |
-| FAQ           | Pertanyaan umum tentang game                                                     |
-| Download      | Tautan unduhan atau platform distribusi                                          |
-| Contact       | Email dan tautan media sosial                                                    |
-| Waiting List  | Pendaftaran pengunjung melalui login Google OAuth                                |
+| Modul           | Isi                                                                                                                        |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Home (Hero)     | Logo, nama/tagline, banner/video, tombol CTA, dan tombol Masuk/Gabung Wishlist                                             |
+| About Game      | Dirender dari `landing_cards`; singleton `about` hanya fallback/seed                                                       |
+| Game Features   | Daftar fitur utama beserta ikon atau gambar (tetap grid 3 kolom)                                                           |
+| How to Play     | Langkah-langkah bermain dan video demo (`#cara-main`)                                                                      |
+| Gallery         | Screenshot, artwork, banner, dan video                                                                                     |
+| Kartu Fleksibel | Daftar `landing_cards` pengganti Event/About/Agents/Maps (gambar, eyebrow, judul, subjudul, paragraf, CTA, urutan, terbit) |
+| News/Updates    | Maks 3 berita terbit di landing; 0 item → seksi hilang; tanpa halaman detail (detail slug DITUNDA)                         |
+| FAQ             | Pertanyaan umum tentang game (0 item → seksi hilang)                                                                       |
+| Download        | Tautan unduhan atau platform distribusi                                                                                    |
+| Contact         | Email dan tautan media sosial                                                                                              |
+| Komentar        | Satu kolom di landing (`#komentar`); login Google wajib; langsung tayang; admin hapus                                      |
+| Wishlist        | Pendaftaran pengunjung melalui login Google OAuth                                                                          |
 
 **2. Panel Admin (CMS)**
 
-| Modul                             | Hal yang Dikelola                                            |
-| --------------------------------- | ------------------------------------------------------------ |
-| Dashboard                         | Ringkasan konten                                             |
-| Branding Management               | Logo, favicon, dan nama game                                 |
-| Hero/Banner Management            | Banner, video, judul, subjudul, dan CTA                      |
-| Game Content Management           | About, Game Features, dan How to Play                        |
-| Gallery & Video Management        | Unggah dan hapus screenshot, artwork, banner, dan video      |
-| News Management                   | Pembuatan dan pengubahan berita                              |
-| FAQ Management                    | Penambahan, pengubahan, dan penghapusan FAQ                  |
-| Social Media & Contact Management | Tautan media sosial, tautan unduhan, dan informasi kontak    |
-| Waiting List Management           | Melihat, mencari, dan mengekspor data pendaftar waiting list |
-| Admin Account Management          | Login, logout, dan pengaturan akun                           |
+| Modul                                          | Hal yang Dikelola                                         |
+| ---------------------------------------------- | --------------------------------------------------------- |
+| Dashboard                                      | Ringkasan konten                                          |
+| Branding Management                            | Logo, favicon, dan nama game                              |
+| Hero/Banner Management                         | Banner, video, judul, subjudul, dan CTA                   |
+| Game Content Management                        | About, Game Features, dan How to Play                     |
+| Gallery & Video Management                     | Unggah dan hapus screenshot, artwork, banner, dan video   |
+| News Management                                | Pembuatan dan pengubahan berita                           |
+| FAQ Management                                 | Penambahan, pengubahan, dan penghapusan FAQ               |
+| Social Media & Contact Management              | Tautan media sosial, tautan unduhan, dan informasi kontak |
+| Wishlist Management (rename dari Waiting List) | Melihat, mencari, dan mengekspor data pendaftar wishlist  |
+| Admin Account Management                       | Login, logout, dan pengaturan akun                        |
+| Landing Cards Management (baru)                | CRUD + urut + toggle terbit kartu fleksibel               |
+| Komentar Management (baru)                     | Hapus komentar dengan konfirmasi                          |
 
 ### 1.3 Definisi, Akronim, dan Singkatan
 
-| Istilah      | Definisi                                                                                   |
-| ------------ | ------------------------------------------------------------------------------------------ |
-| SRS          | Software Requirements Specification, dokumen spesifikasi kebutuhan perangkat lunak         |
-| CMS          | Content Management System, sistem untuk mengelola konten situs tanpa mengubah kode program |
-| Landing page | Halaman web yang memperkenalkan produk dan mengarahkan pengunjung bertindak                |
-| BAREN Web    | Nama sistem yang dikembangkan, yang terdiri atas Situs Publik dan Panel Admin              |
-| Situs Publik | Bagian sistem yang diakses pengunjung tanpa login                                          |
-| Panel Admin  | Bagian sistem yang diakses admin setelah login                                             |
-| Admin        | Pengguna dari pihak mitra yang mengelola konten                                            |
-| Pengunjung   | Pengguna yang mengakses Situs Publik                                                       |
-| Waiting List | Daftar tunggu pendaftar yang ingin dihubungi saat game BAREN dirilis                       |
-| OAuth        | Protokol otorisasi pihak ketiga, mis. login menggunakan akun Google                        |
-| Google OAuth | Mekanisme login Situs Publik memakai akun Google untuk bergabung Waiting List              |
-| CTA          | Call to Action, tombol ajakan bertindak, misalnya Play, Download, atau Learn More          |
-| CRUD         | Create, Read, Update, Delete, yaitu operasi membuat, membaca, mengubah, dan menghapus data |
-| Aset         | Berkas gambar atau video yang diunggah admin                                               |
-| Backend/API  | Bagian server yang mengolah data dan melayani permintaan dari Situs Publik dan Panel Admin |
+| Istilah      | Definisi                                                                                                  |
+| ------------ | --------------------------------------------------------------------------------------------------------- |
+| SRS          | Software Requirements Specification, dokumen spesifikasi kebutuhan perangkat lunak                        |
+| CMS          | Content Management System, sistem untuk mengelola konten situs tanpa mengubah kode program                |
+| Landing page | Halaman web yang memperkenalkan produk dan mengarahkan pengunjung bertindak                               |
+| BAREN Web    | Nama sistem yang dikembangkan, yang terdiri atas Situs Publik dan Panel Admin                             |
+| Situs Publik | Bagian sistem yang diakses pengunjung tanpa login                                                         |
+| Panel Admin  | Bagian sistem yang diakses admin setelah login                                                            |
+| Admin        | Pengguna dari pihak mitra yang mengelola konten                                                           |
+| Pengunjung   | Pengguna yang mengakses Situs Publik                                                                      |
+| Wishlist     | Daftar pendaftar yang ingin dihubungi saat game BAREN dirilis (istilah publik; sebelumnya "Waiting List") |
+| OAuth        | Protokol otorisasi pihak ketiga, mis. login menggunakan akun Google                                       |
+| Google OAuth | Mekanisme login Situs Publik memakai akun Google untuk bergabung Wishlist                                 |
+| CTA          | Call to Action, tombol ajakan bertindak, misalnya Play, Download, atau Learn More                         |
+| CRUD         | Create, Read, Update, Delete, yaitu operasi membuat, membaca, mengubah, dan menghapus data                |
+| Aset         | Berkas gambar atau video yang diunggah admin                                                              |
+| Backend/API  | Bagian server yang mengolah data dan melayani permintaan dari Situs Publik dan Panel Admin                |
 
 ### 1.4 Referensi
 
@@ -120,22 +125,22 @@ Unggahan aset dilakukan langsung dari peramban admin ke R2 melalui presigned URL
 Autentikasi memakai Auth.js v5 dengan Drizzle adapter dan mendukung dua jalur:
 
 - **Admin** — login email dan password (kredensial).
-- **Pengunjung Waiting List** — login Google OAuth.
+- **Pengunjung Wishlist** — login Google OAuth.
 
 ### 2.2 Fungsi Produk
 
-1. Menyajikan informasi game BAREN kepada pengunjung melalui modul Home, About Game, Game Features, How to Play, Gallery, News/Updates, FAQ, Download, dan Contact.
-2. Menyediakan pendaftaran **Waiting List** melalui login Google OAuth yang menyimpan email pendaftar.
-3. Menyediakan Panel Admin untuk mengelola seluruh konten tersebut, termasuk branding, aset, dan data waiting list.
+1. Menyajikan informasi game BAREN kepada pengunjung melalui modul Home, Kartu Fleksibel, Game Features, How to Play, Gallery, News/Updates (maks 3), FAQ, Download, Contact, dan Komentar.
+2. Menyediakan pendaftaran **Wishlist** melalui login Google OAuth yang menyimpan email pendaftar.
+3. Menyediakan Panel Admin untuk mengelola seluruh konten tersebut, termasuk branding, aset, kartu, komentar, dan data wishlist.
 4. Menyimpan konten pada basis data dan aset pada penyimpanan objek, sehingga perubahan tampil tanpa mengubah kode program.
 
 ### 2.3 Karakteristik Pengguna
 
-| Kelas Pengguna              | Deskripsi                                                                | Keahlian Teknis                                     |
-| --------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------- |
-| Pengunjung                  | Pengguna yang mengakses Situs Publik tanpa login                         | Tidak disyaratkan                                   |
-| Calon Pemain (Waiting List) | Pengunjung yang login dengan akun Google untuk bergabung ke waiting list | Dapat login akun Google                             |
-| Admin                       | Staf mitra yang login ke Panel Admin untuk mengelola konten              | Dapat mengoperasikan peramban dan mengunggah berkas |
+| Kelas Pengguna          | Deskripsi                                                            | Keahlian Teknis                                     |
+| ----------------------- | -------------------------------------------------------------------- | --------------------------------------------------- |
+| Pengunjung              | Pengguna yang mengakses Situs Publik tanpa login                     | Tidak disyaratkan                                   |
+| Calon Pemain (Wishlist) | Pengunjung yang login dengan akun Google untuk bergabung ke wishlist | Dapat login akun Google                             |
+| Admin                   | Staf mitra yang login ke Panel Admin untuk mengelola konten          | Dapat mengoperasikan peramban dan mengunggah berkas |
 
 ### 2.4 Lingkungan Operasional
 
@@ -177,15 +182,15 @@ Autentikasi memakai Auth.js v5 dengan Drizzle adapter dan mendukung dua jalur:
 
 ### 2.6 Asumsi dan Ketergantungan
 
-| ID   | Asumsi/Ketergantungan                                                                                                                          |
-| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| A-01 | Mitra menyediakan logo, artwork, screenshot, video, dan teks konten.                                                                           |
-| A-02 | Mitra menyediakan tautan unduhan dan media sosial.                                                                                             |
-| A-03 | Akun Cloudflare (Workers dan R2) dan akun Neon tersedia dan aktif selama proyek berjalan.                                                      |
-| A-04 | Domain situs disediakan atau disetujui oleh mitra.                                                                                             |
-| A-05 | Ketersediaan sistem bergantung pada layanan Cloudflare dan Neon.                                                                               |
-| A-06 | Kredensial OAuth Google (Client ID dan Client Secret) disediakan dan dikonfigurasi oleh tim/mitra.                                             |
-| A-07 | Game BAREN belum dirilis sehingga situs berjalan dalam mode Waiting List; tombol unduhan tampil sebagai "Segera Hadir" sampai tautan tersedia. |
+| ID   | Asumsi/Ketergantungan                                                                                                                      |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| A-01 | Mitra menyediakan logo, artwork, screenshot, video, dan teks konten.                                                                       |
+| A-02 | Mitra menyediakan tautan unduhan dan media sosial.                                                                                         |
+| A-03 | Akun Cloudflare (Workers dan R2) dan akun Neon tersedia dan aktif selama proyek berjalan.                                                  |
+| A-04 | Domain situs disediakan atau disetujui oleh mitra.                                                                                         |
+| A-05 | Ketersediaan sistem bergantung pada layanan Cloudflare dan Neon.                                                                           |
+| A-06 | Kredensial OAuth Google (Client ID dan Client Secret) disediakan dan dikonfigurasi oleh tim/mitra.                                         |
+| A-07 | Game BAREN belum dirilis sehingga situs berjalan dalam mode Wishlist; tombol unduhan tampil sebagai "Segera Hadir" sampai tautan tersedia. |
 
 ---
 
@@ -206,33 +211,34 @@ Autentikasi memakai Auth.js v5 dengan Drizzle adapter dan mendukung dua jalur:
 
 ### 3.2 Kebutuhan Fungsional Situs Publik
 
-| ID        | Kebutuhan                                                                                                                                         |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| FR-PUB-01 | Sistem harus menampilkan Hero berisi logo, nama atau tagline game, banner atau video latar, dan tombol CTA sesuai data yang disimpan admin.       |
-| FR-PUB-02 | Tombol CTA pada Hero harus mengarah ke tautan yang ditetapkan admin.                                                                              |
-| FR-PUB-03 | Sistem harus menampilkan banner secara bergantian apabila admin menambahkan lebih dari satu banner.                                               |
-| FR-PUB-04 | Sistem harus menampilkan seksi About Game berisi judul, deskripsi game (termasuk konsep permainan), dan gambar gameplay.                          |
-| FR-PUB-05 | Sistem harus menampilkan seksi Game Features berupa kartu berisi ikon atau gambar, judul, dan deskripsi, sesuai urutan yang ditetapkan admin.     |
-| FR-PUB-06 | Sistem harus menampilkan seksi How to Play berisi langkah-langkah bermain bernomor berurutan, masing-masing dengan teks serta gambar atau video.  |
-| FR-PUB-07 | Sistem harus menampilkan video demo game pada seksi How to Play.                                                                                  |
-| FR-PUB-08 | Sistem harus menampilkan seksi Gallery berisi screenshot, artwork, banner, dan video.                                                             |
-| FR-PUB-09 | Pengunjung harus dapat memperbesar gambar dan memutar video pada Gallery.                                                                         |
-| FR-PUB-10 | Sistem harus menampilkan daftar berita berstatus terbit, diurutkan dari yang terbaru, dengan paginasi 9 berita per halaman.                       |
-| FR-PUB-11 | Sistem harus menampilkan halaman detail berita pada alamat berbasis slug.                                                                         |
-| FR-PUB-12 | Sistem harus menampilkan FAQ dalam bentuk accordion, yaitu jawaban tampil saat pertanyaan dipilih.                                                |
-| FR-PUB-13 | Sistem harus menampilkan tombol unduhan untuk setiap platform (misalnya Steam, Play Store, atau App Store) yang ditambahkan admin.                |
-| FR-PUB-14 | Sistem harus menampilkan email kontak dan tautan media sosial (misalnya Instagram, TikTok, YouTube, atau Discord) yang ditambahkan admin.         |
-| FR-PUB-15 | Sistem harus menampilkan logo, favicon, dan nama game sesuai data Branding pada seluruh halaman.                                                  |
-| FR-PUB-16 | Sistem harus menyediakan menu navigasi yang tetap terlihat saat halaman digulir dan menuju ke seksi yang dipilih.                                 |
-| FR-PUB-17 | Pada lebar layar di bawah 768 px, menu navigasi harus berbentuk menu lipat.                                                                       |
-| FR-PUB-18 | Sistem harus menyediakan tombol **Login** pada header Situs Publik untuk bergabung ke Waiting List.                                               |
-| FR-PUB-19 | Sistem harus memulai proses login Google OAuth saat pengunjung menekan tombol Login atau tombol Join Waiting List.                                |
-| FR-PUB-20 | Setelah login Google berhasil, sistem harus menyimpan email pendaftar ke tabel `waitlist` beserta nama dan foto profil bila tersedia.             |
-| FR-PUB-21 | Sistem harus bersifat idempoten: email yang sudah terdaftar tidak boleh menghasilkan entri duplikat; sistem menampilkan status "sudah terdaftar". |
-| FR-PUB-22 | Setelah login, sistem harus menampilkan status keikutsertaan Waiting List dan pesan terima kasih kepada pengunjung.                               |
-| FR-PUB-23 | Sistem harus menyediakan tombol logout bagi pengunjung yang sudah login.                                                                          |
-| FR-PUB-24 | Sistem harus menampilkan email pengunjung yang sedang login pada antarmuka (misalnya pada menu akun).                                             |
-| FR-PUB-25 | Selama game belum dirilis, tombol unduhan pada seksi Download harus menampilkan status "Segera Hadir" atau tombol pengingat Waiting List.         |
+| ID        | Kebutuhan                                                                                                                                                                                                                 |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-PUB-01 | Sistem harus menampilkan Hero berisi logo, nama atau tagline game, banner atau video latar, dan tombol CTA sesuai data yang disimpan admin.                                                                               |
+| FR-PUB-02 | Tombol CTA pada Hero harus mengarah ke tautan yang ditetapkan admin.                                                                                                                                                      |
+| FR-PUB-03 | Sistem harus menampilkan banner secara bergantian apabila admin menambahkan lebih dari satu banner.                                                                                                                       |
+| FR-PUB-04 | Sistem harus menampilkan seksi About Game berisi judul, deskripsi game (termasuk konsep permainan), dan gambar gameplay — dirender dari `landing_cards`; singleton `about` hanya fallback/seed.                           |
+| FR-PUB-05 | Sistem harus menampilkan seksi Game Features berupa kartu berisi ikon atau gambar, judul, dan deskripsi, sesuai urutan yang ditetapkan admin.                                                                             |
+| FR-PUB-06 | Sistem harus menampilkan seksi How to Play berisi langkah-langkah bermain bernomor berurutan, masing-masing dengan teks serta gambar atau video.                                                                          |
+| FR-PUB-07 | Sistem harus menampilkan video demo game pada seksi How to Play.                                                                                                                                                          |
+| FR-PUB-08 | Sistem harus menampilkan seksi Gallery berisi screenshot, artwork, banner, dan video.                                                                                                                                     |
+| FR-PUB-09 | Pengunjung harus dapat memperbesar gambar dan memutar video pada Gallery.                                                                                                                                                 |
+| FR-PUB-10 | Sistem harus menampilkan daftar berita berstatus terbit di landing, diurutkan dari yang terbaru, maks 3 item; 0 item → seksi hilang (bukan empty state); tanpa halaman detail.                                            |
+| FR-PUB-11 | Sistem harus menampilkan halaman detail berita pada alamat berbasis slug — DITUNDA (dikerjakan setelah landing baru stabil; sitemap tanpa rute berita sampai saat itu).                                                   |
+| FR-PUB-12 | Sistem harus menampilkan FAQ dalam bentuk accordion, yaitu jawaban tampil saat pertanyaan dipilih.                                                                                                                        |
+| FR-PUB-13 | Sistem harus menampilkan tombol unduhan untuk setiap platform (misalnya Steam, Play Store, atau App Store) yang ditambahkan admin.                                                                                        |
+| FR-PUB-14 | Sistem harus menampilkan email kontak dan tautan media sosial (misalnya Instagram, TikTok, YouTube, atau Discord) yang ditambahkan admin.                                                                                 |
+| FR-PUB-15 | Sistem harus menampilkan logo, favicon, dan nama game sesuai data Branding pada seluruh halaman.                                                                                                                          |
+| FR-PUB-16 | Sistem harus menyediakan menu navigasi yang tetap terlihat saat halaman digulir dan menuju ke seksi yang dipilih.                                                                                                         |
+| FR-PUB-17 | Pada lebar layar di bawah 768 px, menu navigasi harus berbentuk menu lipat.                                                                                                                                               |
+| FR-PUB-18 | Sistem harus menyediakan tombol **Masuk/Gabung Wishlist** pada header Situs Publik.                                                                                                                                       |
+| FR-PUB-19 | Sistem harus memulai proses login Google OAuth saat pengunjung menekan tombol wishlist.                                                                                                                                   |
+| FR-PUB-20 | Setelah login Google berhasil, sistem harus menyimpan email pendaftar ke tabel `wishlist` beserta nama dan foto profil bila tersedia.                                                                                     |
+| FR-PUB-21 | Sistem harus bersifat idempoten: email yang sudah terdaftar tidak boleh menghasilkan entri duplikat; sistem menampilkan status "sudah terdaftar".                                                                         |
+| FR-PUB-22 | Setelah login, sistem harus menampilkan status keikutsertaan Wishlist (`#wishlist`) dan pesan terima kasih kepada pengunjung.                                                                                             |
+| FR-PUB-23 | Sistem harus menyediakan tombol logout bagi pengunjung yang sudah login.                                                                                                                                                  |
+| FR-PUB-24 | Sistem harus menampilkan email pengunjung yang sedang login pada antarmuka (misalnya pada menu akun).                                                                                                                     |
+| FR-PUB-25 | Selama game belum dirilis, tombol unduhan pada seksi Download harus menampilkan status "Segera Hadir" atau tombol pengingat Wishlist.                                                                                     |
+| FR-PUB-26 | Sistem harus menyediakan satu kolom komentar di landing (`#komentar`): login Google wajib; body teks 1–500 karakter tanpa HTML; langsung tayang; anonim ditolak; kirim beruntun dibatasi (mis. maks 5/10 menit per user). |
 
 ### 3.3 Kebutuhan Fungsional Panel Admin
 
@@ -249,9 +255,9 @@ Autentikasi memakai Auth.js v5 dengan Drizzle adapter dan mendukung dua jalur:
 
 #### 3.3.2 Dashboard
 
-| ID        | Kebutuhan                                                                                                                                                        |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| FR-ADM-07 | Sistem harus menampilkan dashboard berisi jumlah fitur game, item galeri, berita, FAQ, **jumlah pendaftar waiting list**, serta waktu pembaruan konten terakhir. |
+| ID        | Kebutuhan                                                                                                                                                                         |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-ADM-07 | Sistem harus menampilkan dashboard berisi jumlah fitur game, item galeri, berita, FAQ, **jumlah pendaftar wishlist**, **jumlah komentar**, serta waktu pembaruan konten terakhir. |
 
 #### 3.3.3 Branding Management
 
@@ -304,13 +310,19 @@ Autentikasi memakai Auth.js v5 dengan Drizzle adapter dan mendukung dua jalur:
 | FR-ADM-22 | Sistem harus memungkinkan admin menambah, mengubah, dan menghapus tautan media sosial.                          |
 | FR-ADM-23 | Sistem harus memungkinkan admin mengubah email kontak.                                                          |
 
-#### 3.3.10 Waiting List Management
+#### 3.3.10 Wishlist Management (rename dari Waiting List)
 
-| ID        | Kebutuhan                                                                                                           |
-| --------- | ------------------------------------------------------------------------------------------------------------------- |
-| FR-ADM-28 | Sistem harus menampilkan daftar pendaftar waiting list (email, nama, tanggal daftar) dengan paginasi dan pencarian. |
-| FR-ADM-29 | Sistem harus memungkinkan admin mengekspor data waiting list ke berkas CSV.                                         |
-| FR-ADM-30 | Sistem harus menampilkan jumlah total pendaftar waiting list pada Dashboard dan halaman pengelolaan.                |
+| ID        | Kebutuhan                                                                                                       |
+| --------- | --------------------------------------------------------------------------------------------------------------- |
+| FR-ADM-28 | Sistem harus menampilkan daftar pendaftar wishlist (email, nama, tanggal daftar) dengan paginasi dan pencarian. |
+| FR-ADM-29 | Sistem harus memungkinkan admin mengekspor data wishlist ke berkas CSV.                                         |
+| FR-ADM-30 | Sistem harus menampilkan jumlah total pendaftar wishlist pada Dashboard dan halaman pengelolaan.                |
+
+#### 3.3.11 Komentar Management (baru)
+
+| ID        | Kebutuhan                                                                                                                                        |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| FR-ADM-31 | Sistem harus memungkinkan admin menghapus komentar dengan konfirmasi; tanpa mengubah isi komentar. Daftar admin boleh menampilkan email pelapor. |
 
 #### 3.3.11 Kebutuhan Umum Panel Admin
 
@@ -330,7 +342,7 @@ Autentikasi memakai Auth.js v5 dengan Drizzle adapter dan mendukung dua jalur:
 | NFR-PRF-03 | Performa       | Gambar harus dimuat melalui next/image dengan custom loader R2. Gambar di bawah layar pertama harus dimuat lambat (lazy loading).                                                 |
 | NFR-USE-01 | Kegunaan       | Tampilan harus bebas gulir horizontal pada lebar layar 360 px hingga 1920 px.                                                                                                     |
 | NFR-USE-02 | Kegunaan       | Tiga dari tiga calon admin uji harus mampu mengganti logo tanpa panduan dalam waktu ≤ 5 menit.                                                                                    |
-| NFR-USE-03 | Kegunaan       | Alur bergabung Waiting List harus dapat diselesaikan maksimal dalam 3 langkah (klik Login → pilih akun Google → konfirmasi).                                                      |
+| NFR-USE-03 | Kegunaan       | Alur bergabung Wishlist harus dapat diselesaikan maksimal dalam 3 langkah (klik Wishlist → pilih akun Google → konfirmasi).                                                       |
 | NFR-ACC-01 | Aksesibilitas  | Skor Lighthouse Accessibility harus ≥ 90. Setiap gambar informatif harus memiliki teks alternatif.                                                                                |
 | NFR-CMP-01 | Kompatibilitas | Seluruh fungsi pada Subbab 3.2 harus berjalan pada Chrome, Firefox, Edge, dan Safari dua versi mayor terakhir.                                                                    |
 | NFR-SEC-01 | Keamanan       | Password harus disimpan dalam bentuk hash dengan algoritma yang berjalan pada runtime Cloudflare Workers, misalnya bcryptjs.                                                      |
@@ -349,24 +361,26 @@ Autentikasi memakai Auth.js v5 dengan Drizzle adapter dan mendukung dua jalur:
 
 Tabel berikut memuat garis besar entitas yang disimpan pada Neon Postgres. Rancangan rinci disusun pada tahap perancangan.
 
-| Entitas           | Atribut Utama                                                                        |
-| ----------------- | ------------------------------------------------------------------------------------ |
-| users             | id, nama, email, password_hash, created_at (dikelola Auth.js dengan Drizzle adapter) |
-| accounts          | id, user_id, provider, provider_account_id (dikelola Auth.js untuk OAuth)            |
-| sessions          | id, session_token, user_id, expires (dikelola Auth.js)                               |
-| site_settings     | id, nama_game, tagline, logo_url, favicon_url, email_kontak                          |
-| hero              | id, judul, subjudul, video_url, teks_cta, tautan_cta                                 |
-| hero_banners      | id, gambar_url, urutan                                                               |
-| about             | id, judul, deskripsi, gambar_url                                                     |
-| features          | id, judul, deskripsi, ikon_url, urutan                                               |
-| how_to_play_steps | id, judul_langkah, deskripsi, media_url, urutan                                      |
-| how_to_play_video | id, video_url                                                                        |
-| gallery_assets    | id, jenis, judul, file_url, urutan                                                   |
-| news              | id, judul, slug, isi, thumbnail_url, status, published_at                            |
-| faq               | id, pertanyaan, jawaban, urutan                                                      |
-| social_links      | id, platform, url                                                                    |
-| download_links    | id, platform, label, url                                                             |
-| waitlist          | id, email (unik), nama, foto_url, provider, created_at                               |
+| Entitas           | Atribut Utama                                                                                                    |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------- |
+| users             | id, nama, email, password_hash, created_at (dikelola Auth.js dengan Drizzle adapter)                             |
+| accounts          | id, user_id, provider, provider_account_id (dikelola Auth.js untuk OAuth)                                        |
+| sessions          | id, session_token, user_id, expires (dikelola Auth.js)                                                           |
+| site_settings     | id, nama_game, tagline, logo_url, favicon_url, email_kontak                                                      |
+| hero              | id, judul, subjudul, video_url, teks_cta, tautan_cta                                                             |
+| hero_banners      | id, gambar_url, urutan                                                                                           |
+| about             | id, judul, deskripsi, gambar_url                                                                                 |
+| features          | id, judul, deskripsi, ikon_url, urutan                                                                           |
+| how_to_play_steps | id, judul_langkah, deskripsi, media_url, urutan                                                                  |
+| how_to_play_video | id, video_url                                                                                                    |
+| gallery_assets    | id, jenis, judul, file_url, urutan                                                                               |
+| news              | id, judul, slug, isi, thumbnail_url, status, published_at                                                        |
+| landing_cards     | id, slot, eyebrow, title, subtitle, body, image_url, cta_label/url, tone, sort_order, is_published               |
+| comments          | id, user_id (FK users.id cascade), body 1–500 tanpa HTML, created_at                                             |
+| faq               | id, pertanyaan, jawaban, urutan                                                                                  |
+| social_links      | id, platform, url                                                                                                |
+| download_links    | id, platform, label, url                                                                                         |
+| wishlist          | id, email (unik), nama, foto_url, provider, created_at (rename dari `waitlist`; migrasi RENAME tanpa hapus data) |
 
 ### 3.6 Pedoman Desain (Design Guidelines)
 

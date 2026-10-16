@@ -6,8 +6,8 @@
 | ------------- | ------------------------------------------------------------------------------------------ |
 | Nama Produk   | BAREN Web                                                                                  |
 | Jenis Produk  | Website landing page + Content Management System (CMS)                                     |
-| Versi Dokumen | 1.0                                                                                        |
-| Tanggal       | [Tanggal]                                                                                  |
+| Versi Dokumen | 1.1                                                                                        |
+| Tanggal       | 17 Oktober 2026                                                                            |
 | Status        | Draft                                                                                      |
 | Sumber Acuan  | SRS BAREN Web (`SRS_BAREN_Web.txt`)                                                        |
 | Mitra         | [Nama Perusahaan Mitra]                                                                    |
@@ -75,14 +75,17 @@
 - **Game Features** — daftar fitur utama dengan ikon/gambar.
 - **How to Play** — langkah bermain bernomor + video demo.
 - **Gallery** — screenshot, artwork, banner, video.
-- **News/Updates** — berita, event, pengumuman (dengan paginasi & detail slug).
+- **News/Updates** — maks 3 berita terbit di landing; 0 item → seksi hilang; tanpa halaman detail (detail slug DITUNDA).
+- **Kartu Fleksibel** — daftar `landing_cards` (pengganti Event/About/Agents/Maps): gambar, eyebrow, judul, subjudul, paragraf, CTA, urutan, status terbit.
+- **Wishlist** — pendaftaran pengunjung via login Google OAuth (rename dari Waiting List); alur ≤ 3 langkah; istilah publik selalu "wishlist".
+- **Komentar** — satu kolom di landing; wajib login Google; langsung tayang; admin hanya hapus.
 - **FAQ** — accordion.
 - **Download** — tautan unduhan/platform distribusi.
 - **Contact** — email dan tautan media sosial.
 
 **Panel Admin (9 modul):**
 
-- Dashboard, Branding Management, Hero/Banner Management, Game Content Management, Gallery & Video Management, News Management, FAQ Management, Social Media & Contact Management, Admin Account Management.
+- Dashboard, Branding Management, Hero/Banner Management, Game Content Management, Gallery & Video Management, News Management, FAQ Management, Social Media & Contact Management, Landing Cards Management, Wishlist Management, Komentar Management, Admin Account Management.
 
 ### 4.2 Out of Scope
 
@@ -144,25 +147,34 @@ Admin ───────┘        │
 
 ### 6.1 Situs Publik
 
-| ID        | Kebutuhan                                                                      | Prioritas |
-| --------- | ------------------------------------------------------------------------------ | --------- |
-| FR-PUB-01 | Hero: logo, nama/tagline, banner/video latar, tombol CTA sesuai data admin     | Must      |
-| FR-PUB-02 | Tombol CTA Hero mengarah ke tautan yang ditetapkan admin                       | Must      |
-| FR-PUB-03 | Banner bergantian (carousel) jika ada lebih dari satu banner                   | Should    |
-| FR-PUB-04 | Seksi About Game: judul, deskripsi (konsep), gambar gameplay                   | Must      |
-| FR-PUB-05 | Seksi Game Features: kartu ikon/gambar + judul + deskripsi sesuai urutan admin | Must      |
-| FR-PUB-06 | Seksi How to Play: langkah bernomor berurutan + gambar/video                   | Must      |
-| FR-PUB-07 | Video demo game pada How to Play                                               | Must      |
-| FR-PUB-08 | Seksi Gallery: screenshot, artwork, banner, video                              | Must      |
-| FR-PUB-09 | Pengunjung dapat memperbesar gambar & memutar video di Gallery                 | Should    |
-| FR-PUB-10 | Daftar berita berstatus terbit, terbaru, paginasi 9/halaman                    | Must      |
-| FR-PUB-11 | Halaman detail berita berbasis slug                                            | Must      |
-| FR-PUB-12 | FAQ accordion                                                                  | Must      |
-| FR-PUB-13 | Tombol unduhan per platform (Steam, Play Store, App Store, dll.)               | Must      |
-| FR-PUB-14 | Email kontak & tautan media sosial                                             | Must      |
-| FR-PUB-15 | Logo, favicon, nama game tampil di seluruh halaman                             | Must      |
-| FR-PUB-16 | Menu navigasi sticky menuju seksi terkait                                      | Should    |
-| FR-PUB-17 | Menu navigasi berbentuk lipat (< 768 px)                                       | Must      |
+| ID        | Kebutuhan                                                                                                         | Prioritas |
+| --------- | ----------------------------------------------------------------------------------------------------------------- | --------- |
+| FR-PUB-01 | Hero: logo, nama/tagline, banner/video latar, tombol CTA sesuai data admin                                        | Must      |
+| FR-PUB-02 | Tombol CTA Hero mengarah ke tautan yang ditetapkan admin                                                          | Must      |
+| FR-PUB-03 | Banner bergantian (carousel) jika ada lebih dari satu banner                                                      | Should    |
+| FR-PUB-04 | Seksi About Game: judul, deskripsi (konsep), gambar gameplay                                                      | Must      |
+| FR-PUB-05 | Seksi Game Features: kartu ikon/gambar + judul + deskripsi sesuai urutan admin                                    | Must      |
+| FR-PUB-06 | Seksi How to Play: langkah bernomor berurutan + gambar/video                                                      | Must      |
+| FR-PUB-07 | Video demo game pada How to Play                                                                                  | Must      |
+| FR-PUB-08 | Seksi Gallery: screenshot, artwork, banner, video                                                                 | Must      |
+| FR-PUB-09 | Pengunjung dapat memperbesar gambar & memutar video di Gallery                                                    | Should    |
+| FR-PUB-10 | Daftar berita terbit di landing: maks 3 terbaru; 0 item → seksi hilang; tanpa halaman detail                      | Must      |
+| FR-PUB-11 | Halaman detail berita berbasis slug — DITUNDA (dikerjakan setelah landing baru stabil)                            | Must      |
+| FR-PUB-12 | FAQ accordion                                                                                                     | Must      |
+| FR-PUB-13 | Tombol unduhan per platform (Steam, Play Store, App Store, dll.)                                                  | Must      |
+| FR-PUB-14 | Email kontak & tautan media sosial                                                                                | Must      |
+| FR-PUB-15 | Logo, favicon, nama game tampil di seluruh halaman                                                                | Must      |
+| FR-PUB-16 | Menu navigasi sticky menuju seksi terkait                                                                         | Should    |
+| FR-PUB-17 | Menu navigasi berbentuk lipat (< 768 px)                                                                          | Must      |
+| FR-PUB-18 | Tombol Masuk/Gabung Wishlist pada header (anonim vs sudah login)                                                  | Must      |
+| FR-PUB-19 | Login Google OAuth saat pengunjung menekan tombol wishlist                                                        | Must      |
+| FR-PUB-20 | Setelah login Google, simpan email (+nama, foto) ke tabel `wishlist`                                              | Must      |
+| FR-PUB-21 | Idempoten: email terdaftar tidak duplikat; tampil status "sudah terdaftar"                                        | Must      |
+| FR-PUB-22 | Status keikutsertaan wishlist + pesan terima kasih setelah login (`#wishlist`)                                    | Must      |
+| FR-PUB-23 | Tombol logout bagi pengunjung yang sudah login                                                                    | Must      |
+| FR-PUB-24 | Email pengunjung login tampil pada menu akun                                                                      | Must      |
+| FR-PUB-25 | Selama belum rilis, tombol unduhan tampil "Segera Hadir"                                                          | Must      |
+| FR-PUB-26 | Komentar landing: login Google wajib, teks 1–500 tanpa HTML, langsung tayang; anonim ditolak; spam cepat kena 429 | Must      |
 
 ### 6.2 Panel Admin
 
@@ -179,9 +191,9 @@ Admin ───────┘        │
 
 **3.3.2 Dashboard**
 
-| ID        | Kebutuhan                                                                     | Prioritas |
-| --------- | ----------------------------------------------------------------------------- | --------- |
-| FR-ADM-07 | Dashboard: jumlah fitur, item galeri, berita, FAQ, + waktu pembaruan terakhir | Should    |
+| ID        | Kebutuhan                                                                                                  | Prioritas |
+| --------- | ---------------------------------------------------------------------------------------------------------- | --------- |
+| FR-ADM-07 | Dashboard: jumlah fitur, item galeri, berita, FAQ, pendaftar wishlist, komentar + waktu pembaruan terakhir | Should    |
 
 **3.3.3 Branding Management**
 
@@ -234,7 +246,21 @@ Admin ───────┘        │
 | FR-ADM-22 | CRUD tautan media sosial               | Must      |
 | FR-ADM-23 | Ubah email kontak                      | Must      |
 
-**3.3.10 Kebutuhan Umum Panel Admin**
+**3.3.10 Wishlist Management**
+
+| ID        | Kebutuhan                                                        | Prioritas |
+| --------- | ---------------------------------------------------------------- | --------- |
+| FR-ADM-28 | Daftar pendaftar wishlist (email, nama, tanggal) + paginasi/cari | Must      |
+| FR-ADM-29 | Ekspor data wishlist ke CSV                                      | Must      |
+| FR-ADM-30 | Total pendaftar wishlist di Dashboard dan halaman pengelolaan    | Must      |
+
+**3.3.11 Komentar Management**
+
+| ID        | Kebutuhan                                        | Prioritas |
+| --------- | ------------------------------------------------ | --------- |
+| FR-ADM-31 | Hapus komentar dengan konfirmasi; tanpa edit isi | Must      |
+
+**3.3.12 Kebutuhan Umum Panel Admin**
 
 | ID        | Kebutuhan                                                            | Prioritas |
 | --------- | -------------------------------------------------------------------- | --------- |
@@ -285,21 +311,24 @@ Admin ───────┘        │
 
 ## 9. Model Data (Garis Besar)
 
-| Entitas             | Atribut Utama                                                          |
-| ------------------- | ---------------------------------------------------------------------- |
-| `users`             | id, nama, email, password_hash, created_at (Auth.js + Drizzle adapter) |
-| `site_settings`     | id, nama_game, tagline, logo_url, favicon_url, email_kontak            |
-| `hero`              | id, judul, subjudul, video_url, teks_cta, tautan_cta                   |
-| `hero_banners`      | id, gambar_url, urutan                                                 |
-| `about`             | id, judul, deskripsi, gambar_url                                       |
-| `features`          | id, judul, deskripsi, ikon_url, urutan                                 |
-| `how_to_play_steps` | id, judul_langkah, deskripsi, media_url, urutan                        |
-| `how_to_play_video` | id, video_url                                                          |
-| `gallery_assets`    | id, jenis, judul, file_url, urutan                                     |
-| `news`              | id, judul, slug, isi, thumbnail_url, status, published_at              |
-| `faq`               | id, pertanyaan, jawaban, urutan                                        |
-| `social_links`      | id, platform, url                                                      |
-| `download_links`    | id, platform, label, url                                               |
+| Entitas             | Atribut Utama                                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------------- |
+| `users`             | id, nama, email, password_hash, created_at (Auth.js + Drizzle adapter)                            |
+| `site_settings`     | id, nama_game, tagline, logo_url, favicon_url, email_kontak                                       |
+| `hero`              | id, judul, subjudul, video_url, teks_cta, tautan_cta                                              |
+| `hero_banners`      | id, gambar_url, urutan                                                                            |
+| `about`             | id, judul, deskripsi, gambar_url                                                                  |
+| `features`          | id, judul, deskripsi, ikon_url, urutan                                                            |
+| `how_to_play_steps` | id, judul_langkah, deskripsi, media_url, urutan                                                   |
+| `how_to_play_video` | id, video_url                                                                                     |
+| `gallery_assets`    | id, jenis, judul, file_url, urutan                                                                |
+| `news`              | id, judul, slug, isi, thumbnail_url, status, published_at                                         |
+| `landing_cards`     | id, slot, eyebrow, judul, subjudul, isi, image_url, cta_label/url, tone, sort_order, is_published |
+| `wishlist`          | id, email (unik), nama, foto_url, provider, created_at                                            |
+| `comments`          | id, user_id (FK users.id cascade), body 1–500 tanpa HTML, created_at                              |
+| `faq`               | id, pertanyaan, jawaban, urutan                                                                   |
+| `social_links`      | id, platform, url                                                                                 |
+| `download_links`    | id, platform, label, url                                                                          |
 
 > Rancangan rinci dilakukan pada tahap perancangan.
 
@@ -321,11 +350,13 @@ Admin ───────┘        │
 
 **Pengunjung:**
 
-1. Membuka landing page → melihat Hero, About, Features, How to Play.
-2. Menelusuri Gallery, membaca News, membuka detail berita.
+1. Membuka landing page → melihat Hero, Kartu fleksibel, Features, How to Play.
+2. Menelusuri Gallery, membaca News (maks 3, tanpa halaman detail; 0 → seksi hilang).
 3. Membaca FAQ (accordion).
-4. Menekan tombol Download → diarahkan ke platform (tab baru).
+4. Menekan tombol Download → diarahkan ke platform (tab baru) atau "Segera Hadir".
 5. Menghubungi via email/sosial media.
+6. Gabung wishlist via login Google (≤ 3 langkah) → status + terima kasih terlihat.
+7. Berkomentar (login Google wajib) → langsung tayang.
 
 **Admin:**
 
