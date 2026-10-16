@@ -2,13 +2,20 @@ import Image from "next/image";
 
 import { hero } from "@/content/baren";
 import { CtaButton } from "@/components/site/cta-button";
+import { HeroCarousel } from "@/components/site/hero-carousel";
 import { getHeroContent } from "@/lib/hero-content";
+import { getHeroBanners } from "@/lib/hero-banners";
 
 // E6-1: hero dinamis dari tabel `hero` (video/poster/judul/CTA). DB
 // kosong/gagal → fallback konten statis + aset lokal agar landing tidak
 // pernah blank (pola sama seperti branding E5-2).
+// E6-2: banner dari tabel `hero_banners` (0 = hilang, 1 = statis,
+// >1 = carousel di <HeroCarousel />).
 export async function Hero() {
-  const content = await getHeroContent();
+  const [content, banners] = await Promise.all([
+    getHeroContent(),
+    getHeroBanners(),
+  ]);
 
   const tagline = content?.title ?? hero.tagline;
   const subtitle = content?.subtitle ?? null;
@@ -76,6 +83,7 @@ export async function Hero() {
             ))}
           </ul>
         </div>
+        <HeroCarousel banners={banners} />
       </div>
     </section>
   );

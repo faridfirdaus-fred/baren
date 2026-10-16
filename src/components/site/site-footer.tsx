@@ -1,7 +1,10 @@
 import { legalLinks, nav, site, social } from "@/content/baren";
+import { externalLinkProps } from "@/lib/external-link";
+import type { SocialItemResolved } from "@/lib/links-content";
 import { BrandLogo } from "./brand-logo";
 import {
   IconDiscord,
+  IconGlobe,
   IconInstagram,
   IconMail,
   IconTiktok,
@@ -14,24 +17,39 @@ export type SiteFooterProps = {
   brandDescription?: string;
   contactEmail?: string;
   logoSrc?: string;
+  /** E7-5 — Tautan media sosial dari DB (fallback ke content/baren.ts). */
+  socialLinks?: SocialItemResolved[] | null;
 };
 
 /**
  * E5-1 — Footer publik. Kontras: sand/75 (9.25:1), sand/60 (6.27:1),
  * sand/55 (5.43:1) di ink — semua ≥4.5:1 teks normal.
+ * E7-5/E7-6 — Kontak (#kontak) & medsos dari settings/links, tautan keluar tab baru.
  */
 export function SiteFooter({
   brandName = site.name,
   brandDescription = site.description,
   contactEmail = site.email,
   logoSrc = "/brand/baren-mark.svg",
+  socialLinks,
 }: SiteFooterProps) {
   const icons = {
     instagram: IconInstagram,
     youtube: IconYoutube,
     discord: IconDiscord,
     tiktok: IconTiktok,
+    other: IconGlobe,
   };
+
+  const listSocial =
+    socialLinks && socialLinks.length > 0
+      ? socialLinks
+      : social.map((s, idx) => ({
+          id: idx + 1,
+          label: s.label,
+          url: s.href,
+          icon: s.icon,
+        }));
 
   return (
     <footer className="overflow-x-clip bg-ink text-sand">
@@ -61,7 +79,7 @@ export function SiteFooter({
                 ))}
             </ul>
           </nav>
-          <div className="min-w-0">
+          <div className="min-w-0" id="kontak">
             <p className="eyebrow text-sand/50">Kontak</p>
             <a
               href={`mailto:${contactEmail}`}
@@ -73,14 +91,13 @@ export function SiteFooter({
           </div>
         </div>
         <ul className="mt-8 flex flex-wrap items-center gap-3">
-          {social.map((s) => {
-            const Icon = icons[s.icon];
+          {listSocial.map((s) => {
+            const Icon = icons[s.icon] ?? IconGlobe;
             return (
               <li key={s.label}>
                 <a
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={s.url}
+                  {...externalLinkProps(s.url)}
                   aria-label={s.label}
                   className="flex h-10 w-10 items-center justify-center rounded-none bg-ink-700 text-sand transition-colors hover:bg-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
                 >
