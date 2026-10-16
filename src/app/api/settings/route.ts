@@ -4,17 +4,11 @@
 // src/lib/validation/settings.ts). Error: 400/401/403/500 amplop E3-1.
 // Tabel `site_settings` key/value milik Data — route ini hanya query/insert.
 
-import { auth } from "@/auth";
 import { getDb } from "@/db";
 import { siteSettings } from "@/db/schema";
-import { checkAdmin, type SessionLike } from "@/lib/api/auth";
+import { requireAdminResponse } from "@/lib/api/guard";
 import { toDbResult } from "@/lib/api/db-errors";
-import {
-  forbidden,
-  fromResult,
-  internalError,
-  unauthorized,
-} from "@/lib/api/response";
+import { fromResult, internalError } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/parse";
 import {
   readSettings,
@@ -48,18 +42,6 @@ function drizzleStore(): SettingsStore {
   };
 }
 
-function toSessionLike(session: Awaited<ReturnType<typeof auth>>): SessionLike {
-  const user = session?.user as
-    { id?: unknown; role?: unknown } | null | undefined;
-  if (!user) return null;
-  return {
-    user: {
-      id: typeof user.id === "string" ? user.id : null,
-      role: typeof user.role === "string" ? user.role : null,
-    },
-  };
-}
-
 /** Publik: branding game + email kontak. */
 export async function GET(): Promise<Response> {
   let store: SettingsStore;
@@ -79,17 +61,8 @@ export async function GET(): Promise<Response> {
 
 /** Admin: ubah sebagian atau seluruh branding/kontak. */
 export async function PUT(request: Request): Promise<Response> {
-  let session: Awaited<ReturnType<typeof auth>>;
-  try {
-    session = await auth();
-  } catch (error) {
-    console.error("PUT /api/settings auth gagal:", error);
-    return internalError();
-  }
-  const checked = checkAdmin(toSessionLike(session));
-  if (!checked.ok) {
-    return checked.status === 401 ? unauthorized() : forbidden();
-  }
+  const denied = await requireAdminResponse("PUT /api/settings");
+  if (denied) return denied;
   const parsed = await parseJsonBody(request, settingsUpdateSchema);
   if (!parsed.ok) return fromResult(parsed);
   let store: SettingsStore;
