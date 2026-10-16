@@ -1,282 +1,282 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useForm, type FieldPath } from "react-hook-form";
+import { useEffect, useState } from "react";
 
-import { parseFaqApiResult, type FaqItem } from "@/lib/admin-faq-client";
-
-type FaqFormValues = {
+interface FaqItem {
+  id: number;
   question: string;
   answer: string;
   sortOrder: number;
-};
-
-const emptyValues: FaqFormValues = { question: "", answer: "", sortOrder: 0 };
-
-async function fetchFaq(signal?: AbortSignal) {
-  const response = await fetch("/api/faq", { cache: "no-store", signal });
-  return parseFaqApiResult<FaqItem[]>(await response.json());
 }
 
-export function AdminFaqManager() {
-  const router = useRouter();
-  const requestVersion = useRef(0);
-  const [items, setItems] = useState<FaqItem[] | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setError,
-    clearErrors,
-    formState: { errors, isSubmitting },
-  } = useForm<FaqFormValues>({ defaultValues: emptyValues });
+interface FaqFormData {
+  question: string;
+  answer: string;
+  sortOrder: number;
+}
 
-  const loadFaq = useCallback(async () => {
-    const version = ++requestVersion.current;
-    setLoadError(null);
+interface ApiResponse {
+  ok: boolean;
+  data?: FaqItem[];
+  message?: string;
+  fields?: Record<string, string[]>;
+}
+
+export function FaqManager() {
+  const [items, setItems] = useState<FaqItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<FaqFormData>({
+    question: "",
+    answer: "",
+    sortOrder: 0,
+  });
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [formErrors, setFormErrors] = useState<Record<string, string[]>>({});
+  const [submitting, setSubmitting] = useState(false);
+
+  // Load FAQ list
+  const loadFaqs = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const result = await fetchFaq();
-      if (version !== requestVersion.current) return;
-      if (!result.ok) {
-        setLoadError(result.error.message);
+      const res = await fetch("/api/faq");
+      const json = (await res.json()) as ApiResponse;
+      if (!json.ok) {
+        setError(json.message || "Gagal memuat FAQ");
         return;
       }
-      setItems(result.data);
-    } catch {
-      if (version === requestVersion.current) {
-        setLoadError("FAQ tidak dapat dimuat. Coba lagi.");
-      }
+      setItems(json.data || []);
+    } catch (err) {
+      setError("Gagal memuat FAQ");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    const controller = new AbortController();
-    const version = ++requestVersion.current;
-    void fetchFaq(controller.signal)
-      .then((result) => {
-        if (controller.signal.aborted || version !== requestVersion.current)
-          return;
-        if (!result.ok) {
-          setLoadError(result.error.message);
-          return;
-        }
-        setItems(result.data);
-      })
-      .catch(() => {
-        if (!controller.signal.aborted && version === requestVersion.current) {
-          setLoadError("FAQ tidak dapat dimuat. Coba lagi.");
-        }
-      });
-    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadFaqs();
   }, []);
 
-  function cancelEdit() {
-    setEditingId(null);
-    clearErrors();
-    reset(emptyValues);
-  }
+  // Handle form submission (create or update)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormErrors({});
+    setSubmitting(true);
 
-  function applyServerErrors(fields?: Record<string, string[]>) {
-    for (const [name, messages] of Object.entries(fields ?? {})) {
-      if (name === "question" || name === "answer" || name === "sortOrder") {
-        setError(name as FieldPath<FaqFormValues>, {
-          type: "server",
-          message: messages[0],
-        });
-      }
-    }
-  }
-
-  async function submit(values: FaqFormValues) {
-    requestVersion.current += 1;
-    clearErrors("root");
-    const endpoint = editingId === null ? "/api/faq" : `/api/faq/${editingId}`;
-    const method = editingId === null ? "POST" : "PUT";
     try {
-      const response = await fetch(endpoint, {
+      const url = editingId ? `/api/faq/${editingId}` : "/api/faq";
+      const method = editingId ? "PUT" : "POST";
+
+      const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify(formData),
       });
-      const result = parseFaqApiResult<FaqItem>(await response.json());
-      if (!result.ok) {
-        applyServerErrors(result.error.fields);
-        setError("root", { type: "server", message: result.error.message });
+
+      const json = (await res.json()) as ApiResponse;
+
+      if (!json.ok) {
+        if (json.fields) {
+          setFormErrors(json.fields);
+        } else {
+          setError(json.message || "Gagal menyimpan FAQ");
+        }
         return;
       }
-      cancelEdit();
-      await loadFaq();
-      router.refresh();
-    } catch {
-      setError("root", {
-        type: "server",
-        message: "FAQ tidak dapat disimpan. Coba lagi.",
-      });
-    }
-  }
 
-  function edit(item: FaqItem) {
-    setEditingId(item.id);
-    clearErrors();
-    reset({
+      // Success: reset form and reload
+      setFormData({ question: "", answer: "", sortOrder: 0 });
+      setEditingId(null);
+      setFormErrors({});
+      await loadFaqs();
+    } catch (err) {
+      setError("Gagal menyimpan FAQ");
+      console.error(err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Handle edit button
+  const handleEdit = (item: FaqItem) => {
+    setFormData({
       question: item.question,
       answer: item.answer,
       sortOrder: item.sortOrder,
     });
-  }
+    setEditingId(item.id);
+    setFormErrors({});
+  };
 
-  async function remove(item: FaqItem) {
-    if (!window.confirm(`Hapus FAQ “${item.question}”?`)) return;
-    requestVersion.current += 1;
-    setDeletingId(item.id);
-    setLoadError(null);
+  // Handle cancel edit
+  const handleCancelEdit = () => {
+    setFormData({ question: "", answer: "", sortOrder: 0 });
+    setEditingId(null);
+    setFormErrors({});
+  };
+
+  // Handle delete
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Hapus FAQ ini?")) return;
+
     try {
-      const response = await fetch(`/api/faq/${item.id}`, { method: "DELETE" });
-      const result = parseFaqApiResult<FaqItem>(await response.json());
-      if (!result.ok) {
-        setLoadError(result.error.message);
+      const res = await fetch(`/api/faq/${id}`, { method: "DELETE" });
+      const json = (await res.json()) as ApiResponse;
+
+      if (!json.ok) {
+        setError(json.message || "Gagal menghapus FAQ");
         return;
       }
-      if (editingId === item.id) cancelEdit();
-      await loadFaq();
-      router.refresh();
-    } catch {
-      setLoadError("FAQ tidak dapat dihapus. Coba lagi.");
-    } finally {
-      setDeletingId(null);
+
+      await loadFaqs();
+    } catch (err) {
+      setError("Gagal menghapus FAQ");
+      console.error(err);
     }
-  }
+  };
+
+  if (loading) return <p>Memuat FAQ...</p>;
 
   return (
-    <div className="grid max-w-4xl gap-8">
-      <section aria-labelledby="faq-form-heading">
-        <h1 id="faq-form-heading">Kelola FAQ</h1>
-        <form
-          onSubmit={(event) => {
-            void handleSubmit(submit)(event);
-          }}
-          className="grid gap-4"
+    <div>
+      {error && (
+        <div
+          style={{ padding: "1rem", background: "#fee", marginBottom: "1rem" }}
         >
-          <div>
-            <label htmlFor="faq-question">Pertanyaan</label>
-            <input
-              id="faq-question"
-              type="text"
-              autoFocus
-              required
-              {...register("question")}
-              aria-invalid={Boolean(errors.question)}
-              aria-describedby={
-                errors.question ? "faq-question-error" : undefined
-              }
-            />
-            {errors.question ? (
-              <p id="faq-question-error" role="alert">
-                {errors.question.message}
-              </p>
-            ) : null}
-          </div>
-          <div>
-            <label htmlFor="faq-answer">Jawaban</label>
-            <textarea
-              id="faq-answer"
-              rows={5}
-              required
-              {...register("answer")}
-              aria-invalid={Boolean(errors.answer)}
-              aria-describedby={errors.answer ? "faq-answer-error" : undefined}
-            />
-            {errors.answer ? (
-              <p id="faq-answer-error" role="alert">
-                {errors.answer.message}
-              </p>
-            ) : null}
-          </div>
-          <div>
-            <label htmlFor="faq-sort-order">Urutan</label>
-            <input
-              id="faq-sort-order"
-              type="number"
-              min={0}
-              step={1}
-              required
-              {...register("sortOrder", { valueAsNumber: true })}
-              aria-invalid={Boolean(errors.sortOrder)}
-              aria-describedby={
-                errors.sortOrder ? "faq-sort-order-error" : undefined
-              }
-            />
-            {errors.sortOrder ? (
-              <p id="faq-sort-order-error" role="alert">
-                {errors.sortOrder.message}
-              </p>
-            ) : null}
-          </div>
-          {errors.root ? <p role="alert">{errors.root.message}</p> : null}
-          <div className="flex gap-4">
-            <button type="submit" disabled={isSubmitting}>
-              {isSubmitting
-                ? "Menyimpan..."
-                : editingId === null
-                  ? "Tambah FAQ"
-                  : "Simpan perubahan"}
+          {error}
+        </div>
+      )}
+
+      {/* Form tambah/edit */}
+      <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
+        <h2>{editingId ? "Edit FAQ" : "Tambah FAQ"}</h2>
+
+        <div style={{ marginBottom: "1rem" }}>
+          <label htmlFor="question">Pertanyaan</label>
+          <input
+            id="question"
+            type="text"
+            value={formData.question}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, question: e.target.value }))
+            }
+            disabled={submitting}
+            style={{ display: "block", width: "100%", padding: "0.5rem" }}
+          />
+          {formErrors.question && (
+            <div style={{ color: "red", fontSize: "0.875rem" }}>
+              {formErrors.question.join(", ")}
+            </div>
+          )}
+        </div>
+
+        <div style={{ marginBottom: "1rem" }}>
+          <label htmlFor="answer">Jawaban</label>
+          <textarea
+            id="answer"
+            value={formData.answer}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, answer: e.target.value }))
+            }
+            disabled={submitting}
+            rows={4}
+            style={{ display: "block", width: "100%", padding: "0.5rem" }}
+          />
+          {formErrors.answer && (
+            <div style={{ color: "red", fontSize: "0.875rem" }}>
+              {formErrors.answer.join(", ")}
+            </div>
+          )}
+        </div>
+
+        <div style={{ marginBottom: "1rem" }}>
+          <label htmlFor="sortOrder">Urutan</label>
+          <input
+            id="sortOrder"
+            type="number"
+            value={formData.sortOrder}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                sortOrder: parseInt(e.target.value, 10) || 0,
+              }))
+            }
+            disabled={submitting}
+            style={{ display: "block", width: "100%", padding: "0.5rem" }}
+          />
+          {formErrors.sortOrder && (
+            <div style={{ color: "red", fontSize: "0.875rem" }}>
+              {formErrors.sortOrder.join(", ")}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button type="submit" disabled={submitting}>
+            {submitting
+              ? "Menyimpan..."
+              : editingId
+                ? "Simpan Perubahan"
+                : "Tambah"}
+          </button>
+          {editingId && (
+            <button
+              type="button"
+              onClick={handleCancelEdit}
+              disabled={submitting}
+              style={{ marginLeft: "0.5rem" }}
+            >
+              Batal
             </button>
-            {editingId !== null ? (
-              <button
-                type="button"
-                onClick={cancelEdit}
-                disabled={isSubmitting}
-              >
-                Batal
-              </button>
-            ) : null}
-          </div>
-        </form>
-      </section>
-      <section aria-labelledby="faq-list-heading">
-        <h2 id="faq-list-heading">Daftar FAQ</h2>
-        {items === null && loadError === null ? <p>Memuat FAQ...</p> : null}
-        {loadError ? (
-          <div role="alert">
-            <p>{loadError}</p>
-            <button type="button" onClick={() => void loadFaq()}>
-              Coba lagi
-            </button>
-          </div>
-        ) : null}
-        {items !== null && !loadError && items.length === 0 ? (
-          <p>Belum ada FAQ.</p>
-        ) : null}
-        {items !== null && !loadError && items.length > 0 ? (
-          <ul className="grid gap-4">
+          )}
+        </div>
+      </form>
+
+      {/* Empty state */}
+      {items.length === 0 && (
+        <p style={{ color: "#666" }}>Belum ada FAQ. Tambahkan yang pertama!</p>
+      )}
+
+      {/* FAQ list */}
+      {items.length > 0 && (
+        <div>
+          <h2>Daftar FAQ</h2>
+          <ul style={{ listStyle: "none", padding: 0 }}>
             {items.map((item) => (
-              <li key={item.id}>
-                <article>
-                  <h3>{item.question}</h3>
-                  <p>{item.answer}</p>
-                  <p>Urutan: {item.sortOrder}</p>
-                  <div className="flex gap-4">
-                    <button type="button" onClick={() => edit(item)}>
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => void remove(item)}
-                      disabled={deletingId === item.id}
-                    >
-                      {deletingId === item.id ? "Menghapus..." : "Hapus"}
-                    </button>
-                  </div>
-                </article>
+              <li
+                key={item.id}
+                style={{
+                  border: "1px solid #ddd",
+                  padding: "1rem",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                <div style={{ marginBottom: "0.5rem" }}>
+                  <strong>Urutan:</strong> {item.sortOrder}
+                </div>
+                <div style={{ marginBottom: "0.5rem" }}>
+                  <strong>Pertanyaan:</strong> {item.question}
+                </div>
+                <div style={{ marginBottom: "1rem" }}>
+                  <strong>Jawaban:</strong> {item.answer}
+                </div>
+                <div>
+                  <button onClick={() => handleEdit(item)}>Edit</button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    style={{ marginLeft: "0.5rem" }}
+                  >
+                    Hapus
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
-        ) : null}
-      </section>
+        </div>
+      )}
     </div>
   );
 }
