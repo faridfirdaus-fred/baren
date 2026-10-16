@@ -2,18 +2,18 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { WaitlistPage } from "@/lib/api/waitlist";
+import type { WishlistPage } from "@/lib/api/wishlist";
 import {
   buildExportUrl,
   formatRegistrationDate,
   parseWaitlistApiResponse,
-} from "@/lib/admin-waitlist-client";
+} from "@/lib/admin-wishlist-client";
 
 export function AdminWaitlistManager() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
-  const [data, setData] = useState<WaitlistPage | null>(null);
+  const [data, setData] = useState<WishlistPage | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +28,7 @@ export function AdminWaitlistManager() {
     const trimmed = search.trim();
     if (trimmed) params.set("search", trimmed);
 
-    fetch(`/api/waitlist?${params.toString()}`, { cache: "no-store" })
+    fetch(`/api/wishlist?${params.toString()}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((raw) => {
         if (activeRequestRef.current !== requestId) return;
@@ -42,7 +42,7 @@ export function AdminWaitlistManager() {
       })
       .catch(() => {
         if (activeRequestRef.current !== requestId) return;
-        setError("Gagal memuat daftar waiting list. Silakan coba lagi.");
+        setError("Gagal memuat daftar wishlist. Silakan coba lagi.");
         setLoading(false);
       });
   }, [page, search]);
@@ -55,7 +55,7 @@ export function AdminWaitlistManager() {
     const trimmed = search.trim();
     if (trimmed) params.set("search", trimmed);
 
-    fetch(`/api/waitlist?${params.toString()}`, {
+    fetch(`/api/wishlist?${params.toString()}`, {
       cache: "no-store",
       signal: controller.signal,
     })
@@ -74,7 +74,7 @@ export function AdminWaitlistManager() {
       .catch(() => {
         if (controller.signal.aborted || activeRequestRef.current !== requestId)
           return;
-        setError("Gagal memuat daftar waiting list. Silakan coba lagi.");
+        setError("Gagal memuat daftar wishlist. Silakan coba lagi.");
         setLoading(false);
       });
 
@@ -114,7 +114,7 @@ export function AdminWaitlistManager() {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-2xl uppercase tracking-wide">
-            Manajemen Waiting List
+            Manajemen Wishlist
           </h1>
           <p className="mt-1 text-sm text-sand/70">
             Total Pendaftar:{" "}
@@ -135,20 +135,20 @@ export function AdminWaitlistManager() {
       </header>
 
       {/* Filter dan Pencarian */}
-      <section aria-labelledby="waitlist-filter-heading">
-        <h2 id="waitlist-filter-heading" className="sr-only">
-          Pencarian Waiting List
+      <section aria-labelledby="wishlist-filter-heading">
+        <h2 id="wishlist-filter-heading" className="sr-only">
+          Pencarian Wishlist
         </h2>
         <form
           onSubmit={handleSearchSubmit}
           className="flex flex-col gap-3 sm:flex-row sm:items-center"
         >
           <div className="flex-1">
-            <label htmlFor="waitlist-search" className="sr-only">
+            <label htmlFor="wishlist-search" className="sr-only">
               Cari email atau nama
             </label>
             <input
-              id="waitlist-search"
+              id="wishlist-search"
               type="search"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
@@ -179,8 +179,8 @@ export function AdminWaitlistManager() {
       </section>
 
       {/* Konten Tabel dan Status */}
-      <section aria-labelledby="waitlist-table-heading">
-        <h2 id="waitlist-table-heading" className="sr-only">
+      <section aria-labelledby="wishlist-table-heading">
+        <h2 id="wishlist-table-heading" className="sr-only">
           Daftar Pendaftar
         </h2>
 
@@ -202,7 +202,7 @@ export function AdminWaitlistManager() {
 
         {loading && !data ? (
           <p className="py-8 text-center text-sm text-sand/60">
-            Memuat data waiting list...
+            Memuat data wishlist...
           </p>
         ) : null}
 
@@ -210,7 +210,7 @@ export function AdminWaitlistManager() {
           <div className="border border-ink-700 bg-ink-800/40 py-12 text-center text-sm text-sand/60">
             {search
               ? `Tidak ditemukan pendaftar yang cocok dengan kata kunci "${search}".`
-              : "Belum ada pendaftar waiting list."}
+              : "Belum ada pendaftar wishlist."}
           </div>
         ) : null}
 
@@ -261,7 +261,7 @@ export function AdminWaitlistManager() {
         {/* Kontrol Paginasi */}
         {data && totalPages > 1 ? (
           <nav
-            aria-label="Navigasi halaman waiting list"
+            aria-label="Navigasi halaman wishlist"
             className="mt-4 flex flex-col items-center justify-between gap-4 border-t border-ink-700 pt-4 sm:flex-row"
           >
             <p className="text-xs text-sand/60">

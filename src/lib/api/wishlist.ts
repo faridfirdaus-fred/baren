@@ -1,14 +1,14 @@
-import type { WaitlistQuery } from "@/lib/validation/waitlist";
+import type { WishlistQuery } from "@/lib/validation/wishlist";
 
 /**
- * Jumlah item waitlist per halaman - konstanta tetap 25
+ * Jumlah item wishlist per halaman - konstanta tetap 25
  */
-export const WAITLIST_PER_PAGE = 25;
+export const WISHLIST_PER_PAGE = 25;
 
 /**
- * Waitlist list item - representasi satu entry waitlist
+ * Waitlist list item - representasi satu entry wishlist
  */
-export interface WaitlistListItem {
+export interface WishlistListItem {
   id: number;
   email: string;
   name: string | null;
@@ -18,8 +18,8 @@ export interface WaitlistListItem {
 /**
  * Waitlist page - hasil pagination dengan metadata
  */
-export interface WaitlistPage {
-  items: WaitlistListItem[];
+export interface WishlistPage {
+  items: WishlistListItem[];
   total: number;
   page: number;
   perPage: number;
@@ -30,15 +30,15 @@ export interface WaitlistPage {
  * Waitlist lister - interface untuk dependency injection
  */
 export interface WaitlistLister {
-  items: WaitlistListItem[];
+  items: WishlistListItem[];
   total: number;
 }
 
 /**
- * Membaca halaman waitlist dari lister yang terinjeksi.
+ * Membaca halaman wishlist dari lister yang terinjeksi.
  *
  * - Meneruskan query parameters (page, search)
- * - perPage selalu 25 (WAITLIST_PER_PAGE)
+ * - perPage selalu 25 (WISHLIST_PER_PAGE)
  * - Menghitung totalPages: Math.ceil(total / perPage)
  * - totalPages = 0 jika total = 0
  *
@@ -46,20 +46,20 @@ export interface WaitlistLister {
  * @param query - Query parameters (page, search optional)
  * @returns Waitlist page dengan pagination metadata
  */
-export function readWaitlistPage(
+export function readWishlistPage(
   lister: WaitlistLister,
-  query: WaitlistQuery,
-): WaitlistPage {
+  query: WishlistQuery,
+): WishlistPage {
   const { items, total } = lister;
   const { page } = query;
 
-  const totalPages = total === 0 ? 0 : Math.ceil(total / WAITLIST_PER_PAGE);
+  const totalPages = total === 0 ? 0 : Math.ceil(total / WISHLIST_PER_PAGE);
 
   return {
     items,
     total,
     page,
-    perPage: WAITLIST_PER_PAGE,
+    perPage: WISHLIST_PER_PAGE,
     totalPages,
   };
 }

@@ -8,29 +8,55 @@ import { GameFeatures } from "@/components/site/game-features";
 import { GallerySection } from "@/components/site/gallery-section";
 import { Hero } from "@/components/site/hero";
 import { LatestNews } from "@/components/site/latest-news";
+import { LandingCards } from "@/components/site/landing-cards";
+import { HowToPlay } from "@/components/site/how-to-play";
 import { MapsSection } from "@/components/site/maps-section";
+import { CommentsSection } from "@/components/site/comments-section";
 import { getFaqItems } from "@/lib/faq-content";
+import { getLatestNews } from "@/lib/news-content";
+import { getLandingCards } from "@/lib/landing-cards-content";
+import { getHowToPlayContent } from "@/lib/how-to-play-content";
+import { listComments } from "@/lib/api/comments";
+import { auth } from "@/auth";
 
-// E7-3: FAQ dari DB (kosong = seksi hilang, gagal = fallback statis di
-// komponen). Hero dinamis diurus di dalam <Hero /> (E6-1).
-// E6-7/8: Galeri & Lightbox dari DB gallery_assets.
-// E7-4..6: Download & Kontak per platform / Segera Hadir dari DB.
+// E6-1: Hero dinamis dari DB. E7-3: FAQ dari DB (kosong = seksi hilang).
+// E6-3..6: Landing cards, news-3, how-to-play dari DB (kosong = seksi hilang).
+// E6-7/8: Galeri dari DB. E7-4..6: Download & Kontak dari DB.
+// E13-3: Comments section (authenticated Google users, instant publish).
 export default async function SiteHomePage() {
-  const faqs = await getFaqItems();
+  const [faqs, news, cards, howToPlay, comments, session] = await Promise.all([
+    getFaqItems(),
+    getLatestNews(),
+    getLandingCards(),
+    getHowToPlayContent(),
+    listComments(),
+    auth().catch(() => null),
+  ]);
+
+  const userSession = session?.user
+    ? {
+        id: session.user.id!,
+        name: session.user.name ?? null,
+        image: (session.user as { image?: string | null }).image ?? null,
+      }
+    : null;
 
   return (
     <>
       <Hero />
-      <LatestNews />
+      {news && <LatestNews items={news} />}
       <EventBanner />
+      {cards && <LandingCards cards={cards} />}
       <AboutGame />
       <GameFeatures />
       <AgentsSection />
       <MapsSection />
+      {howToPlay && <HowToPlay content={howToPlay} />}
       <GallerySection />
       <FaqAccordion items={faqs ?? undefined} />
       <DownloadSection />
       <ContactSection />
+      <CommentsSection initialComments={comments} userSession={userSession} />
     </>
   );
 }

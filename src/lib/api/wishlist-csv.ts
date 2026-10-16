@@ -23,7 +23,7 @@ export function escapeCsvCell(value: unknown): string {
   return `"${escaped}"`;
 }
 
-export function formatWaitlistCsv(rows: WaitlistCsvRow[]): string {
+export function formatWishlistCsv(rows: WaitlistCsvRow[]): string {
   const header = ['"ID"', '"Email"', '"Nama"', '"Tanggal Terdaftar"'].join(",");
   const lines = [header];
 

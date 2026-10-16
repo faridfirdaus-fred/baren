@@ -1,4 +1,4 @@
-import type { WaitlistPage } from "./api/waitlist";
+import type { WishlistPage } from "./api/wishlist";
 
 export type ClientApiResult<T> =
   | { ok: true; data: T }
@@ -6,7 +6,7 @@ export type ClientApiResult<T> =
 
 export function parseWaitlistApiResponse(
   raw: unknown,
-): ClientApiResult<WaitlistPage> {
+): ClientApiResult<WishlistPage> {
   if (!raw || typeof raw !== "object") {
     return {
       ok: false,
@@ -16,7 +16,7 @@ export function parseWaitlistApiResponse(
 
   const res = raw as {
     ok?: boolean;
-    data?: WaitlistPage;
+    data?: WishlistPage;
     error?: { message?: string; code?: string };
   };
 
@@ -36,9 +36,9 @@ export function parseWaitlistApiResponse(
 export function buildExportUrl(search?: string): string {
   const trimmed = search?.trim();
   if (!trimmed) {
-    return "/api/waitlist/export";
+    return "/api/wishlist/export";
   }
-  return `/api/waitlist/export?search=${encodeURIComponent(trimmed)}`;
+  return `/api/wishlist/export?search=${encodeURIComponent(trimmed)}`;
 }
 
 export function formatRegistrationDate(isoDate: string): string {

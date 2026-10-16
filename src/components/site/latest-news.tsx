@@ -1,11 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { cta, news } from "@/content/baren";
+import { cta } from "@/content/baren";
 import { IconArrowUpRight } from "@/components/site/icon";
 import { SectionShell } from "@/components/site/section-shell";
+import type { NewsItem } from "@/lib/news-content";
 
-export function LatestNews() {
+type Props = {
+  items: NewsItem[];
+};
+
+export function LatestNews({ items }: Props) {
   return (
     <SectionShell id="berita" tone="light">
       <div className="flex items-end justify-between gap-6 border-b border-ink/15 pb-5">
@@ -21,31 +26,44 @@ export function LatestNews() {
         </a>
       </div>
       <div className="mt-10 grid gap-8 md:grid-cols-3">
-        {news.map((item, index) => (
+        {items.map((item) => (
           <Link
-            key={item.title}
-            href={item.href}
+            key={item.id}
+            href={`/news/${item.slug}`}
             className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember"
           >
             <div className="relative aspect-video overflow-hidden bg-ink-700">
-              <Image
-                src={`/art/cover-${index + 1}.jpg`}
-                fill
-                sizes="(min-width:768px) 33vw, 100vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                alt={item.title}
-              />
+              {item.coverUrl ? (
+                <Image
+                  src={item.coverUrl}
+                  fill
+                  sizes="(min-width:768px) 33vw, 100vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  alt={item.title}
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-ink-400">
+                  No cover
+                </div>
+              )}
             </div>
             <p className="mt-4 flex items-center gap-3 text-sm">
               <span className="font-bold uppercase tracking-wide text-ember-700">
-                {item.category}
+                BERITA
               </span>
               <span className="h-4 w-px bg-ink/25" />
-              <span className="text-ink/70">{item.date}</span>
+              <span className="text-ink-600">
+                {item.publishedAt
+                  ? new Date(item.publishedAt).toLocaleDateString("id-ID")
+                  : "—"}
+              </span>
             </p>
-            <h3 className="mt-2 text-lg font-semibold leading-snug text-ink group-hover:text-ember-700">
+            <h3 className="mt-2 text-2xl font-bold leading-tight text-ink transition-colors group-hover:text-ember-700">
               {item.title}
             </h3>
+            {item.excerpt && (
+              <p className="mt-2 text-ink-600 line-clamp-2">{item.excerpt}</p>
+            )}
           </Link>
         ))}
       </div>

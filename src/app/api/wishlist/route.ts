@@ -1,17 +1,17 @@
 import { count, desc, ilike, or } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { waitlist } from "@/db/schema";
+import { wishlist } from "@/db/schema";
 import { toDbResult } from "@/lib/api/db-errors";
 import { requireAdminResponse } from "@/lib/api/guard";
 import { fromResult } from "@/lib/api/response";
-import { WAITLIST_PER_PAGE, readWaitlistPage } from "@/lib/api/waitlist";
-import { waitlistQuerySchema } from "@/lib/validation/waitlist";
+import { WISHLIST_PER_PAGE, readWishlistPage } from "@/lib/api/wishlist";
+import { wishlistQuerySchema } from "@/lib/validation/wishlist";
 
 export const dynamic = "force-dynamic";
 
 /**
- * GET /api/waitlist - Daftar waitlist dengan pagination dan search
+ * GET /api/wishlist - Daftar wishlist dengan pagination dan search
  *
  * Query params:
  * - page: nomor halaman (default 1)
@@ -21,7 +21,7 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(request: Request) {
   // Guard: admin only
-  const denied = await requireAdminResponse("GET /api/waitlist");
+  const denied = await requireAdminResponse("GET /api/wishlist");
   if (denied) return denied;
 
   // Parse dan validasi query parameters
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
     search: searchParams.get("search") ?? undefined,
   };
 
-  const parsed = waitlistQuerySchema.safeParse(rawQuery);
+  const parsed = wishlistQuerySchema.safeParse(rawQuery);
   if (!parsed.success) {
     return fromResult({
       ok: false,
@@ -50,8 +50,8 @@ export async function GET(request: Request) {
     // Buat kondisi filter: tanpa search = tanpa WHERE, dengan search = ilike email OR name
     const filterCondition = search
       ? or(
-          ilike(waitlist.email, `%${search}%`),
-          ilike(waitlist.name, `%${search}%`),
+          ilike(wishlist.email, `%${search}%`),
+          ilike(wishlist.name, `%${search}%`),
         )
       : undefined;
 
@@ -59,17 +59,17 @@ export async function GET(request: Request) {
     const [rows, totalResult] = await Promise.all([
       db
         .select({
-          id: waitlist.id,
-          email: waitlist.email,
-          name: waitlist.name,
-          createdAt: waitlist.createdAt,
+          id: wishlist.id,
+          email: wishlist.email,
+          name: wishlist.name,
+          createdAt: wishlist.createdAt,
         })
-        .from(waitlist)
+        .from(wishlist)
         .where(filterCondition)
-        .orderBy(desc(waitlist.createdAt), desc(waitlist.id))
-        .limit(WAITLIST_PER_PAGE)
-        .offset((page - 1) * WAITLIST_PER_PAGE),
-      db.select({ count: count() }).from(waitlist).where(filterCondition),
+        .orderBy(desc(wishlist.createdAt), desc(wishlist.id))
+        .limit(WISHLIST_PER_PAGE)
+        .offset((page - 1) * WISHLIST_PER_PAGE),
+      db.select({ count: count() }).from(wishlist).where(filterCondition),
     ]);
 
     // Serialisasi createdAt ke ISO string
@@ -82,15 +82,15 @@ export async function GET(request: Request) {
 
     const total = totalResult[0]?.count ?? 0;
 
-    // Masukkan ke readWaitlistPage untuk pagination metadata
-    const result = readWaitlistPage({ items, total }, { page, search });
+    // Masukkan ke readWishlistPage untuk pagination metadata
+    const result = readWishlistPage({ items, total }, { page, search });
 
     return fromResult({
       ok: true,
       data: result,
     });
   } catch (error) {
-    console.error("GET /api/waitlist gagal:", error);
+    console.error("GET /api/wishlist gagal:", error);
     return fromResult(toDbResult(error));
   }
 }

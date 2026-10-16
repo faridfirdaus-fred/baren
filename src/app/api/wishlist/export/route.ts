@@ -1,20 +1,20 @@
 import { desc, ilike, or } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { waitlist } from "@/db/schema";
+import { wishlist } from "@/db/schema";
 import { toDbResult } from "@/lib/api/db-errors";
 import { requireAdminResponse } from "@/lib/api/guard";
 import { fromResult } from "@/lib/api/response";
-import { formatWaitlistCsv } from "@/lib/api/waitlist-csv";
-import { parseWaitlistQuery } from "@/lib/api/waitlist-query";
+import { formatWishlistCsv } from "@/lib/api/wishlist-csv";
+import { parseWishlistQuery } from "@/lib/api/wishlist-query";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  const denied = await requireAdminResponse("GET /api/waitlist/export");
+  const denied = await requireAdminResponse("GET /api/wishlist/export");
   if (denied) return denied;
 
-  const parsed = parseWaitlistQuery(
+  const parsed = parseWishlistQuery(
     Object.fromEntries(new URL(request.url).searchParams),
   );
   if (!parsed.ok) return fromResult(parsed);
@@ -24,35 +24,35 @@ export async function GET(request: Request) {
     const search = parsed.data.search;
     const predicate = search
       ? or(
-          ilike(waitlist.email, `%${search}%`),
-          ilike(waitlist.name, `%${search}%`),
+          ilike(wishlist.email, `%${search}%`),
+          ilike(wishlist.name, `%${search}%`),
         )
       : undefined;
 
     const rows = await db
       .select({
-        id: waitlist.id,
-        email: waitlist.email,
-        name: waitlist.name,
-        createdAt: waitlist.createdAt,
+        id: wishlist.id,
+        email: wishlist.email,
+        name: wishlist.name,
+        createdAt: wishlist.createdAt,
       })
-      .from(waitlist)
+      .from(wishlist)
       .where(predicate)
-      .orderBy(desc(waitlist.createdAt), desc(waitlist.id));
+      .orderBy(desc(wishlist.createdAt), desc(wishlist.id));
 
-    const csv = formatWaitlistCsv(rows);
+    const csv = formatWishlistCsv(rows);
     const dateStamp = new Date().toISOString().slice(0, 10);
 
     return new Response(csv, {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="waitlist-${dateStamp}.csv"`,
+        "Content-Disposition": `attachment; filename="wishlist-${dateStamp}.csv"`,
         "Cache-Control": "no-store",
       },
     });
   } catch (error) {
-    console.error("GET /api/waitlist/export gagal:", error);
+    console.error("GET /api/wishlist/export gagal:", error);
     return fromResult(toDbResult(error));
   }
 }

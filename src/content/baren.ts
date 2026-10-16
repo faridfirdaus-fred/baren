@@ -64,11 +64,11 @@ export const site = {
 };
 
 export const nav: NavItem[] = [
-  { label: "INFO GAME", href: "#fitur", hasMenu: true },
-  { label: "MEDIA", href: "#galeri", hasMenu: true },
+  { label: "INFO GAME", href: "#fitur" },
+  { label: "CARA MAIN", href: "#cara-main" },
   { label: "ARTIKEL", href: "#berita" },
-  { label: "SUPPORT", href: "#faq", hasMenu: true },
-  { label: "MEDIA SOSIAL", href: "#kontak", hasMenu: true },
+  { label: "FAQ", href: "#faq" },
+  { label: "GALERI", href: "#galeri" },
 ];
 
 export const hero: HeroContent = {

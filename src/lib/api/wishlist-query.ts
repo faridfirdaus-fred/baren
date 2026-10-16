@@ -12,7 +12,7 @@ function zodFields(error: z.ZodError): Record<string, string[]> {
   return fields;
 }
 
-const waitlistQuerySchema = z
+const wishlistQuerySchema = z
   .object({
     page: z
       .string()
@@ -31,8 +31,8 @@ const waitlistQuerySchema = z
 
 export type WaitlistQuery = { page: number; search?: string };
 
-export function parseWaitlistQuery(raw: unknown): ApiResult<WaitlistQuery> {
-  const parsed = waitlistQuerySchema.safeParse(raw);
+export function parseWishlistQuery(raw: unknown): ApiResult<WaitlistQuery> {
+  const parsed = wishlistQuerySchema.safeParse(raw);
   if (!parsed.success) {
     return {
       ok: false,

@@ -1,6 +1,8 @@
 # Wishlist Rename + Alur Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
+>
+> **CONTEXT (2026-10-17):** Waitlist API + admin sudah exist dari E11-7/8/9 (Done 2026-10-16). File ada: `src/app/api/waitlist/*`, `src/app/admin/waitlist/*`, `src/components/admin/waitlist-manager.tsx`. Plan ini **rename total**: tabel `waitlist` → `wishlist`, route `/api/waitlist` → `/api/wishlist`, UI label "waiting list" → "wishlist", tanpa kehilangan data.
 
 **Goal:** Seluruh istilah waiting list menjadi wishlist tanpa kehilangan data email, dan alur Google OAuth tampil di landing serta bisa dikelola admin.
 
@@ -46,7 +48,7 @@
 - Consumes: tabel lama `waitlist` + kontrak upsert E11-2/3 (email unik, email terverifikasi saja).
 - Produces: `wishlist` table + `upsertWishlistProfile()` untuk Task 2–3.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/db/wishlist.test.mjs
@@ -61,12 +63,12 @@ describe("wishlist table", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test src/db/wishlist.test.mjs`
 Expected: FAIL with `wishlist` undefined (masih bernama `waitlist`).
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```ts
 // src/db/schema.ts
@@ -91,12 +93,12 @@ ALTER TABLE IF EXISTS "waitlist" RENAME TO "wishlist";
 
 Auth callback: ganti import `waitlist` → `wishlist` saja; pertahankan cek `email_verified` + upsert atomik `onConflictDoUpdate(email)`.
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test src/db/wishlist.test.mjs && pnpm exec tsc --noEmit`
 Expected: PASS; grep `waitlist` di `src/` tidak lagi menemukan import kecuali di file migrasi lama.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/db/schema.ts drizzle src/auth.ts src/db/wishlist.test.mjs
@@ -118,7 +120,7 @@ git commit -m "feat(db): rename waitlist menjadi wishlist tanpa hapus data"
 - Consumes: `wishlist` Task 1, `checkAdmin`, sesi server Auth.js.
 - Produces: `GET /api/wishlist/status` (pemilik), `GET /api/wishlist` + CSV admin untuk Task 3.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/db/wishlist.test.mjs — tambah
@@ -133,12 +135,12 @@ describe("wishlist guards", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test src/db/wishlist.test.mjs`
 Expected: FAIL with "Cannot find module '../src/lib/wishlist-csv.ts'".
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```ts
 // src/lib/wishlist-csv.ts
@@ -157,12 +159,12 @@ export function GET(req: Request) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test src/db/wishlist.test.mjs && pnpm exec tsc --noEmit && pnpm lint`
 Expected: PASS; preview: anonim `GET /api/wishlist` → 401; visitor Google → 403; admin → 200.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/app/api/wishlist src/app/api/waitlist src/lib/wishlist-csv.ts src/db/wishlist.test.mjs
@@ -184,7 +186,7 @@ git commit -m "feat(api): rename endpoint waitlist ke wishlist + status pemilik"
 - Consumes: Task 2 (`/api/wishlist/status`), sesi server, slot `accountSlot` E5-1.
 - Produces: alur ≤3 langkah + tabel admin untuk plan CMS; tidak ada sisa kata waiting list di UI.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/db/wishlist.test.mjs — tambah
@@ -199,12 +201,12 @@ describe("copy wishlist", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test src/db/wishlist.test.mjs`
 Expected: FAIL (masih "GABUNG WAITING LIST").
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```ts
 // src/content/baren.ts
@@ -217,12 +219,12 @@ export const cta = {
 
 `wishlist-menu.tsx` (server, baca sesi): anonim → tombol `GABUNG WISHLIST` (link sign-in Google); login → tampil email + tombol keluar. `wishlist-status.tsx` (`id="wishlist"`): sudah gabung → "Kamu sudah masuk wishlist. Terima kasih!"; belum → ajakan + tombol; gagal → pesan jelas. Header: `accountSlot={<WishlistMenu />}` (desktop+mobile). FAQ/admin/dashboard/CSV/SRS copy diganti wishlist; URL lama `/api/waitlist` tidak dipakai UI baru.
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test src/db/wishlist.test.mjs && pnpm exec tsc --noEmit && pnpm lint && pnpm build`
 Expected: PASS; preview desktop+mobile: alur 3 langkah, email hanya tampil saat sesi ada, logout membersihkan state.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/components/site/wishlist-menu.tsx src/components/site/wishlist-status.tsx src/components/site/site-header.tsx src/content/baren.ts src/app/admin src/db/wishlist.test.mjs
@@ -233,7 +235,7 @@ git commit -m "feat(wishlist): alur publik + label admin memakai wishlist"
 
 ## Verifikasi akhir plan
 
-- [ ] `pnpm lint && pnpm exec tsc --noEmit && pnpm format:check && pnpm build` hijau.
-- [ ] Data email lama tetap ada (`SELECT count(*) FROM wishlist` sebelum/sesudah sama).
-- [ ] Grep UI/dokumen: tidak ada "waiting list"/"waitlist" tersisa di string pengguna (kecuali catatan migrasi historis).
-- [ ] Update `docs/TASK_BREAKDOWN.md` §E1-4, §E11 + matriks FR-PUB-18..24/FR-ADM-28..30 + log.
+- [x] `pnpm lint && pnpm exec tsc --noEmit && pnpm format:check && pnpm build` hijau.
+- [x] Data email lama tetap ada (`SELECT count(*) FROM wishlist` sebelum/sesudah sama).
+- [x] Grep UI/dokumen: tidak ada "waiting list"/"waitlist" tersisa di string pengguna (kecuali catatan migrasi historis).
+- [x] Update `docs/TASK_BREAKDOWN.md` §E1-4, §E11 + matriks FR-PUB-18..24/FR-ADM-28..30 + log.

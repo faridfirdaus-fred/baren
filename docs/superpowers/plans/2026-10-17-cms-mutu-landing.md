@@ -1,10 +1,12 @@
 # CMS + Mutu Landing Baru Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+>
+> **CONTEXT (2026-10-17):** API sudah exist dari plan sebelumnya (`/api/hero`, `/api/landing-cards`, `/api/news`, `/api/faq`, `/api/how-to-play`, `/api/comments`, `/api/wishlist`). E8-2/6/8/9 Done (branding, gallery, FAQ UI, social/links UI). Plan ini fokus ke **UI admin yang belum ada**: E8-3/4/5/7 (hero/about/features/news/how-to-play UI) + E8-10/11/12 (shared components: konfirmasi hapus, toast, drag-drop).
 
 **Goal:** Admin dapat mengelola hero video, kartu fleksibel, news-3, FAQ, how-to-play, wishlist, dan komentar; landing baru lolos performa, aksesibilitas, dan SEO tanpa halaman detail berita.
 
-**Architecture:** CRUD admin mengikuti pola E8 yang sudah direncanakan (form + uploader R2 + konfirmasi hapus + toast); dashboard menghitung wishlist + komentar; mutu mengaudit ulang LCP/a11y/SEO dengan sitemap tanpa rute berita (E7-2 ditunda); E10 diperbarui untuk cakupan baru.
+**Architecture:** UI admin consume API existing; build form + table + delete dialog + toast + drag-drop/keyboard reorder; dashboard menghitung wishlist + komentar; mutu mengaudit ulang LCP/a11y/SEO dengan sitemap tanpa rute berita (E7-2 ditunda); E10 diperbarui untuk cakupan baru.
 
 **Tech Stack:** Next.js 16 App Router, react-hook-form + zodResolver, Tailwind v4 + shadcn/ui, R2 presigned URL, Playwright/Lighthouse/axe.
 
@@ -64,7 +66,9 @@ Expected: FAIL with ENOENT `src/app/admin/news/page.tsx` atau teks belum ada.
 
 - [ ] **Step 3: Write minimal implementation**
 
-Hero: edit title/subtitle/videoUrl/backgroundUrl/CTA + preview + validasi URL + simpan (PUT). Landing-cards: tabel urut + tambah/ubah/hapus + toggle terbit + reorder (drag-drop + tombol naik/turun keyboard) + tone selector. News: CRUD + cover + excerpt + tanggal + link opsional + status; helper teks "Hanya 3 terbaru tampil; kosong = seksi hilang; belum ada halaman detail". FAQ: CRUD + urutan. How-to-play: langkah + media opsional + video demo URL. Semua hapus memakai dialog konfirmasi (Escape/batal aman); semua form memakai toast sukses/gagal + error per kolom + loading + pertahankan input saat error.
+**UI admin saja** (API sudah exist). Hero UI (`/admin/hero/page.tsx`): form edit title/subtitle/videoUrl/backgroundUrl/CTA + preview + validasi URL + simpan (consume `PUT /api/hero`). Landing-cards UI (`/admin/landing-cards/page.tsx`): tabel urut + tambah/ubah/hapus + toggle terbit + reorder (drag-drop + tombol naik/turun keyboard) + tone selector (consume `/api/landing-cards` GET/POST/PUT/DELETE). News UI (`/admin/news/page.tsx`): CRUD + cover + excerpt + tanggal + link opsional + status; helper teks "Hanya 3 terbaru tampil; kosong = seksi hilang; belum ada halaman detail" (consume `/api/news`). FAQ UI sudah exist (E8-8 Done), skip. How-to-play UI (`/admin/how-to-play/page.tsx`): langkah + media opsional + video demo URL (consume `/api/how-to-play`).
+
+**Shared components** (`src/components/admin/`): `DeleteConfirmDialog` (Escape/batal aman), `Toast` (sukses/gagal), form error per kolom + loading + pertahankan input saat error. Reuse `AssetUploader` (E4-6 Done) untuk cover/media.
 
 - [ ] **Step 4: Run test to verify it passes**
 

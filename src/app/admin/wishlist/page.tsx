@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
-import { AdminWaitlistManager } from "@/components/admin/waitlist-manager";
+import { AdminWaitlistManager } from "@/components/admin/wishlist-manager";
 
 export const dynamic = "force-dynamic";
 

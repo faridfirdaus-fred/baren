@@ -1,6 +1,6 @@
 # Landing Dinamis Kartu Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Hero bervideo, news maks-3 opsional, kartu fleksibel, FAQ, dan how-to-play tampil dari database dan bisa diatur admin.
 
@@ -48,7 +48,7 @@
 - Consumes: `timestamps` helper di `src/db/schema.ts`, `drizzle.config.ts`.
 - Produces: `landingCards` table + tipe `LandingCard` untuk Task 2–3 (`id, slot, eyebrow, title, subtitle, body, imageUrl, ctaLabel, ctaUrl, tone, sortOrder, isPublished`).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/lib/validation/landing-cards.test.mjs
@@ -64,12 +64,12 @@ describe("landing_cards schema", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test src/lib/validation/landing-cards.test.mjs`
 Expected: FAIL with "Cannot find module '../src/db/schema.ts'" atau `landingCards` undefined (tabel belum ada).
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```ts
 // src/db/schema.ts — tambah di bawah tabel faq
@@ -92,12 +92,12 @@ export const landingCards = pgTable("landing_cards", {
 
 Lalu generate: `pnpm drizzle-kit generate` dan periksa file SQL baru tidak mengandung `DROP`.
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test src/lib/validation/landing-cards.test.mjs`
 Expected: PASS. Lalu `pnpm exec tsc --noEmit` PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/db/schema.ts drizzle src/lib/validation/landing-cards.test.mjs
@@ -119,7 +119,7 @@ git commit -m "feat(db): tambah tabel landing_cards fleksibel"
 - Consumes: `landingCards` (Task 1), helper `src/lib/api/{response,parse,auth,db-errors}.ts`, guard admin E2-4.
 - Produces: `GET /api/landing-cards` (publik, hanya published, urut `sortOrder,id`); `POST/PUT/DELETE` + `PUT /reorder` admin-only untuk Task 4 (CMS).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/lib/validation/landing-cards.test.mjs — tambah
@@ -135,12 +135,12 @@ describe("landingCardSchema", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test src/lib/validation/landing-cards.test.mjs`
 Expected: FAIL with "Cannot find module '../src/lib/validation/landing-cards.ts'".
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```ts
 // src/lib/validation/landing-cards.ts
@@ -177,12 +177,12 @@ Route `GET /api/landing-cards`: query Drizzle `where isPublished=1`, `orderBy so
 
 `src/app/api/news/route.ts`: tambah `limit = min(max(parseInt(searchParams.get("limit") ?? "9"), 1), 9)`; tetap filter `status=published`, urut terbaru.
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test src/lib/validation/landing-cards.test.mjs && pnpm exec tsc --noEmit && pnpm lint`
 Expected: semua PASS. Lalu uji manual di preview: `GET /api/landing-cards` → 200 array; `POST` anonim → 401.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/validation/landing-cards.ts src/app/api/landing-cards src/app/api/news/route.ts src/lib/validation/landing-cards.test.mjs
@@ -204,7 +204,7 @@ git commit -m "feat(api): CRUD landing-cards + limit berita"
 - Consumes: API/DB Task 2, tabel `hero`, `news`, `faq`, `howToPlaySteps`, `howToPlayVideo`, `landingCards`.
 - Produces: landing dinamis untuk Task 4 (CMS) dan plan mutu; `page.tsx` urutan final.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/lib/landing-public.test.mjs
@@ -220,12 +220,12 @@ describe("aturan tampil landing", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test src/lib/landing-public.test.mjs`
 Expected: FAIL with "Cannot find module '../src/lib/landing.ts'".
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```ts
 // src/lib/landing.ts
@@ -249,12 +249,12 @@ export function shouldShowNews<T>(items: T[]): T[] | false {
 
 `baren.ts`: hapus item `ESPORTS` dan `LEBIH BANYAK` dari `nav`; pastikan sisa anchor valid (`#fitur #galeri #berita #faq #kontak #cara-main #komentar`).
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test src/lib/landing-public.test.mjs && pnpm exec tsc --noEmit && pnpm lint && pnpm build`
 Expected: PASS semua; `pnpm preview` cek 360/768/1920: news 0 → seksi hilang; 2 kartu → tampil 2; video hero bisa diganti admin.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/landing.ts src/components/site src/lib/landing-public.test.mjs src/app/\(site\)/page.tsx src/content/baren.ts
@@ -265,6 +265,6 @@ git commit -m "feat(landing): hero video dinamis, news-3, kartu fleksibel, faq, 
 
 ## Verifikasi akhir plan
 
-- [ ] `pnpm lint && pnpm exec tsc --noEmit && pnpm format:check && pnpm build` hijau.
-- [ ] `pnpm preview`: admin ubah hero/kartu/news/faq → publik berubah ≤60 detik; news 0 → seksi hilang; kartu 2 → tampil 2; nav tanpa Esports/Lebih Banyak; footer tidak berubah.
-- [ ] Update `docs/TASK_BREAKDOWN.md` §E1-6, §E3-11, §E6-1, §E6-3..6, §E7-1, §E7-3, §E5-3 + log progress (plan D memverifikasi E9/E10, bukan di sini).
+- [x] `pnpm lint && pnpm exec tsc --noEmit && pnpm format:check && pnpm build` hijau.
+- [x] `pnpm preview`: admin ubah hero/kartu/news/faq → publik berubah ≤60 detik; news 0 → seksi hilang; kartu 2 → tampil 2; nav tanpa Esports/Lebih Banyak; footer tidak berubah.
+- [x] Update `docs/TASK_BREAKDOWN.md` §E1-6, §E3-11, §E6-1, §E6-3..6, §E7-1, §E7-3, §E5-3 + log progress (plan D memverifikasi E9/E10, bukan di sini).
