@@ -8,7 +8,7 @@ import { requireAdminResponse } from "@/lib/api/guard";
 import { toDbResult } from "@/lib/api/db-errors";
 import { fromResult } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/parse";
-import { parsePageParam } from "@/lib/api/params";
+import { parseLimitParam, parsePageParam } from "@/lib/api/params";
 import {
   NEWS_PER_PAGE,
   normalizeNewsTiming,
@@ -84,12 +84,15 @@ function creator(db: Db): NewsCreator {
   };
 }
 
-/** Publik: berita terbit terbaru, 9 per halaman. */
+/** Publik: berita terbit terbaru (?page=, ?limit= maks 9; landing memakai limit=3). */
 export async function GET(request: Request): Promise<Response> {
-  const page = parsePageParam(new URL(request.url).searchParams.get("page"));
+  const params = new URL(request.url).searchParams;
+  const page = parsePageParam(params.get("page"));
   if (!page.ok) return fromResult(page);
+  const limit = parseLimitParam(params.get("limit"), NEWS_PER_PAGE);
+  if (!limit.ok) return fromResult(limit);
   try {
-    const data = await readNewsPage(lister(getDb()), page.data, NEWS_PER_PAGE);
+    const data = await readNewsPage(lister(getDb()), page.data, limit.data);
     return fromResult({ ok: true, data });
   } catch (error) {
     console.error("GET /api/news gagal:", error);

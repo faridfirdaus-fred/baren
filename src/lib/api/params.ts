@@ -33,3 +33,23 @@ export function parsePageParam(raw: string | null): ApiResult<number> {
   }
   return { ok: true, data: page };
 }
+
+/** Parse ?limit= menjadi integer 1..maks (default 9). */
+export function parseLimitParam(
+  raw: string | null,
+  def = 9,
+  maks = 9,
+): ApiResult<number> {
+  if (raw === null) return { ok: true, data: def };
+  const limit = Number(raw);
+  if (!Number.isInteger(limit) || limit < 1) {
+    return {
+      ok: false,
+      status: 400,
+      code: "VALIDATION_ERROR",
+      message: "Validasi gagal. Periksa kembali kolom yang ditandai.",
+      fields: { limit: ["Batas tidak valid."] },
+    };
+  }
+  return { ok: true, data: Math.min(limit, maks) };
+}
