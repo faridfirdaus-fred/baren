@@ -154,6 +154,82 @@ export function buildPublicAssetUrl(key: string, baseUrl?: string): string {
   return `${base.replace(/\/+$/, "")}/${key}`;
 }
 
+/**
+ * Turunkan key R2 dari URL publik (E4-5; dipakai pemanggil SEBELUM hapus
+ * record DB agar URL invalid tidak membuat record terhapus tanpa key valid).
+ *
+ * Parsing ketat (revisi reviewer): pakai `new URL()`, tolak bila protocol
+ * bukan https:, origin tidak persis sama dengan basis publik (cegah domain
+ * tiruan prefix-serupa), ada kredensial di URL, ada query/hash, atau path
+ * tidak kanonis (tidak diawali batas segmen basis, mengandung `..`,
+ * double-slash, atau encoding traversal). Hasil akhir wajib lolos
+ * `assertAssetKey()`.
+ *
+ * Ini unit helper (cakup E4-5): endpoint DELETE menerima `{key}`, bukan
+ * `{fileUrl}` — uji URL berbahaya adalah unit helper, bukan 400 HTTP.
+ */
+export function keyFromPublicUrl(fileUrl: string, baseUrl?: string): string {
+  const base =
+    baseUrl ?? readEnvValue("R2_PUBLIC_URL") ?? "https://pub-xxx.r2.dev";
+  let parsed: URL;
+  let baseParsed: URL;
+  try {
+    parsed = new URL(fileUrl);
+    baseParsed = new URL(base);
+  } catch {
+    throw new Error("URL aset tidak valid.");
+  }
+  if (parsed.protocol !== "https:") {
+    throw new Error("URL aset tidak valid.");
+  }
+  // Kredensial di URL dilarang (phishing / log-leak).
+  if (parsed.username !== "" || parsed.password !== "") {
+    throw new Error("URL aset tidak valid.");
+  }
+  // Query/hash dilarang: URL publik kanonis tanpa keduanya.
+  if (parsed.search !== "" || parsed.hash !== "") {
+    throw new Error("URL aset tidak valid.");
+  }
+  // Origin harus persis sama (bukan startsWith: cegah evil-prefix).
+  if (parsed.origin !== baseParsed.origin) {
+    throw new Error("URL aset bukan milik bucket ini.");
+  }
+  // Path harus diawali batas segmen basis publik.
+  const basePath = baseParsed.pathname.replace(/\/+$/, "");
+  const fullPath = parsed.pathname;
+  let keyPath: string;
+  if (basePath === "") {
+    keyPath = fullPath.startsWith("/") ? fullPath.slice(1) : fullPath;
+  } else {
+    if (fullPath !== basePath && !fullPath.startsWith(`${basePath}/`)) {
+      throw new Error("URL aset bukan milik bucket ini.");
+    }
+    const rest =
+      fullPath === basePath ? "" : fullPath.slice(basePath.length + 1);
+    keyPath = rest;
+  }
+  // Kanonis: tolak path kosong, `..`, double-slash, dan encoding traversal.
+  if (!keyPath) {
+    throw new Error("URL aset tidak valid.");
+  }
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(keyPath);
+  } catch {
+    throw new Error("URL aset tidak valid.");
+  }
+  if (
+    decoded.includes("..") ||
+    decoded.includes("\\") ||
+    keyPath.includes("//") ||
+    /%(2e|2f|5c)/i.test(keyPath)
+  ) {
+    throw new Error("URL aset tidak valid.");
+  }
+  assertAssetKey(decoded);
+  return decoded;
+}
+
 function encodeRfc3986(value: string): string {
   return encodeURIComponent(value).replace(
     /[!'()*]/g,

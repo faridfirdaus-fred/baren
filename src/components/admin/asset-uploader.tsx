@@ -7,6 +7,8 @@ import {
   acceptedMimeTypes,
   checkClientFile,
   formatBytes,
+  uploadOneFile,
+  type UploadedAsset,
 } from "@/lib/assets-client";
 
 export type UploaderFileState = {
@@ -16,14 +18,34 @@ export type UploaderFileState = {
   type: string;
   previewUrl: string | null;
   progress: number;
-  status: "siap" | "mengunggah" | "selesai" | "gagal" | "dibatalkan";
+  status:
+    | "siap"
+    | "mengunggah"
+    | "terunggah"
+    | "menyimpan"
+    | "tersimpan"
+    | "gagal"
+    | "gagal-simpan"
+    | "dibatalkan";
   message: string | null;
+  /** Hasil R2 (ada setelah PUT sukses; dipakai retry simpan tanpa reupload). */
+  asset: UploadedAsset | null;
 };
 
 export type AssetUploaderProps = {
   purpose: string;
-  /** Dipanggil setelah file lolos validasi klien; integrasi presign (E4-2) menyusul. */
+  /** Dipanggil setelah file lolos validasi klien (kompatibilitas mundur). */
   onFilesValidated?: (files: File[]) => void;
+  /**
+   * Dipanggil setelah objek TERUNGGAH ke R2 (bukan setelah record CMS
+   * tersimpan — pemisahan E4 vs E8-6). Boleh async: komponen menunggu,
+   * menampilkan "Menyimpan metadata…", dan retry-gagal-simpan tanpa
+   * reupload. Tanpa callback -> status akhir "Terunggah ke R2".
+   * Untuk callback sinkron void, "Tersimpan" hanya bila kontrak integrasi
+   * menjamin penyimpanan selesai.
+   */
+  onUploaded?: (result: UploadedAsset) => void | Promise<void>;
+  disabled?: boolean;
 };
 
 function toState(file: File): UploaderFileState {
@@ -38,32 +60,132 @@ function toState(file: File): UploaderFileState {
     progress: 0,
     status: "siap",
     message: null,
+    asset: null,
   };
 }
 
 /**
- * Fondasi uploader aset admin (E4-6 menunggu E4-2).
- * Sudah mencakup: drag/drop + fallback pilih file, validasi klien (UX),
- * preview, status error, keyboard, dan pembatalan pilihan.
- * PUT langsung ke `uploadUrl` + simpan metadata via API ditambahkan
- * setelah endpoint presign E4-2 tersedia (butuh guard admin E2-4).
+ * Uploader aset admin (E4-6): drag/drop + fallback pilih file, validasi
+ * klien (UX), PUT langsung ke `uploadUrl` R2 via presign just-in-time,
+ * progress XHR, batal per-file, retry triple-atomik, dan status bertahap
+ * terunggah/menyimpan/tersimpan/gagal-simpan (pemisahan E4 vs E8-6).
+ * Tak pernah POST byte file ke Worker.
  */
 export function AssetUploader({
   purpose,
   onFilesValidated,
+  onUploaded,
+  disabled = false,
 }: AssetUploaderProps) {
   const inputId = useId();
   const helpId = useId();
   const errorId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const filesRef = useRef<Map<string, File>>(new Map());
+  const abortRef = useRef<Map<string, AbortController>>(new Map());
   const [files, setFiles] = useState<UploaderFileState[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const patchFile = useCallback(
+    (id: string, patch: Partial<UploaderFileState>) => {
+      setFiles((prev) =>
+        prev.map((f) => (f.id === id ? { ...f, ...patch } : f)),
+      );
+    },
+    [],
+  );
+
+  /** Jalankan callback simpan-metadata; tanpa callback -> "Terunggah ke R2". */
+  const runSaveCallback = useCallback(
+    async (id: string, asset: UploadedAsset) => {
+      if (!onUploaded) {
+        patchFile(id, {
+          status: "terunggah",
+          message: "Terunggah ke R2.",
+          asset,
+        });
+        return;
+      }
+      patchFile(id, {
+        status: "menyimpan",
+        message: "Terunggah. Menyimpan metadata…",
+        asset,
+      });
+      try {
+        await onUploaded(asset);
+        patchFile(id, {
+          status: "tersimpan",
+          message: "Tersimpan.",
+          asset,
+        });
+      } catch (error) {
+        patchFile(id, {
+          status: "gagal-simpan",
+          message:
+            error instanceof Error && error.message
+              ? `Unggahan ok, simpan metadata gagal: ${error.message}`
+              : "Unggahan ok, simpan metadata gagal. Coba lagi tanpa mengunggah ulang.",
+          asset,
+        });
+      }
+    },
+    [onUploaded, patchFile],
+  );
+
+  /** Unggah satu file: presign just-in-time -> PUT R2 -> callback simpan. */
+  const uploadFile = useCallback(
+    async (id: string) => {
+      const file = filesRef.current.get(id);
+      if (!file) return;
+      const controller = new AbortController();
+      abortRef.current.set(id, controller);
+      patchFile(id, { status: "mengunggah", progress: 0, message: null });
+      const result = await uploadOneFile(
+        file,
+        purpose,
+        (loaded: number, total: number) =>
+          patchFile(id, {
+            progress: total > 0 ? Math.round((loaded / total) * 100) : 0,
+          }),
+        controller.signal,
+      );
+      abortRef.current.delete(id);
+      if (result.ok) {
+        await runSaveCallback(id, result.asset);
+        return;
+      }
+      if (result.error.kind === "aborted") {
+        patchFile(id, {
+          status: "dibatalkan",
+          message: "Unggahan dibatalkan.",
+        });
+        return;
+      }
+      patchFile(id, {
+        status: "gagal",
+        message: result.error.message,
+      });
+    },
+    [purpose, patchFile, runSaveCallback],
+  );
+
+  /** Retry simpan-metadata tanpa reupload (pakai asset yang sudah ada). */
+  const retrySave = useCallback(
+    (id: string) => {
+      const target = filesRef.current.get(id);
+      const state = files.find((f) => f.id === id) ?? null;
+      const asset = state?.asset ?? null;
+      if (!target || !asset) return;
+      void runSaveCallback(id, asset);
+    },
+    [files, runSaveCallback],
+  );
+
   const addFiles = useCallback(
     (incoming: FileList | File[]) => {
       const list = Array.from(incoming);
-      if (list.length === 0) return;
+      if (list.length === 0 || disabled) return;
       const accepted = acceptedMimeTypes(purpose);
       const next: UploaderFileState[] = [];
       const valid: File[] = [];
@@ -80,7 +202,13 @@ export function AssetUploader({
           });
           continue;
         }
-        next.push({ ...toState(file), status: "siap", message: null });
+        const state = {
+          ...toState(file),
+          status: "siap" as const,
+          message: null,
+        };
+        next.push(state);
+        filesRef.current.set(state.id, file);
         valid.push(file);
       }
       const rejected = next.filter((f) => f.status === "gagal");
@@ -92,15 +220,22 @@ export function AssetUploader({
       setFiles((prev) => [...prev, ...next]);
       if (valid.length > 0) onFilesValidated?.(valid);
     },
-    [purpose, onFilesValidated],
+    [purpose, onFilesValidated, disabled],
   );
 
-  const removeFile = useCallback((id: string) => {
+  const cancelFile = useCallback((id: string) => {
+    const controller = abortRef.current.get(id);
+    if (controller) {
+      controller.abort();
+      return;
+    }
+    // Belum mulai mengunggah: batalkan pilihan.
     setFiles((prev) => {
       const target = prev.find((f) => f.id === id);
       if (target?.previewUrl) URL.revokeObjectURL(target.previewUrl);
+      filesRef.current.delete(id);
       return prev.map((f) =>
-        f.id === id && (f.status === "mengunggah" || f.status === "siap")
+        f.id === id && f.status === "siap"
           ? { ...f, status: "dibatalkan", message: "Pemilihan dibatalkan." }
           : f,
       );
@@ -179,8 +314,8 @@ export function AssetUploader({
         <div className="mt-4">
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-sand/70">
-              {files.length} berkas dipilih. Unggah aktif setelah endpoint
-              presign E4-2 tersedia.
+              {files.length} berkas dipilih. Tekan Unggah per berkas; file
+              dikirim langsung ke R2, bukan ke Worker.
             </p>
             <button
               type="button"
@@ -233,14 +368,42 @@ export function AssetUploader({
                     />
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => removeFile(file.id)}
-                  aria-label={`Batalkan ${file.name}`}
-                  className="shrink-0 rounded border border-sand/25 px-2.5 py-1.5 text-xs text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-                >
-                  Batal
-                </button>
+                <div className="flex shrink-0 flex-col gap-1.5">
+                  {file.status === "siap" || file.status === "gagal" ? (
+                    <button
+                      type="button"
+                      onClick={() => void uploadFile(file.id)}
+                      disabled={disabled}
+                      aria-label={`Unggah ${file.name}`}
+                      className="rounded bg-ember px-2.5 py-1.5 text-xs text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember disabled:opacity-50"
+                    >
+                      {file.status === "gagal" ? "Coba Lagi" : "Unggah"}
+                    </button>
+                  ) : null}
+                  {file.status === "gagal-simpan" ? (
+                    <button
+                      type="button"
+                      onClick={() => retrySave(file.id)}
+                      disabled={disabled}
+                      aria-label={`Coba simpan lagi ${file.name} tanpa mengunggah ulang`}
+                      className="rounded bg-ember px-2.5 py-1.5 text-xs text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember disabled:opacity-50"
+                    >
+                      Simpan Lagi
+                    </button>
+                  ) : null}
+                  {file.status === "siap" ||
+                  file.status === "mengunggah" ||
+                  file.status === "gagal" ? (
+                    <button
+                      type="button"
+                      onClick={() => cancelFile(file.id)}
+                      aria-label={`Batalkan ${file.name}`}
+                      className="rounded border border-sand/25 px-2.5 py-1.5 text-xs text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                    >
+                      Batal
+                    </button>
+                  ) : null}
+                </div>
               </li>
             ))}
           </ul>
