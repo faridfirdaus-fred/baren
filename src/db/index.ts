@@ -5,9 +5,24 @@ import type ws from "ws";
 
 import * as schema from "./schema";
 
+// Configure DNS/network family for Node.js development (avoids IPv6 timeout on hosts without IPv6 routing)
+if (typeof process !== "undefined" && process.versions?.node) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const dns = require("node:dns");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const net = require("node:net");
+    dns.setDefaultResultOrder?.("ipv4first");
+    net.setDefaultAutoSelectFamily?.(false);
+  } catch {
+    // Abaikan di luar Node.js
+  }
+}
+
 // Configure WebSocket for Node.js development
 if (typeof WebSocket === "undefined") {
   // Dynamic import to avoid bundling in Workers
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   neonConfig.webSocketConstructor = require("ws") as typeof ws;
 }
 

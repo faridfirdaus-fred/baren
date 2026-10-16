@@ -25,7 +25,7 @@ export async function DELETE(
     const rows = await getDb()
       .delete(comments)
       .where(eq(comments.id, id.data))
-      .returning({ id: comments.id });
+      .returning();
     if (!rows[0]) return notFound("Komentar");
     return fromResult({ ok: true, data: { id: rows[0].id } });
   } catch (error) {
