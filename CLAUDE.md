@@ -1,6 +1,6 @@
 @AGENTS.md
 
-@docs/TASK\_[BREAKDOWN.md](http://BREAKDOWN.md) 
+@docs/TASK\_[BREAKDOWN.md](http://BREAKDOWN.md)
 
 ```markdown
 # Panduan Agent — BAREN Web
@@ -9,11 +9,11 @@ Dokumen ini adalah instruksi kerja untuk agent (AI coding assistant) yang menger
 
 ## 1. Dokumen Sumber (wajib dibaca sebelum bekerja)
 
-| Dokumen | Fungsi |
-| --- | --- |
-| `docs/PRD.md` | **Kenapa & apa** — visi, persona, ruang lingkup, kebutuhan fungsional/nonfungsional, acuan desain. |
-| `docs/SRS.md` | **Spesifikasi detail** — kebutuhan bernomor (FR-*, NFR-*, EI-*, C-*, DG-*) sebagai acuan implementasi & pengujian. |
-| `docs/TASK_BREAKDOWN.md` | **Bagaimana & urutannya** — epik, task, estimasi, dependensi, status, dan log progress. |
+| Dokumen                  | Fungsi                                                                                                             |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `docs/PRD.md`            | **Kenapa & apa** — visi, persona, ruang lingkup, kebutuhan fungsional/nonfungsional, acuan desain.                 |
+| `docs/SRS.md`            | **Spesifikasi detail** — kebutuhan bernomor (FR-_, NFR-_, EI-_, C-_, DG-*) sebagai acuan implementasi & pengujian. |
+| `docs/TASK_BREAKDOWN.md` | **Bagaimana & urutannya** — epik, task, estimasi, dependensi, status, dan log progress.                            |
 
 > **Aturan:** Jangan mulai menulis kode sebelum membaca ketiga dokumen di atas. Setiap pekerjaan harus dapat dipetakan ke minimal satu task di `docs/TASK_BREAKDOWN.md` dan satu kebutuhan di `docs/SRS.md`.
 
@@ -29,19 +29,25 @@ Dokumen ini adalah instruksi kerja untuk agent (AI coding assistant) yang menger
 8. **Sinkronkan dokumen** — bila scope/desain berubah, perbarui `docs/PRD.md` dan/atau `docs/SRS.md` lebih dulu agar tetap konsisten.
 
 ### Format pembaruan status task
-Ubah baris tabel task, contoh:
 
+Ubah baris tabel task, contoh:
 ```
+
 | E11-2 | Handler login Google → simpan waitlist | ... | P0 | 5 | E11-1, E1-4 | In Progress | 2026-01-15: mulai implementasi callback |
+
 ```
 Setelah selesai:
 ```
+
 | E11-2 | Handler login Google → simpan waitlist | ... | P0 | 5 | E11-1, E1-4 | Done | 2026-01-16: upsert email, commit abc123 |
+
 ```
 
 ### Format entri Log Progress
 ```
+
 | 2026-01-16 | E11-2 | Handler login Google menyimpan email ke waitlist (idempoten) | commit abc123 |
+
 ```
 
 ## 3. Aturan Teknis Proyek
@@ -66,13 +72,15 @@ Setelah selesai:
 ## 5. Perintah Berguna
 
 ```
-pnpm dev            # jalankan dev server
-pnpm build          # build Next.js
-pnpm lint           # ESLint
-pnpm preview        # build + preview OpenNext (Cloudflare)
-pnpm deploy         # build + deploy ke Cloudflare Workers
-pnpm db:generate    # generate migrasi Drizzle
-pnpm db:push        # push skema ke Neon
+
+pnpm dev # jalankan dev server
+pnpm build # build Next.js
+pnpm lint # ESLint
+pnpm preview # build + preview OpenNext (Cloudflare)
+pnpm deploy # build + deploy ke Cloudflare Workers
+pnpm db:generate # generate migrasi Drizzle
+pnpm db:push # push skema ke Neon
+
 ```
 
 ---
@@ -89,5 +97,3 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 
 ```
-
-  
