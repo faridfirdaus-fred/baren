@@ -22,7 +22,7 @@
 ## API dan UI waitlist
 
 - [x] **E11-7** (Dep E3-1, E11-2): GET `/api/waitlist` admin-only, Zod query page/search, pagination deterministik dan count; 401 anonim, 403 pengunjung Google, tidak ada email di GET publik.
-- [ ] **E11-8** (Dep E11-7): endpoint CSV admin-only dengan header/encoding aman dan escaping CSV untuk nilai yang diawali `=`, `+`, `-`, `@`; uji 0 baris, unicode, pemisah/quote/newline dan unauthorized. Data diekspor hanya oleh admin.
-- [ ] **E11-9** (Dep E11-7, E11-8): tabel email/nama/tanggal, pencarian/paginasi/jumlah total, tombol ekspor CSV, error/kosong/loading dan keyboard; uji daftar panjang.
+- [x] **E11-8** (Dep E11-7): endpoint CSV admin-only dengan header/encoding aman dan escaping CSV untuk nilai yang diawali `=`, `+`, `-`, `@`; uji 0 baris, unicode, pemisah/quote/newline dan unauthorized. Data diekspor hanya oleh admin.
+- [x] **E11-9** (Dep E11-7, E11-8): tabel email/nama/tanggal, pencarian/paginasi/jumlah total, tombol ekspor CSV, error/kosong/loading dan keyboard; uji daftar panjang.
 
 **Verifikasi:** `pnpm lint && pnpm exec tsc --noEmit && pnpm format:check && pnpm build`, preview Worker: admin CRUD → halaman publik, anonim/Google-only 401/403, upload/hapus riil, CSV aman, navigasi mobile/keyboard. Cek setiap modul terhadap FR-ADM terkait sebelum tandai `Done`.
