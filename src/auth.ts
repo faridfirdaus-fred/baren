@@ -186,8 +186,22 @@ function buildAuth() {
         return token;
       },
       async session({ session, token }) {
-        (session.user as { id?: string }).id =
+        const id =
           (token.id as string | undefined) ?? (token.sub as string | undefined);
+        (session.user as { id?: string }).id = id;
+        try {
+          const rows = await getDb()
+            .select({ name: users.name, email: users.email, role: users.role })
+            .from(users)
+            .where(eq(users.id, id ?? ""))
+            .limit(1);
+          if (rows[0]) {
+            session.user.name = rows[0].name;
+            if (rows[0].email) session.user.email = rows[0].email;
+            (session.user as { role?: string }).role = rows[0].role;
+            return session;
+          }
+        } catch {}
         (session.user as { role?: string }).role =
           ((token as { role?: string }).role as string | undefined) ??
           "visitor";
@@ -210,10 +224,25 @@ export async function isEmailAdmin(email: string): Promise<boolean> {
 // process.env sebelum NextAuth membaca konfigurasinya. NextAuth v5 beta
 // membaca AUTH_SECRET sekali saat NextAuth() dipanggil, jadi sync harus
 // terjadi SEBELUM buildAuth().
-export async function auth() {
+//
+// Hanya untuk Server Component/Route Handler/Server Action (tanpa argumen).
+// JANGAN panggil `auth(request)` di proxy/middleware: pada beta ini argumen
+// request menjalankan pipeline middleware (mengembalikan Response, bukan
+// sesi). Guard proxy memakai verifikasi JWT langsung (lihat `src/proxy.ts`).
+type SessionResult = {
+  user?: {
+    id?: string;
+    name?: string | null;
+    email?: string | null;
+    role?: string;
+  };
+  expires: string;
+} | null;
+
+export async function auth(): Promise<SessionResult> {
   syncProcessEnv(getRequestEnv());
   const { auth: inner } = buildAuth();
-  return inner();
+  return (inner as () => Promise<SessionResult>)();
 }
 
 export async function signIn(
