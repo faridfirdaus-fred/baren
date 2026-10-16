@@ -1,4 +1,10 @@
-import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  integer,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -9,12 +15,66 @@ const timestamps = {
     .notNull(),
 };
 
-export const branding = pgTable("branding", {
+// Auth.js v5 tables (E1-3). Strategi sesi database (E2-1) agar Credentials +
+// Google berbagi sesi. Kolom role: admin vs visitor; passwordHash hanya admin.
+export const users = pgTable("users", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name"),
+  email: text("email").unique(),
+  emailVerified: timestamp("email_verified", { mode: "date" }),
+  image: text("image"),
+  role: text("role").notNull().default("visitor"),
+  passwordHash: text("password_hash"),
+  ...timestamps,
+});
+
+export const accounts = pgTable(
+  "accounts",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type").notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state"),
+  },
+  (account) => [
+    primaryKey({ columns: [account.provider, account.providerAccountId] }),
+  ],
+);
+
+export const sessions = pgTable("sessions", {
+  sessionToken: text("session_token").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expires: timestamp("expires", { mode: "date" }).notNull(),
+});
+
+export const verificationTokens = pgTable(
+  "verification_tokens",
+  {
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+  },
+  (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })],
+);
+
+// Konten E1-1 (SRS 3.5): branding->site_settings, how_to_play->steps+video.
+export const siteSettings = pgTable("site_settings", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  siteName: text("site_name").notNull().default("Baren"),
-  tagline: text("tagline"),
-  logoUrl: text("logo_url"),
-  faviconUrl: text("favicon_url"),
+  key: text("key").notNull().unique(),
+  value: text("value"),
   ...timestamps,
 });
 
@@ -29,6 +89,13 @@ export const hero = pgTable("hero", {
   secondaryCtaLabel: text("secondary_cta_label"),
   secondaryCtaUrl: text("secondary_cta_url"),
   isPublished: integer("is_published").notNull().default(1),
+  ...timestamps,
+});
+
+export const heroBanners = pgTable("hero_banners", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  imageUrl: text("image_url").notNull(),
+  sortOrder: integer("sort_order").notNull().default(0),
   ...timestamps,
 });
 
@@ -49,21 +116,28 @@ export const features = pgTable("features", {
   ...timestamps,
 });
 
-export const howToPlay = pgTable("how_to_play", {
+export const howToPlaySteps = pgTable("how_to_play_steps", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   step: integer("step").notNull().default(1),
   title: text("title").notNull(),
   description: text("description"),
-  imageUrl: text("image_url"),
-  videoUrl: text("video_url"),
+  mediaUrl: text("media_url"),
+  sortOrder: integer("sort_order").notNull().default(0),
   ...timestamps,
 });
 
-export const gallery = pgTable("gallery", {
+export const howToPlayVideo = pgTable("how_to_play_video", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  title: text("title"),
+  videoUrl: text("video_url").notNull(),
+  ...timestamps,
+});
+
+// Konten dinamis E1-2.
+export const galleryAssets = pgTable("gallery_assets", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   kind: text("kind").notNull().default("image"),
-  assetUrl: text("asset_url").notNull(),
+  title: text("title"),
+  fileUrl: text("file_url").notNull(),
   sortOrder: integer("sort_order").notNull().default(0),
   ...timestamps,
 });
@@ -75,12 +149,12 @@ export const news = pgTable("news", {
   excerpt: text("excerpt"),
   body: text("body").notNull(),
   coverUrl: text("cover_url"),
-  isPublished: integer("is_published").notNull().default(0),
+  status: text("status").notNull().default("draft"),
   publishedAt: timestamp("published_at", { withTimezone: true }),
   ...timestamps,
 });
 
-export const faqs = pgTable("faqs", {
+export const faq = pgTable("faq", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   question: text("question").notNull(),
   answer: text("answer").notNull(),
@@ -96,16 +170,25 @@ export const socialLinks = pgTable("social_links", {
   ...timestamps,
 });
 
-export const siteSettings = pgTable("site_settings", {
+export const downloadLinks = pgTable("download_links", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  key: text("key").notNull().unique(),
-  value: text("value"),
+  platform: text("platform").notNull(),
+  label: text("label").notNull(),
+  url: text("url").notNull(),
+  sortOrder: integer("sort_order").notNull().default(0),
   ...timestamps,
 });
 
-export const admins = pgTable("admins", {
+// Waiting list E1-4: email unik DB; tanpa token OAuth (NFR-SEC-07).
+export const waitlist = pgTable("waitlist", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   email: text("email").notNull().unique(),
-  passwordHash: text("password_hash").notNull(),
-  ...timestamps,
+  name: text("name"),
+  photoUrl: text("photo_url"),
+  provider: text("provider").notNull().default("google"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });
+
+export type UserRole = "admin" | "visitor";
