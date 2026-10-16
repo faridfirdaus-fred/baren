@@ -1,6 +1,6 @@
 # Komentar Landing Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Pengunjung login Google dapat berkomentar di satu kolom landing dan komentar langsung tayang; admin dapat menghapus.
 
@@ -44,7 +44,7 @@
 - Consumes: `users.id`, `timestamps`.
 - Produces: `comments` + `commentBodySchema` untuk Task 2–3.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/lib/validation/comments.test.mjs
@@ -64,12 +64,12 @@ describe("commentBodySchema", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test src/lib/validation/comments.test.mjs`
 Expected: FAIL with "Cannot find module '../src/lib/validation/comments.ts'".
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```ts
 // src/lib/validation/comments.ts
@@ -101,12 +101,12 @@ export const comments = pgTable("comments", {
 
 Generate migrasi, pastikan tanpa `DROP`.
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test src/lib/validation/comments.test.mjs && pnpm exec tsc --noEmit`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/db/schema.ts drizzle src/lib/validation/comments.ts src/lib/validation/comments.test.mjs
@@ -128,7 +128,7 @@ git commit -m "feat(komentar): skema comments + validasi body"
 - Consumes: `commentBodySchema` Task 1, sesi Auth.js, `checkAdmin`.
 - Produces: `GET` (publik, `{ id, name, photoUrl, body, createdAt }`, cursor), `POST` (visitor), `DELETE` (admin) untuk Task 3.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/lib/validation/comments.test.mjs — tambah
@@ -146,12 +146,12 @@ describe("rate limit komentar", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test src/lib/validation/comments.test.mjs`
 Expected: FAIL with "Cannot find module '../src/lib/comments.ts'" atau fungsi hilang.
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```ts
 // src/lib/comments.ts
@@ -164,12 +164,12 @@ export function checkCommentRateLimit(stamps: number[], now: number): boolean {
 
 `GET /api/comments`: query `limit` (default 20, maks 50) + `cursor` (id terakhir), join `users` untuk nama/foto saja (tanpa email), urut `id desc`. `POST`: wajib sesi visitor Google; `parse` Zod; hitung 5 kiriman terakhir user 10 menit (query `created_at`); 429 bila lewat; insert lalu kembalikan baris publik. `DELETE /:id`: `checkAdmin`, 401/403, 404 bila tidak ada.
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test src/lib/validation/comments.test.mjs && pnpm exec tsc --noEmit && pnpm lint`
 Expected: PASS; preview: anonim POST → 401; visitor valid → 201 langsung tampil; ke-6 cepat → 429; admin DELETE → 200.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/comments.ts src/app/api/comments src/lib/validation/comments.test.mjs
@@ -191,7 +191,7 @@ git commit -m "feat(komentar): API daftar-kirim-hapus + rate limit"
 - Consumes: Task 2 (GET/POST/DELETE), sesi Google, anchor `#komentar`.
 - Produces: UI komentar untuk plan CMS/mutu; nav `MEDIA SOSIAL`/`SUPPORT` tidak berubah.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/lib/validation/comments.test.mjs — tambah (kontrak render)
@@ -208,12 +208,12 @@ describe("seksi komentar", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test src/lib/validation/comments.test.mjs`
 Expected: FAIL with ENOENT `src/components/site/comments.tsx`.
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```tsx
 // src/components/site/comments.tsx (Server Component + form client terpisah bila perlu)
@@ -237,12 +237,12 @@ export function Comments({
 
 Anonim melihat daftar + tombol "Masuk dengan Google untuk berkomentar". Login melihat form (wajib isi, maks 500, error per kolom Indonesia). Kirim sukses → komentar langsung muncul di atas tanpa reload penuh (revalidate). Admin melihat tombol Hapus per item + dialog konfirmasi (reuse pola E8-10).
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node --test src/lib/validation/comments.test.mjs && pnpm exec tsc --noEmit && pnpm lint && pnpm build`
 Expected: PASS; preview: kirim sebagai 2 akun berbeda tampil nama masing-masing; admin hapus hilang ≤60 detik.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/components/site/comments.tsx "src/app/(site)/page.tsx" src/app/admin src/lib/validation/comments.test.mjs
@@ -253,6 +253,6 @@ git commit -m "feat(komentar): seksi landing + hapus admin"
 
 ## Verifikasi akhir plan
 
-- [ ] `pnpm lint && pnpm exec tsc --noEmit && pnpm format:check && pnpm build` hijau.
-- [ ] Spam dasar tertahan (429), XSS tidak mungkin (teks polos, tanpa `dangerouslySetInnerHTML`).
-- [ ] Update `docs/TASK_BREAKDOWN.md` §E13 + matriks + log.
+- [x] `pnpm lint && pnpm exec tsc --noEmit && pnpm format:check && pnpm build` hijau.
+- [x] Spam dasar tertahan (429), XSS tidak mungkin (teks polos, tanpa `dangerouslySetInnerHTML`).
+- [x] Update `docs/TASK_BREAKDOWN.md` §E13 + matriks + log.
