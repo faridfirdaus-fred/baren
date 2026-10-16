@@ -77,6 +77,16 @@ export default function AdminLayout({
       </li>
       <li>
         <Link
+          href="/admin/waitlist"
+          onClick={closeNav}
+          aria-current={pathname === "/admin/waitlist" ? "page" : undefined}
+          className="flex min-h-11 items-center rounded-none px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+        >
+          Waiting List
+        </Link>
+      </li>
+      <li>
+        <Link
           href="/"
           onClick={closeNav}
           className="flex min-h-11 items-center rounded-none px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand/75 transition-colors hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
