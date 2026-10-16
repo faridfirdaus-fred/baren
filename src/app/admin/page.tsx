@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { auth, signOut } from "@/auth";
+import { AdminAccountForm } from "@/components/admin/account-form";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,10 @@ export default async function AdminDashboardPage() {
     <main>
       <h1>Dasbor Admin</h1>
       <p>Masuk sebagai {(session.user as { email?: string }).email}</p>
+      <AdminAccountForm
+        name={session.user.name ?? ""}
+        email={(session.user as { email?: string }).email ?? ""}
+      />
       <form
         action={async () => {
           "use server";

@@ -33,10 +33,17 @@ export async function updateAdminProfileAction(
   if (existing[0] && existing[0].id !== sessionUser.id) {
     return { ok: false, message: "Email sudah digunakan akun lain." };
   }
-  await database
-    .update(users)
-    .set({ name: parsed.data.name, email: parsed.data.email })
-    .where(eq(users.id, sessionUser.id));
+  try {
+    await database
+      .update(users)
+      .set({ name: parsed.data.name, email: parsed.data.email })
+      .where(eq(users.id, sessionUser.id));
+  } catch (error) {
+    if ((error as { code?: string }).code === "23505") {
+      return { ok: false, message: "Email sudah digunakan akun lain." };
+    }
+    throw error;
+  }
   return { ok: true, message: "Profil berhasil diperbarui." };
 }
 
