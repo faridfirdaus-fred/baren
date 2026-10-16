@@ -7,6 +7,7 @@ import { AdminAccountForm } from "@/components/admin/account-form";
 import { getDb } from "@/db";
 import {
   about,
+  comments,
   downloadLinks,
   faq,
   features,
@@ -44,6 +45,7 @@ export default async function AdminDashboardPage() {
     newsCount,
     faqCount,
     wishlistCount,
+    commentsCount,
     siteSettingsUpdate,
     heroUpdate,
     heroBannersUpdate,
@@ -62,6 +64,7 @@ export default async function AdminDashboardPage() {
     db.select({ count: count() }).from(news),
     db.select({ count: count() }).from(faq),
     db.select({ count: count() }).from(wishlist),
+    db.select({ count: count() }).from(comments),
     db.select({ updatedAt: max(siteSettings.updatedAt) }).from(siteSettings),
     db.select({ updatedAt: max(hero.updatedAt) }).from(hero),
     db.select({ updatedAt: max(heroBanners.updatedAt) }).from(heroBanners),
@@ -87,6 +90,7 @@ export default async function AdminDashboardPage() {
     news: newsCount[0]?.count ?? 0,
     faq: faqCount[0]?.count ?? 0,
     wishlist: wishlistCount[0]?.count ?? 0,
+    comments: commentsCount[0]?.count ?? 0,
     contentUpdates: [
       siteSettingsUpdate[0]?.updatedAt ?? null,
       heroUpdate[0]?.updatedAt ?? null,
@@ -125,8 +129,12 @@ export default async function AdminDashboardPage() {
           <dd>{dashboard.faq}</dd>
         </div>
         <div>
-          <dt>Waitlist</dt>
+          <dt>Wishlist</dt>
           <dd>{dashboard.wishlist}</dd>
+        </div>
+        <div>
+          <dt>Komentar</dt>
+          <dd>{dashboard.comments}</dd>
         </div>
         <div>
           <dt>Pembaruan konten terakhir</dt>
