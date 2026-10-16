@@ -9,6 +9,7 @@ import Google from "next-auth/providers/google";
 import { z } from "zod";
 
 import { getDb } from "@/db";
+import { verifiedGoogleEmail } from "@/lib/google-profile.mjs";
 import {
   accounts,
   sessions,
@@ -131,9 +132,15 @@ function buildAuth() {
           return { id: user.id, name: user.name, email: user.email };
         },
       }),
-      // E11-1: scope openid email profile; hanya aktif bila kredensial tersedia.
+      // E11-1: scope Google eksplisit; state dan PKCE divalidasi Auth.js.
       ...(googleConfigured
-        ? [Google({ allowDangerousEmailAccountLinking: false })]
+        ? [
+            Google({
+              allowDangerousEmailAccountLinking: false,
+              authorization: { params: { scope: "openid email profile" } },
+              checks: ["state", "pkce"],
+            }),
+          ]
         : []),
     ],
     callbacks: {
@@ -141,10 +148,8 @@ function buildAuth() {
         // E11-2: hanya email Google terverifikasi yang masuk waitlist,
         // upsert atomik idempoten; kegagalan DB menolak login.
         if (account?.provider === "google") {
-          const emailVerified = (profile as { email_verified?: boolean } | null)
-            ?.email_verified;
-          const email = user.email ? normalizeEmail(user.email) : "";
-          if (emailVerified !== true || !email) return false;
+          const email = verifiedGoogleEmail(profile);
+          if (!email) return false;
           try {
             await getDb()
               .insert(waitlist)
@@ -154,7 +159,14 @@ function buildAuth() {
                 photoUrl: user.image ?? null,
                 provider: "google",
               })
-              .onConflictDoNothing({ target: waitlist.email });
+              .onConflictDoUpdate({
+                target: waitlist.email,
+                set: {
+                  name: user.name ?? null,
+                  photoUrl: user.image ?? null,
+                  provider: "google",
+                },
+              });
           } catch {
             return false;
           }
