@@ -31,7 +31,7 @@ async function login(loginEmail, loginPassword) {
 }
 
 async function logout() {
-  await page.getByRole("button", { name: "Keluar" }).click();
+  await page.getByRole("button", { name: "Keluar", exact: true }).click();
   await page.waitForURL(`${baseUrl}/admin/login`);
   signedIn = false;
 }
