@@ -162,6 +162,25 @@ export const faq = pgTable("faq", {
   ...timestamps,
 });
 
+// Kartu fleksibel landing E1-6: pengganti seksi statis Event/About/Agents/
+// Maps. Admin tambah/kurang/urut; `tone` mengendalikan palet (dark/light/
+// ember). CTA label+url wajib berpasangan (ditegakkan di Zod).
+export const landingCards = pgTable("landing_cards", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  slot: text("slot").notNull().default("general"),
+  eyebrow: text("eyebrow"),
+  title: text("title").notNull(),
+  subtitle: text("subtitle"),
+  body: text("body"),
+  imageUrl: text("image_url"),
+  ctaLabel: text("cta_label"),
+  ctaUrl: text("cta_url"),
+  tone: text("tone").notNull().default("dark"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  isPublished: integer("is_published").notNull().default(1),
+  ...timestamps,
+});
+
 export const socialLinks = pgTable("social_links", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   platform: text("platform").notNull(),
@@ -189,6 +208,17 @@ export const waitlist = pgTable("waitlist", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
+});
+
+// Komentar landing E1-7: satu kolom, wajib login Google (user_id pemilik),
+// langsung tayang tanpa antre moderasi; penindakan = DELETE admin.
+export const comments = pgTable("comments", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
+  ...timestamps,
 });
 
 export type UserRole = "admin" | "visitor";
