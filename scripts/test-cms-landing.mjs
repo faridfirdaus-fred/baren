@@ -45,13 +45,17 @@ try {
   await expectText(page, "Kelola Berita");
   await expectText(page, "maksimal 3");
   await page.getByLabel("Judul").fill("Berita Test E2E");
-  await page.getByLabel("Isi").fill("Konten berita untuk pengujian end-to-end.");
+  await page
+    .getByLabel("Isi")
+    .fill("Konten berita untuk pengujian end-to-end.");
   await page.getByLabel("Status").selectOption("published");
   await page.getByRole("button", { name: "Simpan" }).click();
   await expectText(page, "Berita ditambahkan");
 
   // 4. Landing-cards: tambah kartu
-  await page.goto(`${baseUrl}/admin/landing-cards`, { waitUntil: "networkidle" });
+  await page.goto(`${baseUrl}/admin/landing-cards`, {
+    waitUntil: "networkidle",
+  });
   await expectText(page, "Kelola Kartu Landing");
   await page.getByLabel("Judul").fill("Kartu Test E2E");
   await page.getByLabel("Tone").selectOption("dark");

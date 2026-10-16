@@ -3,6 +3,7 @@
 ## Konteks Session Sebelumnya (2026-10-17)
 
 Session panjang, selesai:
+
 - ✅ Plan `2026-10-17-cms-mutu-landing.md` (3 task, 4 commits: 9c55b89, f38811a, 48da9f7, 40d3306)
 - ✅ CMS admin UI lengkap: hero, landing-cards, news, how-to-play, comments
 - ✅ Dashboard nav + komentar management
@@ -15,6 +16,7 @@ Session panjang, selesai:
 Branch: `main` (clean, synced dengan origin)
 
 **Progress Epik:**
+
 - E0..E5: Done 100%
 - E6: 30% (situs publik — konten utama)
 - E7: 29% (situs publik — tambahan)
@@ -57,18 +59,21 @@ Di `docs/superpowers/plans/`:
 ## Rekomendasi Prioritas Next Session
 
 **Opsi 1 — Situs Publik (E6, E7):**
+
 - Kerjakan `2026-10-16-situs-publik.md`
 - Task: E6-2 (hero publik), E6-7/8 (footer, nav), E7-3/4/5 (gallery, FAQ, footer UI publik)
 - Impact: Landing page jadi lengkap untuk visitor
 - Estimasi: ~15-20 SP
 
 **Opsi 2 — Mutu + Testing (E9, E10):**
+
 - Kerjakan `2026-10-16-mutu.md` + sebagian `2026-10-16-rilis.md`
 - Task: E9-1 (Lighthouse audit), E9-3 (axe a11y), E10-2 (uji admin), E10-3 (uji keamanan)
 - Impact: Validasi kualitas sebelum UAT/deploy
 - Estimasi: ~12-15 SP
 
 **Opsi 3 — Cleanup + Rilis (E10, docs):**
+
 - Audit plan tersisa, arsipkan yang sudah selesai
 - Kerjakan E10-2..8 (testing lengkap → UAT → deploy → docs)
 - Impact: Proyek siap rilis
@@ -115,6 +120,7 @@ ls docs/superpowers/plans/*.md
 ```
 
 Expected:
+
 - Clean tree, branch `main`
 - Last commit: 40d3306 (docs: update TASK_BREAKDOWN)
 - 22 task Todo

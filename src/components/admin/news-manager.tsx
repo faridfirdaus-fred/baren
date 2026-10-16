@@ -185,8 +185,10 @@ export function NewsManager() {
     <div>
       <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded">
         <p className="text-sm text-gray-700">
-          <strong>Catatan:</strong> Hanya <strong>maksimal 3 berita terbaru</strong> yang tampil di landing page.
-          Jika kosong, seksi berita akan hilang. Saat ini belum ada halaman detail berita.
+          <strong>Catatan:</strong> Hanya{" "}
+          <strong>maksimal 3 berita terbaru</strong> yang tampil di landing
+          page. Jika kosong, seksi berita akan hilang. Saat ini belum ada
+          halaman detail berita.
         </p>
       </div>
 
@@ -263,7 +265,9 @@ export function NewsManager() {
             className="w-full border px-3 py-2 rounded"
           />
           {formErrors.coverUrl && (
-            <p className="text-red-600 text-sm mt-1">{formErrors.coverUrl[0]}</p>
+            <p className="text-red-600 text-sm mt-1">
+              {formErrors.coverUrl[0]}
+            </p>
           )}
         </div>
 

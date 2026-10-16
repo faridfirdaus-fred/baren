@@ -99,7 +99,9 @@ export function LandingCardsManager() {
     setSubmitting(true);
 
     try {
-      const url = editingId ? `/api/landing-cards/${editingId}` : "/api/landing-cards";
+      const url = editingId
+        ? `/api/landing-cards/${editingId}`
+        : "/api/landing-cards";
       const method = editingId ? "PUT" : "POST";
       const res = await fetch(url, {
         method,
@@ -253,7 +255,10 @@ export function LandingCardsManager() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="mb-8 p-4 border rounded space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="mb-8 p-4 border rounded space-y-4"
+      >
         <h3 className="font-bold mb-4">
           {editingId ? "Edit Kartu" : "Tambah Kartu"}
         </h3>

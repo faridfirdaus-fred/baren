@@ -62,7 +62,9 @@ export function HowToPlayManager() {
         setError(json.message || "Gagal memuat how-to-play");
         return;
       }
-      setSteps((json.data?.steps || []).sort((a, b) => a.sortOrder - b.sortOrder));
+      setSteps(
+        (json.data?.steps || []).sort((a, b) => a.sortOrder - b.sortOrder),
+      );
       setVideoUrl(json.data?.videoUrl || "");
     } catch (err) {
       setError("Gagal memuat how-to-play");
@@ -110,7 +112,13 @@ export function HowToPlayManager() {
         message: editingStepId ? "Langkah diperbarui" : "Langkah ditambahkan",
         type: "success",
       });
-      setStepForm({ step: 1, title: "", description: "", mediaUrl: "", sortOrder: 0 });
+      setStepForm({
+        step: 1,
+        title: "",
+        description: "",
+        mediaUrl: "",
+        sortOrder: 0,
+      });
       setEditingStepId(null);
       await loadData();
     } catch (err) {
@@ -134,7 +142,13 @@ export function HowToPlayManager() {
   };
 
   const handleCancelEdit = () => {
-    setStepForm({ step: 1, title: "", description: "", mediaUrl: "", sortOrder: 0 });
+    setStepForm({
+      step: 1,
+      title: "",
+      description: "",
+      mediaUrl: "",
+      sortOrder: 0,
+    });
     setEditingStepId(null);
     setFormErrors({});
   };
@@ -344,7 +358,9 @@ export function HowToPlayManager() {
               </h4>
               <p className="text-sm text-gray-600 mt-2">{item.description}</p>
               {item.mediaUrl && (
-                <p className="text-xs text-gray-500 mt-1">Media: {item.mediaUrl}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Media: {item.mediaUrl}
+                </p>
               )}
               <div className="flex gap-2 mt-4">
                 <button

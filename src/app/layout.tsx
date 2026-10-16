@@ -16,12 +16,15 @@ const anton = Anton({
 export const metadata: Metadata = {
   title: "BAREN | Rebut benteng. Kuasai arena.",
   description: "BAREN adalah game aksi tim 5v5 terinspirasi benteng-bentengan.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://baren.example.com"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL || "https://baren.example.com",
+  ),
   openGraph: {
     type: "website",
     locale: "id_ID",
     title: "BAREN | Rebut benteng. Kuasai arena.",
-    description: "BAREN adalah game aksi tim 5v5 terinspirasi benteng-bentengan.",
+    description:
+      "BAREN adalah game aksi tim 5v5 terinspirasi benteng-bentengan.",
   },
   twitter: {
     card: "summary_large_image",

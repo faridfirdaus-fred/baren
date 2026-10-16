@@ -42,8 +42,15 @@ export interface DashboardSummary extends DashboardCounts {
  * @returns Dashboard summary dengan latest content timestamp
  */
 export function readDashboardSummary(store: DashboardStore): DashboardSummary {
-  const { features, galleryAssets, news, faq, wishlist, comments, contentUpdates } =
-    store;
+  const {
+    features,
+    galleryAssets,
+    news,
+    faq,
+    wishlist,
+    comments,
+    contentUpdates,
+  } = store;
 
   // Filter null values dan cari timestamp terbesar
   const validDates = contentUpdates.filter(
