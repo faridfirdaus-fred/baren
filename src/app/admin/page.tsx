@@ -151,6 +151,38 @@ export default async function AdminDashboardPage() {
         <ul className="mt-2 flex flex-wrap gap-3">
           <li>
             <Link
+              href="/admin/hero"
+              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+            >
+              Kelola Hero
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/admin/landing-cards"
+              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+            >
+              Kelola Kartu Landing
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/admin/news"
+              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+            >
+              Kelola Berita
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/admin/how-to-play"
+              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+            >
+              Kelola How to Play
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/admin/branding"
               className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
             >
@@ -167,6 +199,14 @@ export default async function AdminDashboardPage() {
           </li>
           <li>
             <Link
+              href="/admin/gallery"
+              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+            >
+              Kelola Galeri
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/admin/links"
               className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
             >
@@ -178,7 +218,15 @@ export default async function AdminDashboardPage() {
               href="/admin/wishlist"
               className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
             >
-              Kelola Waitlist
+              Wishlist
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/admin/comments"
+              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+            >
+              Komentar
             </Link>
           </li>
         </ul>
