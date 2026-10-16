@@ -5,6 +5,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  /* E12-1 — Palet dasar BAREN (adaptasi pola Valorant, bukan aset Riot).
+     Kontras terukur (WCAG): sand #f2ede4/ink #0b1220 = 16.06:1;
+     ember #e4572e/ink = 5.08:1; sand/ember-700 #b23a1a = 5.13:1;
+     ember #e4572e/sand = 3.16:1 (hanya teks besar ≥3:1);
+     sand-600 #d8d2c6/ink = 12.44:1. Aturan pakai: teks normal di
+     latar gelap memakai sand, di latar terang memakai ink/ember-700/800;
+     CTA berisi memakai ember-700 + teks sand (5.13:1). */
   --color-ink: #0b1220;
   --color-ink-800: #101a2c;
   --color-ink-700: #16233a;
@@ -14,13 +21,46 @@
   --color-ember-600: #c6451f;
   --color-ember-700: #b23a1a;
   --color-ember-800: #9e3010;
-  --font-display: var(--font-anton);
-  --font-sans: var(--font-inter);
+  /* E12-1 — Token semantik (satu sumber untuk worktree lain):
+     latar/teks/aksen/border/fokus. */
+  --color-bg: var(--color-ink);
+  --color-fg: var(--color-sand);
+  --color-accent: var(--color-ember);
+  --color-accent-strong: var(--color-ember-700);
+  --color-line: rgb(242 237 228 / 0.15);
+  --color-focus: var(--color-ember);
+  --font-display: var(--font-anton), "Arial Narrow", sans-serif;
+  --font-sans:
+    var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
   --radius-none: 0px;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+/* E5-3 — Offset anchor di bawah header fixed h-20 (5rem) + napas. */
+[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+/* E5-3 — Tandai target anchor keyboard agar fokus lokasi terlihat. */
+[id]:target {
+  outline: 2px dashed var(--color-focus);
+  outline-offset: 4px;
+}
+
+/* E5-5 — Kunci anti overflow horizontal 360–1920px. */
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+img,
+video,
+svg {
+  max-width: 100%;
 }
 
 .container-baren {
@@ -30,11 +70,23 @@ html {
 }
 
 .display-xl {
+  /* E12-2 — Display Anton condensed uppercase; fluid 44px→94px
+     (360/768/1920 + zoom 200% via clamp + vkecil). */
   font-family: var(--font-display);
   text-transform: uppercase;
   line-height: 0.92;
   letter-spacing: 0.01em;
   font-size: clamp(2.75rem, 6.6vw, 5.9rem);
+  text-wrap: balance;
+}
+
+.display-lg {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  text-wrap: balance;
 }
 
 .eyebrow {
@@ -42,6 +94,7 @@ html {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  line-height: 1.5;
 }
 
 .pattern-grid {
@@ -123,72 +176,74 @@ body {
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  /* E12-1 — BAREN default dark theme (mobile-first). shadcn vars dipetakan
+     ke palet BAREN agar primitives mengikuti satu sumber. */
+  --background: #0b1220;
+  --foreground: #f2ede4;
+  --card: #101a2c;
+  --card-foreground: #f2ede4;
+  --popover: #101a2c;
+  --popover-foreground: #f2ede4;
+  --primary: #b23a1a;
+  --primary-foreground: #f2ede4;
+  --secondary: #16233a;
+  --secondary-foreground: #f2ede4;
+  --muted: #16233a;
+  --muted-foreground: #d8d2c6;
+  --accent: #e4572e;
+  --accent-foreground: #0b1220;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --border: rgb(242 237 228 / 0.15);
+  --input: rgb(242 237 228 / 0.2);
+  --ring: #e4572e;
+  --chart-1: #e4572e;
+  --chart-2: #d8d2c6;
+  --chart-3: #16233a;
+  --chart-4: #101a2c;
+  --chart-5: #f2ede4;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #101a2c;
+  --sidebar-foreground: #f2ede4;
+  --sidebar-primary: #b23a1a;
+  --sidebar-primary-foreground: #f2ede4;
+  --sidebar-accent: #16233a;
+  --sidebar-accent-foreground: #f2ede4;
+  --sidebar-border: rgb(242 237 228 / 0.15);
+  --sidebar-ring: #e4572e;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: #0b1220;
+  --foreground: #f2ede4;
+  --card: #101a2c;
+  --card-foreground: #f2ede4;
+  --popover: #101a2c;
+  --popover-foreground: #f2ede4;
+  --primary: #b23a1a;
+  --primary-foreground: #f2ede4;
+  --secondary: #16233a;
+  --secondary-foreground: #f2ede4;
+  --muted: #16233a;
+  --muted-foreground: #d8d2c6;
+  --accent: #e4572e;
+  --accent-foreground: #0b1220;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --border: rgb(242 237 228 / 0.15);
+  --input: rgb(242 237 228 / 0.2);
+  --ring: #e4572e;
+  --chart-1: #e4572e;
+  --chart-2: #d8d2c6;
+  --chart-3: #16233a;
+  --chart-4: #101a2c;
+  --chart-5: #f2ede4;
+  --sidebar: #101a2c;
+  --sidebar-foreground: #f2ede4;
+  --sidebar-primary: #b23a1a;
+  --sidebar-primary-foreground: #f2ede4;
+  --sidebar-accent: #16233a;
+  --sidebar-accent-foreground: #f2ede4;
+  --sidebar-border: rgb(242 237 228 / 0.15);
+  --sidebar-ring: #e4572e;
 }
 
 @layer base {
@@ -200,5 +255,11 @@ body {
   }
   html {
     @apply font-sans;
+  }
+  /* E12-1/E12-6 — Fokus terlihat di kedua keadaan header (gelap/terang).
+     Ember #e4572e: 5.08:1 di ink, 3.16:1 di sand (≥3:1 indikator). */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
   }
 }
