@@ -1,5 +1,9 @@
 // E3-5: PUT/DELETE aset galeri per ID (admin).
 // DELETE mengembalikan fileUrl agar E4-5 dapat menghapus objek R2-nya.
+// E8-6: DELETE juga membersihkan objek R2 server-side (urutan DB->R2):
+// record dihapus dulu, lalu key diturunkan dari fileUrl via
+// keyFromPublicUrl dan objek dihapus idempoten. Gagal cleanup R2 tidak
+// menggagalkan penghapusan record (dilaporkan via r2Deleted:false).
 
 import { eq } from "drizzle-orm";
 
@@ -10,6 +14,8 @@ import { toDbResult } from "@/lib/api/db-errors";
 import { fromResult, notFound } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/parse";
 import { parseIdParam } from "@/lib/api/params";
+import { deleteAssetObject } from "@/lib/api/assets";
+import { deleteAsset, keyFromPublicUrl, verifyStoredAsset } from "@/lib/r2";
 import type { GalleryById, GalleryRow } from "@/lib/api/gallery";
 import {
   galleryUpdateSchema,
@@ -83,7 +89,7 @@ export async function PUT(
   }
 }
 
-/** Admin: hapus record aset (fileUrl dikembalikan untuk E4-5). */
+/** Admin: hapus record aset + bersihkan objek R2-nya (E8-6, DB->R2). */
 export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -96,7 +102,24 @@ export async function DELETE(
   try {
     const row = await byId(getDb()).remove(id.data);
     if (!row) return notFound("Aset galeri");
-    return fromResult({ ok: true, data: row });
+    let r2Deleted = false;
+    try {
+      const key = keyFromPublicUrl(row.fileUrl);
+      const cleaned = await deleteAssetObject(
+        {
+          head: async (k) => verifyStoredAsset(k),
+          remove: (k) => deleteAsset(k),
+        },
+        key,
+      );
+      r2Deleted = cleaned.ok && cleaned.data.deleted;
+    } catch (error) {
+      console.error(
+        `DELETE /api/gallery/[id] cleanup R2 gagal (id=${id.data}):`,
+        error instanceof Error ? error.message : error,
+      );
+    }
+    return fromResult({ ok: true, data: { ...row, r2Deleted } });
   } catch (error) {
     console.error("DELETE /api/gallery/[id] gagal:", error);
     return fromResult(toDbResult(error));

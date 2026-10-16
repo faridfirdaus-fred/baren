@@ -1,8 +1,11 @@
 import { AboutGame } from "@/components/site/about-game";
 import { AgentsSection } from "@/components/site/agents-section";
+import { ContactSection } from "@/components/site/contact-section";
+import { DownloadSection } from "@/components/site/download-section";
 import { EventBanner } from "@/components/site/event-banner";
 import { FaqAccordion } from "@/components/site/faq-accordion";
 import { GameFeatures } from "@/components/site/game-features";
+import { GallerySection } from "@/components/site/gallery-section";
 import { Hero } from "@/components/site/hero";
 import { LatestNews } from "@/components/site/latest-news";
 import { MapsSection } from "@/components/site/maps-section";
@@ -23,6 +26,9 @@ export default async function SiteHomePage() {
       <AgentsSection />
       <MapsSection />
       <FaqAccordion items={faqs ?? undefined} />
+      <GallerySection />
+      <DownloadSection />
+      <ContactSection />
     </>
   );
 }
