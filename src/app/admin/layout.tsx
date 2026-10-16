@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 /**
  * E5-6 — Kerangka panel admin (milik Fondasi; isi milik CMS/E8).
@@ -17,6 +18,7 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
   const [navOpen, setNavOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -47,10 +49,30 @@ export default function AdminLayout({
         <Link
           href="/admin"
           onClick={closeNav}
-          aria-current="page"
+          aria-current={pathname === "/admin" ? "page" : undefined}
           className="flex min-h-11 items-center rounded-none px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
         >
           Dasbor
+        </Link>
+      </li>
+      <li>
+        <Link
+          href="/admin/faq"
+          onClick={closeNav}
+          aria-current={pathname === "/admin/faq" ? "page" : undefined}
+          className="flex min-h-11 items-center rounded-none px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+        >
+          FAQ
+        </Link>
+      </li>
+      <li>
+        <Link
+          href="/admin/links"
+          onClick={closeNav}
+          aria-current={pathname === "/admin/links" ? "page" : undefined}
+          className="flex min-h-11 items-center rounded-none px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+        >
+          Tautan
         </Link>
       </li>
       <li>
