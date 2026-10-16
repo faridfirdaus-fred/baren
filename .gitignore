@@ -48,10 +48,6 @@ next-env.d.ts
 .dev.vars*
 !.dev.vars.example
 
-# agent instruction files (local only)
-AGENTS.md
-CLAUDE.md
-
 # scraping reference material (third-party assets — reference only, never shipped)
 /scrape/
 
