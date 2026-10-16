@@ -1,8 +1,5 @@
-import { AboutGame } from "@/components/site/about-game";
-import { AgentsSection } from "@/components/site/agents-section";
 import { ContactSection } from "@/components/site/contact-section";
 import { DownloadSection } from "@/components/site/download-section";
-import { EventBanner } from "@/components/site/event-banner";
 import { FaqAccordion } from "@/components/site/faq-accordion";
 import { GameFeatures } from "@/components/site/game-features";
 import { GallerySection } from "@/components/site/gallery-section";
@@ -10,7 +7,6 @@ import { Hero } from "@/components/site/hero";
 import { LatestNews } from "@/components/site/latest-news";
 import { LandingCards } from "@/components/site/landing-cards";
 import { HowToPlay } from "@/components/site/how-to-play";
-import { MapsSection } from "@/components/site/maps-section";
 import { CommentsSection } from "@/components/site/comments-section";
 import { getFaqItems } from "@/lib/faq-content";
 import { getLatestNews } from "@/lib/news-content";
@@ -45,12 +41,8 @@ export default async function SiteHomePage() {
     <>
       <Hero />
       {news && <LatestNews items={news} />}
-      <EventBanner />
       {cards && <LandingCards cards={cards} />}
-      <AboutGame />
       <GameFeatures />
-      <AgentsSection />
-      <MapsSection />
       {howToPlay && <HowToPlay content={howToPlay} />}
       <GallerySection />
       <FaqAccordion items={faqs ?? undefined} />
