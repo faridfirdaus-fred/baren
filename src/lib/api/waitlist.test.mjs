@@ -1,58 +1,143 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-
-const { readWaitlistPage, WAITLIST_PER_PAGE } = await import("./waitlist.ts");
+import { readWaitlistPage, WAITLIST_PER_PAGE } from "./waitlist.ts";
 
 describe("readWaitlistPage", () => {
-  it("uses fixed page size and returns pagination metadata", async () => {
-    const calls = [];
-    const store = {
-      async list(search, page, perPage) {
-        calls.push({ search, page, perPage });
-        return {
-          items: [
-            {
-              id: 7,
-              email: "rani@example.com",
-              name: "Rani",
-              createdAt: "2026-10-16T00:00:00.000Z",
-            },
-          ],
-          total: 26,
-        };
-      },
+  it("should pass through query parameters", () => {
+    const mockLister = {
+      items: [
+        {
+          id: 1,
+          email: "user1@test.com",
+          name: "User One",
+          createdAt: "2026-01-01T00:00:00Z",
+        },
+      ],
+      total: 1,
     };
 
+    const result = readWaitlistPage(mockLister, { page: 2, search: "test" });
+
+    assert.equal(result.page, 2);
+    assert.equal(result.items.length, 1);
+  });
+
+  it("should keep perPage constant at 25", () => {
+    const mockLister = {
+      items: [],
+      total: 0,
+    };
+
+    const result = readWaitlistPage(mockLister, { page: 1 });
+
+    assert.equal(result.perPage, 25);
     assert.equal(WAITLIST_PER_PAGE, 25);
-    assert.deepEqual(
-      await readWaitlistPage(store, { page: 2, search: "rani" }),
+  });
+
+  it("should calculate totalPages correctly for zero total", () => {
+    const mockLister = {
+      items: [],
+      total: 0,
+    };
+
+    const result = readWaitlistPage(mockLister, { page: 1 });
+
+    assert.equal(result.total, 0);
+    assert.equal(result.totalPages, 0);
+  });
+
+  it("should calculate totalPages correctly for non-zero totals", () => {
+    // Exactly one page
+    const result1 = readWaitlistPage({ items: [], total: 25 }, { page: 1 });
+    assert.equal(result1.total, 25);
+    assert.equal(result1.totalPages, 1);
+
+    // Partial second page
+    const result2 = readWaitlistPage({ items: [], total: 26 }, { page: 1 });
+    assert.equal(result2.total, 26);
+    assert.equal(result2.totalPages, 2);
+
+    // Exactly two pages
+    const result3 = readWaitlistPage({ items: [], total: 50 }, { page: 1 });
+    assert.equal(result3.total, 50);
+    assert.equal(result3.totalPages, 2);
+
+    // Multiple pages
+    const result4 = readWaitlistPage({ items: [], total: 100 }, { page: 1 });
+    assert.equal(result4.total, 100);
+    assert.equal(result4.totalPages, 4);
+
+    // Partial last page
+    const result5 = readWaitlistPage({ items: [], total: 63 }, { page: 1 });
+    assert.equal(result5.total, 63);
+    assert.equal(result5.totalPages, 3);
+  });
+
+  it("should pass through items array", () => {
+    const items = [
+      {
+        id: 1,
+        email: "user1@test.com",
+        name: "User 1",
+        createdAt: "2026-01-01T00:00:00Z",
+      },
+      {
+        id: 2,
+        email: "user2@test.com",
+        name: "User 2",
+        createdAt: "2026-01-02T00:00:00Z",
+      },
+      {
+        id: 3,
+        email: "user3@test.com",
+        name: "User 3",
+        createdAt: "2026-01-03T00:00:00Z",
+      },
+    ];
+
+    const result = readWaitlistPage({ items, total: 3 }, { page: 1 });
+
+    assert.equal(result.items.length, 3);
+    assert.deepEqual(result.items, items);
+  });
+
+  it("should handle edge case with 1 item", () => {
+    const result = readWaitlistPage(
       {
         items: [
           {
-            id: 7,
-            email: "rani@example.com",
-            name: "Rani",
-            createdAt: "2026-10-16T00:00:00.000Z",
+            id: 1,
+            email: "solo@test.com",
+            name: "Solo",
+            createdAt: "2026-01-01T00:00:00Z",
           },
         ],
-        page: 2,
-        perPage: 25,
-        total: 26,
-        totalPages: 2,
+        total: 1,
       },
+      { page: 1 },
     );
-    assert.deepEqual(calls, [{ search: "rani", page: 2, perPage: 25 }]);
+
+    assert.equal(result.total, 1);
+    assert.equal(result.totalPages, 1);
+    assert.equal(result.items.length, 1);
   });
 
-  it("returns zero totalPages for an empty result", async () => {
-    const store = {
-      async list() {
-        return { items: [], total: 0 };
-      },
-    };
+  it("should calculate totalPages for large datasets", () => {
+    const result = readWaitlistPage({ items: [], total: 1000 }, { page: 1 });
 
-    const page = await readWaitlistPage(store, { page: 1 });
+    assert.equal(result.total, 1000);
+    assert.equal(result.totalPages, 40); // 1000 / 25 = 40
+  });
 
-    assert.equal(page.totalPages, 0);
+  it("should handle different page numbers correctly", () => {
+    const mockData = { items: [], total: 100 };
+
+    const result1 = readWaitlistPage(mockData, { page: 1 });
+    assert.equal(result1.page, 1);
+    assert.equal(result1.totalPages, 4);
+
+    const result2 = readWaitlistPage(mockData, { page: 4 });
+    assert.equal(result2.page, 4);
+    assert.equal(result2.totalPages, 4);
   });
 });

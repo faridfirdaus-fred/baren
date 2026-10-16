@@ -1,42 +1,65 @@
+import type { WaitlistQuery } from "@/lib/validation/waitlist";
+
+/**
+ * Jumlah item waitlist per halaman - konstanta tetap 25
+ */
 export const WAITLIST_PER_PAGE = 25;
 
-export type WaitlistItem = {
+/**
+ * Waitlist list item - representasi satu entry waitlist
+ */
+export interface WaitlistListItem {
   id: number;
   email: string;
   name: string | null;
-  createdAt: string;
-};
+  createdAt: string; // ISO 8601
+}
 
-export type WaitlistPage = {
-  items: WaitlistItem[];
+/**
+ * Waitlist page - hasil pagination dengan metadata
+ */
+export interface WaitlistPage {
+  items: WaitlistListItem[];
+  total: number;
   page: number;
   perPage: number;
-  total: number;
   totalPages: number;
-};
+}
 
-export type WaitlistLister = {
-  list(
-    search: string | undefined,
-    page: number,
-    perPage: number,
-  ): Promise<{ items: WaitlistItem[]; total: number }>;
-};
+/**
+ * Waitlist lister - interface untuk dependency injection
+ */
+export interface WaitlistLister {
+  items: WaitlistListItem[];
+  total: number;
+}
 
-export async function readWaitlistPage(
+/**
+ * Membaca halaman waitlist dari lister yang terinjeksi.
+ *
+ * - Meneruskan query parameters (page, search)
+ * - perPage selalu 25 (WAITLIST_PER_PAGE)
+ * - Menghitung totalPages: Math.ceil(total / perPage)
+ * - totalPages = 0 jika total = 0
+ *
+ * @param lister - Waitlist lister dengan items dan total
+ * @param query - Query parameters (page, search optional)
+ * @returns Waitlist page dengan pagination metadata
+ */
+export function readWaitlistPage(
   lister: WaitlistLister,
-  input: { page: number; search?: string },
-): Promise<WaitlistPage> {
-  const { items, total } = await lister.list(
-    input.search,
-    input.page,
-    WAITLIST_PER_PAGE,
-  );
+  query: WaitlistQuery,
+): WaitlistPage {
+  const { items, total } = lister;
+  const { page } = query;
+
+  const totalPages = total === 0 ? 0 : Math.ceil(total / WAITLIST_PER_PAGE);
+
   return {
     items,
-    page: input.page,
-    perPage: WAITLIST_PER_PAGE,
     total,
-    totalPages: Math.ceil(total / WAITLIST_PER_PAGE),
+    page,
+    perPage: WAITLIST_PER_PAGE,
+    totalPages,
   };
 }

@@ -20,7 +20,7 @@ import {
   socialLinks,
   waitlist,
 } from "@/db/schema";
-import { summarizeAdminDashboard } from "@/lib/admin-dashboard";
+import { readDashboardSummary } from "@/lib/admin/dashboard";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +36,8 @@ export default async function AdminDashboardPage() {
   if (role !== "admin") redirect("/admin/login?error=AksesDitolak");
 
   const db = getDb();
+
+  // Query counts dan timestamps secara paralel
   const [
     featureCount,
     galleryCount,
@@ -77,26 +79,28 @@ export default async function AdminDashboardPage() {
     db.select({ updatedAt: max(socialLinks.updatedAt) }).from(socialLinks),
     db.select({ updatedAt: max(downloadLinks.updatedAt) }).from(downloadLinks),
   ]);
-  const dashboard = summarizeAdminDashboard({
+
+  // Buat store untuk dashboard summary
+  const dashboard = readDashboardSummary({
     features: featureCount[0]?.count ?? 0,
-    gallery: galleryCount[0]?.count ?? 0,
+    galleryAssets: galleryCount[0]?.count ?? 0,
     news: newsCount[0]?.count ?? 0,
     faq: faqCount[0]?.count ?? 0,
     waitlist: waitlistCount[0]?.count ?? 0,
-    contentUpdatedAt: {
-      siteSettings: siteSettingsUpdate[0]?.updatedAt ?? null,
-      hero: heroUpdate[0]?.updatedAt ?? null,
-      heroBanners: heroBannersUpdate[0]?.updatedAt ?? null,
-      about: aboutUpdate[0]?.updatedAt ?? null,
-      features: featuresUpdate[0]?.updatedAt ?? null,
-      howToPlaySteps: howToPlayStepsUpdate[0]?.updatedAt ?? null,
-      howToPlayVideo: howToPlayVideoUpdate[0]?.updatedAt ?? null,
-      gallery: galleryUpdate[0]?.updatedAt ?? null,
-      news: newsUpdate[0]?.updatedAt ?? null,
-      faq: faqUpdate[0]?.updatedAt ?? null,
-      social: socialLinksUpdate[0]?.updatedAt ?? null,
-      downloads: downloadLinksUpdate[0]?.updatedAt ?? null,
-    },
+    contentUpdates: [
+      siteSettingsUpdate[0]?.updatedAt ?? null,
+      heroUpdate[0]?.updatedAt ?? null,
+      heroBannersUpdate[0]?.updatedAt ?? null,
+      aboutUpdate[0]?.updatedAt ?? null,
+      featuresUpdate[0]?.updatedAt ?? null,
+      howToPlayStepsUpdate[0]?.updatedAt ?? null,
+      howToPlayVideoUpdate[0]?.updatedAt ?? null,
+      galleryUpdate[0]?.updatedAt ?? null,
+      newsUpdate[0]?.updatedAt ?? null,
+      faqUpdate[0]?.updatedAt ?? null,
+      socialLinksUpdate[0]?.updatedAt ?? null,
+      downloadLinksUpdate[0]?.updatedAt ?? null,
+    ],
   });
 
   return (
@@ -110,7 +114,7 @@ export default async function AdminDashboardPage() {
         </div>
         <div>
           <dt>Galeri</dt>
-          <dd>{dashboard.gallery}</dd>
+          <dd>{dashboard.galleryAssets}</dd>
         </div>
         <div>
           <dt>Berita</dt>
@@ -127,7 +131,7 @@ export default async function AdminDashboardPage() {
         <div>
           <dt>Pembaruan konten terakhir</dt>
           <dd>
-            {dashboard.latestContentUpdate?.toISOString() ??
+            {dashboard.latestContentUpdatedAt?.toISOString() ??
               "Belum ada pembaruan konten."}
           </dd>
         </div>
