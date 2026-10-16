@@ -64,7 +64,21 @@ Buat token API R2 (R2 → Manage API tokens) dengan izin baca/tulis pada bucket
 `baren-assets` saja. Token ini hanya dipakai server untuk signing; tidak
 pernah dikirim ke browser.
 
-## Uji manual (butuh kredensial uji + CORS)
+## Status penyiapan (2026-10-16, terverifikasi)
+
+- Bucket `baren-assets` (APAC, Standard, private) + `baren-opennext-cache`
+  ada pada satu akun; binding `wrangler.jsonc` cocok
+  (`BAREN_ASSETS`, `NEXT_INC_CACHE_R2_BUCKET`).
+- `.dev.vars` lokal terisi 5 key `R2_*` (ter-ignore git, tanpa nilai di repo).
+- CORS bucket `baren-assets` terpasang: `PUT, HEAD`, `Content-Type`,
+  `ETag`, `MaxAgeSeconds 3600`; origin localhost + staging/prod.
+- `R2_PUBLIC_URL` hidup (404 di `/` wajar: bucket masih kosong).
+- Token R2 scoped `Object Read & Write` hanya ke `baren-assets`.
+
+Sisa: uji upload/delete nyata menunggu E2-4 (guard admin) + E3-5
+(kontrak record) sesuai plan E4-2/E4-5.
+
+## Uji manual (butuh kredensial uji + CORS — SUDAH TERSEDIA)
 
 1. Isi `.dev.vars` lokal dengan kredensial bucket uji (bukan produksi).
 2. Jalankan `pnpm preview`, minta presigned URL sebagai admin (E4-2, setelah
@@ -75,6 +89,8 @@ pernah dikirim ke browser.
 4. Cek network: tidak ada `POST` byte file ke Worker; URL final yang disimpan
    adalah `publicUrl` (bukan signed URL).
 
-**Blocker saat ini:** kredensial R2/CORS bucket uji belum tersedia di
-lingkungan ini, sehingga uji upload nyata belum dapat dilakukan. Integrasi
-tidak diklaim sukses sampai bukti tersebut ada (lihat plan E4).
+**Blocker kredensial/CORS gugur 2026-10-16:** kredensial R2 + CORS bucket uji
+sudah terverifikasi (lihat `docs/R2_ASSETS_SETUP.md` § Status penyiapan).
+Sisa blocker hanya dependensi kode: E2-4 (guard admin) untuk E4-2/E4-5
+dan E3-5 (kontrak record) untuk E4-5. Integrasi upload nyata belum diklaim
+sukses sampai uji E4-2 ada buktinya.
