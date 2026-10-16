@@ -6,8 +6,13 @@ import { GameFeatures } from "@/components/site/game-features";
 import { Hero } from "@/components/site/hero";
 import { LatestNews } from "@/components/site/latest-news";
 import { MapsSection } from "@/components/site/maps-section";
+import { getFaqItems } from "@/lib/faq-content";
 
-export default function SiteHomePage() {
+// E7-3: FAQ dari DB (kosong = seksi hilang, gagal = fallback statis di
+// komponen). Hero dinamis diurus di dalam <Hero /> (E6-1).
+export default async function SiteHomePage() {
+  const faqs = await getFaqItems();
+
   return (
     <>
       <Hero />
@@ -17,7 +22,7 @@ export default function SiteHomePage() {
       <GameFeatures />
       <AgentsSection />
       <MapsSection />
-      <FaqAccordion />
+      <FaqAccordion items={faqs ?? undefined} />
     </>
   );
 }

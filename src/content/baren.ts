@@ -69,8 +69,6 @@ export const nav: NavItem[] = [
   { label: "ARTIKEL", href: "#berita" },
   { label: "SUPPORT", href: "#faq", hasMenu: true },
   { label: "MEDIA SOSIAL", href: "#kontak", hasMenu: true },
-  { label: "ESPORTS", href: "https://esports.example.com", external: true },
-  { label: "LEBIH BANYAK", href: "#kontak", hasMenu: true },
 ];
 
 export const hero: HeroContent = {
@@ -172,7 +170,7 @@ export const faqs: FaqItem[] = [
   {
     question: "Kapan BAREN dirilis?",
     answer:
-      "BAREN sedang dalam tahap pengembangan dan akan segera hadir. Ikuti waiting list untuk mendapatkan kabar terbaru.",
+      "BAREN sedang dalam tahap pengembangan dan akan segera hadir. Ikuti wishlist untuk mendapatkan kabar terbaru.",
   },
   {
     question: "BAREN tersedia di platform apa?",
@@ -184,9 +182,9 @@ export const faqs: FaqItem[] = [
       "BAREN dirancang sebagai game aksi tim 5v5 yang dapat dimainkan gratis.",
   },
   {
-    question: "Bagaimana cara ikut waiting list?",
+    question: "Bagaimana cara ikut wishlist?",
     answer:
-      "Klik tombol Gabung Waiting List dan isi alamat emailmu untuk menerima informasi akses awal.",
+      "Klik tombol Gabung Wishlist lalu masuk dengan akun Google untuk menerima informasi akses awal.",
   },
 ];
 
@@ -204,7 +202,7 @@ export const legalLinks: LegalLink[] = [
 ];
 
 export const cta = {
-  login: "LOGIN",
-  joinWaitlist: "GABUNG WAITING LIST",
+  login: "MASUK",
+  joinWaitlist: "GABUNG WISHLIST",
   newsAll: "BUKA HALAMAN ARTIKEL",
 };
