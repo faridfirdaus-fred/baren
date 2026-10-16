@@ -7,7 +7,7 @@
 ## Langkah konten
 
 - [x] **E8-1** (Dep E3-2..8 dan E11-3): dashboard hitung features, gallery, news, FAQ, waitlist dan waktu update terakhir dari DB/API; tampilkan loading/error/kosong, tidak ada fetch sensitif dari klien anonim.
-- [ ] **E8-2** (Dep E3-2, E4-6): branding nama/logo/favicon dengan uploader, preview, validasi dan simpan; uji perubahan nyata di header/favicon setelah revalidate.
+- [x] **E8-2** (Dep E3-2, E4-6): branding nama/logo/favicon dengan uploader, preview, validasi dan simpan; uji perubahan nyata di header/favicon setelah revalidate.
 - [ ] **E8-3** (Dep E3-3, E4-6): edit hero judul/subjudul/video/CTA, CRUD banner termasuk urutan; uji hapus/update dan tampilan publik.
 - [ ] **E8-4** (Dep E3-4, E4-6): edit About + CRUD Features dengan gambar/ikon dan urutan; uji wajib, data kosong, admin lain melihat perubahan.
 - [ ] **E8-5** (Dep E3-4, E4-6): langkah How to Play dan video demo; CRUD/urut media; uji hasil publik.
