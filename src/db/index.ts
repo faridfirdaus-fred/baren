@@ -1,7 +1,15 @@
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { neon, neonConfig, Pool } from "@neondatabase/serverless";
+import { drizzle as drizzleHttp } from "drizzle-orm/neon-http";
+import { drizzle as drizzleWs } from "drizzle-orm/neon-serverless";
+import type ws from "ws";
 
 import * as schema from "./schema";
+
+// Configure WebSocket for Node.js development
+if (typeof WebSocket === "undefined") {
+  // Dynamic import to avoid bundling in Workers
+  neonConfig.webSocketConstructor = require("ws") as typeof ws;
+}
 
 function resolveDatabaseUrl(): string | undefined {
   try {
@@ -20,13 +28,33 @@ function resolveDatabaseUrl(): string | undefined {
   return process.env.NEON_DATABASE_URL ?? process.env.DATABASE_URL;
 }
 
+function isCloudflareWorkers(): boolean {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getCloudflareContext } = require("@opennextjs/cloudflare") as {
+      getCloudflareContext: () => unknown;
+    };
+    getCloudflareContext();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function getDb(url?: string) {
   const databaseUrl = url ?? resolveDatabaseUrl();
   if (!databaseUrl) {
     throw new Error("NEON_DATABASE_URL is not set");
   }
-  const sql = neon(databaseUrl);
-  return drizzle(sql, { schema });
+
+  // Use HTTP driver for Cloudflare Workers, WebSocket driver for Node.js development
+  if (isCloudflareWorkers()) {
+    const sql = neon(databaseUrl);
+    return drizzleHttp({ client: sql, schema });
+  } else {
+    const pool = new Pool({ connectionString: databaseUrl });
+    return drizzleWs({ client: pool, schema });
+  }
 }
 
 export type Db = ReturnType<typeof getDb>;
