@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import Image from "next/image";
 
 import { cta, nav, site } from "@/content/baren";
+import { BrandLogo } from "./brand-logo";
 import { IconArrowUpRight, IconChevronDown, IconClose, IconMenu } from "./icon";
 
 export type SiteHeaderProps = {
@@ -82,13 +82,7 @@ export function SiteHeader({
           className="flex min-w-0 items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
           aria-label={`${brandName} — kembali ke atas`}
         >
-          <Image
-            src={logoSrc}
-            alt=""
-            width={32}
-            height={32}
-            className="h-8 w-8 shrink-0"
-          />
+          <BrandLogo src={logoSrc} size={32} className="shrink-0" />
           <span className="truncate font-display text-xl uppercase tracking-wide text-sand">
             {brandName}
           </span>

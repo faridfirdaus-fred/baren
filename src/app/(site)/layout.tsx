@@ -1,3 +1,6 @@
+import type { Metadata } from "next";
+
+import { getSiteBranding } from "@/lib/branding";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 
@@ -5,20 +8,37 @@ import { SiteHeader } from "@/components/site/site-header";
  * E5-1 — Layout situs publik (Next.js App Router; baca docs layout/metadata
  * Next.js 16 sebelum mengubah: root layout memegang <html>/<body>, layout
  * segmen hanya membungkus UI).
- * - Header/footer + container + tipografi via globals.css.
- * - Branding fallback Indonesia (nama/logo statis); E5-2 mengganti dengan
- *   `site_settings` (logo, favicon, nama game) + revalidasi ≤60 dtk.
+ * E5-2 — Branding dinamis dari `site_settings` (kontrak E3-2): nama game,
+ * logo, favicon, email kontak + tagline untuk deskripsi. `revalidate = 60`
+ * (Cache Components tidak aktif di proyek ini, jadi model ISR segmen
+ * berlaku — sama seperti pola E3-10): perubahan admin tayang
+ * ≤60 detik. Gagal/kosong → fallback Indonesia (tak pernah melempar,
+ * aman saat build tanpa env). Metadata penuh (sitemap/robots/OG) milik
+ * E9-5/Mutu setelah Fondasi merge.
  * - Main landmark + skip link untuk navigasi inklusif.
  * - Slot akun header: `SiteHeader accountSlot` milik Fondasi; E11-4 Publik
  *   mengirim child `AccountMenu`, integrator memasang setelah kedua sisi merge.
  * - ID anchor kontrak: #top, #berita, #tentang, #fitur, #pemain, #arena,
  *   #faq, #galeri (E6), #kontak (E7), #daftar.
  */
-export default function SiteLayout({
+export const revalidate = 60;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const branding = await getSiteBranding();
+  return {
+    title: `${branding.brandName} | Rebut benteng. Kuasai arena.`,
+    description: branding.tagline,
+    icons: { icon: branding.faviconUrl },
+  };
+}
+
+export default async function SiteLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const branding = await getSiteBranding();
+
   return (
     <div
       id="top"
@@ -30,7 +50,7 @@ export default function SiteLayout({
       >
         Lewati ke konten utama
       </a>
-      <SiteHeader />
+      <SiteHeader brandName={branding.brandName} logoSrc={branding.logoSrc} />
       <main
         id="konten-utama"
         tabIndex={-1}
@@ -38,7 +58,12 @@ export default function SiteLayout({
       >
         {children}
       </main>
-      <SiteFooter />
+      <SiteFooter
+        brandName={branding.brandName}
+        brandDescription={branding.tagline}
+        contactEmail={branding.contactEmail}
+        logoSrc={branding.logoSrc}
+      />
     </div>
   );
 }

@@ -1,6 +1,5 @@
-import Image from "next/image";
-
 import { legalLinks, nav, site, social } from "@/content/baren";
+import { BrandLogo } from "./brand-logo";
 import {
   IconDiscord,
   IconInstagram,
@@ -39,7 +38,7 @@ export function SiteFooter({
       <div className="container-baren py-14">
         <div className="grid gap-10 md:grid-cols-3">
           <div className="min-w-0">
-            <Image src={logoSrc} alt="" width={40} height={40} />
+            <BrandLogo src={logoSrc} size={40} />
             <p className="mt-4 font-display text-2xl uppercase">{brandName}</p>
             <p className="mt-3 max-w-xs text-sm leading-6 text-sand/60">
               {brandDescription}
