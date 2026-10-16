@@ -2,11 +2,19 @@
 
 import { useState } from "react";
 
-import { faqs } from "@/content/baren";
+import { faqs as fallbackFaqs, type FaqItem } from "@/content/baren";
 import { IconMinus, IconPlus } from "./icon";
 
-export function FaqAccordion() {
+export type FaqAccordionProps = {
+  /** E7-3: daftar dari DB. `undefined` = fallback statis; `[]` = seksi hilang. */
+  items?: FaqItem[];
+};
+
+export function FaqAccordion({ items }: FaqAccordionProps) {
+  const list = items ?? fallbackFaqs;
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  if (list.length === 0) return null;
 
   return (
     <section id="faq" className="bg-ink py-12 text-sand lg:py-16">
@@ -14,7 +22,7 @@ export function FaqAccordion() {
         <p className="eyebrow text-ember">FAQ</p>
         <h2 className="display-xl mt-4 text-sand">PERTANYAAN UMUM</h2>
         <dl className="mt-10 divide-y divide-sand/15 border-y border-sand/15">
-          {faqs.map((f, i) => {
+          {list.map((f, i) => {
             const open = openIndex === i;
             return (
               <div key={f.question}>

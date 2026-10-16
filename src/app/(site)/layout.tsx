@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getSiteBranding } from "@/lib/branding";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { WishlistMenu } from "@/components/site/wishlist-menu";
 
 /**
  * E5-1 — Layout situs publik (Next.js App Router; baca docs layout/metadata
@@ -50,7 +51,11 @@ export default async function SiteLayout({
       >
         Lewati ke konten utama
       </a>
-      <SiteHeader brandName={branding.brandName} logoSrc={branding.logoSrc} />
+      <SiteHeader
+        brandName={branding.brandName}
+        logoSrc={branding.logoSrc}
+        accountSlot={<WishlistMenu />}
+      />
       <main
         id="konten-utama"
         tabIndex={-1}
