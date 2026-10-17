@@ -1,116 +1,116 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { waitlistQuerySchema } from "./waitlist.ts";
+import { wishlistQuerySchema } from "./wishlist.ts";
 
-describe("waitlistQuerySchema", () => {
+describe("wishlistQuerySchema", () => {
   it("should default page to 1 when not provided", () => {
-    const result = waitlistQuerySchema.parse({});
+    const result = wishlistQuerySchema.parse({});
     assert.equal(result.page, 1);
   });
 
   it("should accept valid page numbers", () => {
-    const result1 = waitlistQuerySchema.parse({ page: 1 });
+    const result1 = wishlistQuerySchema.parse({ page: 1 });
     assert.equal(result1.page, 1);
 
-    const result2 = waitlistQuerySchema.parse({ page: 5 });
+    const result2 = wishlistQuerySchema.parse({ page: 5 });
     assert.equal(result2.page, 5);
 
-    const result3 = waitlistQuerySchema.parse({ page: 100 });
+    const result3 = wishlistQuerySchema.parse({ page: 100 });
     assert.equal(result3.page, 100);
   });
 
   it("should reject zero page", () => {
     assert.throws(() => {
-      waitlistQuerySchema.parse({ page: 0 });
+      wishlistQuerySchema.parse({ page: 0 });
     }, /page/i);
   });
 
   it("should reject negative page", () => {
     assert.throws(() => {
-      waitlistQuerySchema.parse({ page: -1 });
+      wishlistQuerySchema.parse({ page: -1 });
     }, /page/i);
 
     assert.throws(() => {
-      waitlistQuerySchema.parse({ page: -10 });
+      wishlistQuerySchema.parse({ page: -10 });
     }, /page/i);
   });
 
   it("should reject decimal page", () => {
     assert.throws(() => {
-      waitlistQuerySchema.parse({ page: 1.5 });
+      wishlistQuerySchema.parse({ page: 1.5 });
     }, /integer/i);
 
     assert.throws(() => {
-      waitlistQuerySchema.parse({ page: 2.99 });
+      wishlistQuerySchema.parse({ page: 2.99 });
     }, /integer/i);
   });
 
   it("should reject non-numeric page values", () => {
     assert.throws(() => {
-      waitlistQuerySchema.parse({ page: "abc" });
+      wishlistQuerySchema.parse({ page: "abc" });
     });
 
     assert.throws(() => {
-      waitlistQuerySchema.parse({ page: "1.5" });
+      wishlistQuerySchema.parse({ page: "1.5" });
     });
 
     assert.throws(() => {
-      waitlistQuerySchema.parse({ page: null });
+      wishlistQuerySchema.parse({ page: null });
     });
   });
 
   it("should trim search query", () => {
-    const result1 = waitlistQuerySchema.parse({ search: "  hello  " });
+    const result1 = wishlistQuerySchema.parse({ search: "  hello  " });
     assert.equal(result1.search, "hello");
 
-    const result2 = waitlistQuerySchema.parse({ search: "\t\ntest\n\t" });
+    const result2 = wishlistQuerySchema.parse({ search: "\t\ntest\n\t" });
     assert.equal(result2.search, "test");
   });
 
   it("should convert empty search to undefined", () => {
-    const result1 = waitlistQuerySchema.parse({ search: "" });
+    const result1 = wishlistQuerySchema.parse({ search: "" });
     assert.equal(result1.search, undefined);
 
-    const result2 = waitlistQuerySchema.parse({ search: "   " });
+    const result2 = wishlistQuerySchema.parse({ search: "   " });
     assert.equal(result2.search, undefined);
 
-    const result3 = waitlistQuerySchema.parse({});
+    const result3 = wishlistQuerySchema.parse({});
     assert.equal(result3.search, undefined);
   });
 
   it("should accept valid search queries", () => {
-    const result1 = waitlistQuerySchema.parse({ search: "user@example.com" });
+    const result1 = wishlistQuerySchema.parse({ search: "user@example.com" });
     assert.equal(result1.search, "user@example.com");
 
-    const result2 = waitlistQuerySchema.parse({ search: "John Doe" });
+    const result2 = wishlistQuerySchema.parse({ search: "John Doe" });
     assert.equal(result2.search, "John Doe");
   });
 
   it("should reject search queries over 320 characters", () => {
     const longSearch = "a".repeat(321);
     assert.throws(() => {
-      waitlistQuerySchema.parse({ search: longSearch });
+      wishlistQuerySchema.parse({ search: longSearch });
     }, /320/);
   });
 
   it("should accept search queries at exactly 320 characters", () => {
     const maxSearch = "a".repeat(320);
-    const result = waitlistQuerySchema.parse({ search: maxSearch });
+    const result = wishlistQuerySchema.parse({ search: maxSearch });
     assert.equal(result.search, maxSearch);
   });
 
   it("should reject unknown keys", () => {
     assert.throws(() => {
-      waitlistQuerySchema.parse({ page: 1, unknownKey: "value" });
+      wishlistQuerySchema.parse({ page: 1, unknownKey: "value" });
     }, /unrecognized/i);
 
     assert.throws(() => {
-      waitlistQuerySchema.parse({ search: "test", extra: 123 });
+      wishlistQuerySchema.parse({ search: "test", extra: 123 });
     }, /unrecognized/i);
   });
 
   it("should handle combined valid page and search", () => {
-    const result = waitlistQuerySchema.parse({
+    const result = wishlistQuerySchema.parse({
       page: 3,
       search: "test@email.com",
     });

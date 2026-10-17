@@ -6,10 +6,10 @@ import type { WishlistPage } from "@/lib/api/wishlist";
 import {
   buildExportUrl,
   formatRegistrationDate,
-  parseWaitlistApiResponse,
+  parseWishlistApiResponse,
 } from "@/lib/admin-wishlist-client";
 
-export function AdminWaitlistManager() {
+export function AdminWishlistManager() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
@@ -32,7 +32,7 @@ export function AdminWaitlistManager() {
       .then((res) => res.json())
       .then((raw) => {
         if (activeRequestRef.current !== requestId) return;
-        const parsed = parseWaitlistApiResponse(raw);
+        const parsed = parseWishlistApiResponse(raw);
         if (!parsed.ok) {
           setError(parsed.error.message);
         } else {
@@ -63,7 +63,7 @@ export function AdminWaitlistManager() {
       .then((raw) => {
         if (controller.signal.aborted || activeRequestRef.current !== requestId)
           return;
-        const parsed = parseWaitlistApiResponse(raw);
+        const parsed = parseWishlistApiResponse(raw);
         if (!parsed.ok) {
           setError(parsed.error.message);
         } else {

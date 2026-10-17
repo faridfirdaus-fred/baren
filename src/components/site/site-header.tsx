@@ -76,10 +76,10 @@ export function SiteHeader({
     <header
       className={`fixed inset-x-0 top-0 z-50 h-20 transition-colors duration-300 ${scrolled || menuOpen ? "border-b border-ink-700 bg-ink/95 backdrop-blur" : "bg-transparent"}`}
     >
-      <div className="container-baren flex h-full items-center justify-between gap-6">
+      <div className="container-baren flex h-full items-center justify-between gap-6 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
         <a
           href="#top"
-          className="flex min-w-0 items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+          className="flex min-w-0 items-center gap-3 justify-self-start focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
           aria-label={`${brandName} — kembali ke atas`}
         >
           <BrandLogo src={logoSrc} size={32} className="shrink-0" />
@@ -87,7 +87,10 @@ export function SiteHeader({
             {brandName}
           </span>
         </a>
-        <nav aria-label="Navigasi utama" className="hidden md:block">
+        <nav
+          aria-label="Navigasi utama"
+          className="hidden justify-self-center md:block"
+        >
           <ul className="flex items-center gap-1">
             {nav.map((n) => (
               <li key={n.label}>
@@ -108,7 +111,7 @@ export function SiteHeader({
             ))}
           </ul>
         </nav>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 justify-self-end">
           {accountSlot ?? (
             <a
               href="#daftar"

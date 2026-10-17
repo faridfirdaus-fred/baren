@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AssetUploader } from "./asset-uploader";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
+import type { UploadedAsset } from "@/lib/assets-client";
 
 interface HowToPlayStep {
   id: number;
@@ -177,6 +179,24 @@ export function HowToPlayManager() {
     }
   };
 
+  const handleVideoUploaded = (asset: UploadedAsset) => {
+    setVideoUrl(asset.publicUrl);
+    setToast({
+      message:
+        "Video demo berhasil diunggah ke R2. Klik 'Simpan Video' untuk menerapkan perubahan.",
+      type: "success",
+    });
+  };
+
+  const handleStepMediaUploaded = (asset: UploadedAsset) => {
+    setStepForm((prev) => ({ ...prev, mediaUrl: asset.publicUrl }));
+    setToast({
+      message:
+        "Media langkah berhasil diunggah ke R2. Klik 'Simpan' untuk menerapkan perubahan.",
+      type: "success",
+    });
+  };
+
   const handleVideoSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -225,7 +245,33 @@ export function HowToPlayManager() {
               value={videoUrl}
               onChange={(e) => setVideoUrl(e.target.value)}
               className="w-full border px-3 py-2 rounded"
+              placeholder="https://... (MP4)"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan
+              tautan MP4 langsung.
+            </p>
+            {videoUrl.trim() ? (
+              <video
+                src={videoUrl}
+                preload="metadata"
+                muted
+                playsInline
+                controls
+                className="mt-2 max-h-48 w-full rounded border"
+                aria-label="Pratinjau video demo"
+              />
+            ) : null}
+            <div className="mt-2">
+              <p className="mb-1 text-sm font-medium">
+                Unggah Video Demo Baru ke R2 (MP4 ≤ 50 MB)
+              </p>
+              <AssetUploader
+                purpose="how-to-play-video"
+                onUploaded={handleVideoUploaded}
+                disabled={submitting}
+              />
+            </div>
           </div>
           <button
             type="submit"
@@ -307,7 +353,30 @@ export function HowToPlayManager() {
                 setStepForm({ ...stepForm, mediaUrl: e.target.value })
               }
               className="w-full border px-3 py-2 rounded"
+              placeholder="https://... (gambar/video)"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan
+              tautan langsung.
+            </p>
+            {stepForm.mediaUrl.trim() ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={stepForm.mediaUrl}
+                alt="Pratinjau media langkah"
+                className="mt-2 max-h-48 w-full rounded border object-cover"
+              />
+            ) : null}
+            <div className="mt-2">
+              <p className="mb-1 text-sm font-medium">
+                Unggah Media Langkah ke R2 (gambar ≤ 5 MB / MP4 ≤ 50 MB)
+              </p>
+              <AssetUploader
+                purpose="how-to-play-media"
+                onUploaded={handleStepMediaUploaded}
+                disabled={submitting}
+              />
+            </div>
           </div>
 
           <div>

@@ -203,6 +203,6 @@ export const legalLinks: LegalLink[] = [
 
 export const cta = {
   login: "MASUK",
-  joinWaitlist: "GABUNG WISHLIST",
+  joinWishlist: "GABUNG WISHLIST",
   newsAll: "BUKA HALAMAN ARTIKEL",
 };

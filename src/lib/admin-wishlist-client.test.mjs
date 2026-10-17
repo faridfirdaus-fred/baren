@@ -1,10 +1,10 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-const { parseWaitlistApiResponse, buildExportUrl, formatRegistrationDate } =
-  await import("./admin-waitlist-client.ts");
+const { parseWishlistApiResponse, buildExportUrl, formatRegistrationDate } =
+  await import("./admin-wishlist-client.ts");
 
-describe("parseWaitlistApiResponse", () => {
+describe("parseWishlistApiResponse", () => {
   it("parses success envelope", () => {
     const raw = {
       ok: true,
@@ -24,7 +24,7 @@ describe("parseWaitlistApiResponse", () => {
       },
     };
 
-    const parsed = parseWaitlistApiResponse(raw);
+    const parsed = parseWishlistApiResponse(raw);
     assert.equal(parsed.ok, true);
     if (parsed.ok) {
       assert.equal(parsed.data.total, 1);
@@ -41,7 +41,7 @@ describe("parseWaitlistApiResponse", () => {
       },
     };
 
-    const parsed = parseWaitlistApiResponse(raw);
+    const parsed = parseWishlistApiResponse(raw);
     assert.equal(parsed.ok, false);
     if (!parsed.ok) {
       assert.equal(parsed.error.message, "Sesi tidak valid.");
@@ -49,7 +49,7 @@ describe("parseWaitlistApiResponse", () => {
   });
 
   it("handles malformed response gracefully", () => {
-    const parsed = parseWaitlistApiResponse(null);
+    const parsed = parseWishlistApiResponse(null);
     assert.equal(parsed.ok, false);
     if (!parsed.ok) {
       assert.equal(parsed.error.message, "Format data server tidak valid.");
@@ -59,19 +59,19 @@ describe("parseWaitlistApiResponse", () => {
 
 describe("buildExportUrl", () => {
   it("returns base url when search is absent or empty", () => {
-    assert.equal(buildExportUrl(), "/api/waitlist/export");
-    assert.equal(buildExportUrl(""), "/api/waitlist/export");
-    assert.equal(buildExportUrl("   "), "/api/waitlist/export");
+    assert.equal(buildExportUrl(), "/api/wishlist/export");
+    assert.equal(buildExportUrl(""), "/api/wishlist/export");
+    assert.equal(buildExportUrl("   "), "/api/wishlist/export");
   });
 
   it("appends encoded search query parameter", () => {
     assert.equal(
       buildExportUrl("john doe"),
-      "/api/waitlist/export?search=john%20doe",
+      "/api/wishlist/export?search=john%20doe",
     );
     assert.equal(
       buildExportUrl("  budi@example.com  "),
-      "/api/waitlist/export?search=budi%40example.com",
+      "/api/wishlist/export?search=budi%40example.com",
     );
   });
 });

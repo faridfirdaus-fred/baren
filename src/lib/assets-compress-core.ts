@@ -3,7 +3,19 @@
 // API browser (createImageBitmap/canvas) tetap di `assets-compress.ts`.
 
 export type CompressPurpose =
-  "hero" | "gallery" | "news" | "logo" | "ikon" | "icon" | "favicon";
+  | "hero"
+  | "hero-video"
+  | "hero-background"
+  | "how-to-play-video"
+  | "how-to-play-media"
+  | "landing-image"
+  | "news-cover"
+  | "gallery"
+  | "news"
+  | "logo"
+  | "ikon"
+  | "icon"
+  | "favicon";
 
 /** MIME raster yang layak dikompres di browser. */
 export const COMPRESSIBLE_MIME_TYPES = [
@@ -29,6 +41,12 @@ export type CompressPreset = {
  */
 const PRESETS: Record<CompressPurpose, CompressPreset | null> = {
   hero: { maxSide: 1920, quality: 0.8, mimeType: "image/webp" },
+  "hero-video": null,
+  "hero-background": { maxSide: 1920, quality: 0.8, mimeType: "image/webp" },
+  "how-to-play-video": null,
+  "how-to-play-media": { maxSide: 1920, quality: 0.8, mimeType: "image/webp" },
+  "landing-image": { maxSide: 1200, quality: 0.75, mimeType: "image/webp" },
+  "news-cover": { maxSide: 1200, quality: 0.75, mimeType: "image/webp" },
   gallery: { maxSide: 1920, quality: 0.8, mimeType: "image/webp" },
   news: { maxSide: 1200, quality: 0.75, mimeType: "image/webp" },
   logo: { maxSide: 512, quality: 0.85, mimeType: "image/webp" },
@@ -42,6 +60,12 @@ export function normalizeCompressPurpose(
 ): CompressPurpose | null {
   const p = purpose.trim().toLowerCase();
   if (p === "hero") return "hero";
+  if (p === "hero-video") return "hero-video";
+  if (p === "hero-background") return "hero-background";
+  if (p === "how-to-play-video") return "how-to-play-video";
+  if (p === "how-to-play-media") return "how-to-play-media";
+  if (p === "landing-image") return "landing-image";
+  if (p === "news-cover") return "news-cover";
   if (p === "gallery") return "gallery";
   if (p === "news") return "news";
   if (p === "logo") return "logo";

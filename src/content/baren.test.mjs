@@ -5,8 +5,8 @@ const { cta, faqs, nav } = await import("./baren.ts");
 
 describe("copy wishlist E11-4", () => {
   it("CTA memakai istilah wishlist", () => {
-    assert.match(cta.joinWaitlist, /wishlist/i);
-    assert.doesNotMatch(cta.joinWaitlist, /waiting list/i);
+    assert.match(cta.joinWishlist, /wishlist/i);
+    assert.doesNotMatch(cta.joinWishlist, /waiting list/i);
   });
 
   it("FAQ tidak lagi menyebut waiting list", () => {

@@ -29,9 +29,9 @@ const wishlistQuerySchema = z
   })
   .strict();
 
-export type WaitlistQuery = { page: number; search?: string };
+export type WishlistQuery = { page: number; search?: string };
 
-export function parseWishlistQuery(raw: unknown): ApiResult<WaitlistQuery> {
+export function parseWishlistQuery(raw: unknown): ApiResult<WishlistQuery> {
   const parsed = wishlistQuerySchema.safeParse(raw);
   if (!parsed.success) {
     return {

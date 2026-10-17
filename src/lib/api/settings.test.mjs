@@ -3,6 +3,33 @@ import assert from "node:assert/strict";
 
 const { readSettings, writeSettings } = await import("./settings.ts");
 
+const emptyLandingCopy = {
+  featuresEyebrow: null,
+  featuresTitle: null,
+  featuresEmptyMessage: null,
+  howToPlayTitle: null,
+  galleryEyebrow: null,
+  galleryTitle: null,
+  galleryDescription: null,
+  galleryEmptyTitle: null,
+  galleryEmptyMessage: null,
+  newsTitle: null,
+  newsCtaLabel: null,
+  faqEyebrow: null,
+  faqTitle: null,
+  commentsTitle: null,
+  commentsLoginPrompt: null,
+  commentsEmptyMessage: null,
+  commentsSubmitLabel: null,
+  commentsSubmitError: null,
+  contactEyebrow: null,
+  contactTitle: null,
+  contactDescription: null,
+  contactEmailLabel: null,
+  contactSocialTitle: null,
+  contactSocialEmptyMessage: null,
+};
+
 function fakeDb(awal = {}) {
   const map = new Map(Object.entries(awal));
   return {
@@ -26,6 +53,7 @@ describe("readSettings", () => {
       logoUrl: null,
       faviconUrl: null,
       emailKontak: "a@b.id",
+      ...emptyLandingCopy,
     });
   });
 
@@ -34,6 +62,20 @@ describe("readSettings", () => {
     const r = await readSettings(db);
     assert.equal(r.namaGame, "BAREN");
     assert.ok(!("kunciAsing" in r));
+  });
+
+  it("memetakan copy landing dan menjadikan key yang hilang null", async () => {
+    const db = fakeDb({
+      features_eyebrow: "Fitur",
+      gallery_empty_message: "Belum ada galeri.",
+      contact_social_title: "Ikuti kami",
+    });
+    const r = await readSettings(db);
+    assert.equal(r.featuresEyebrow, "Fitur");
+    assert.equal(r.galleryEmptyMessage, "Belum ada galeri.");
+    assert.equal(r.contactSocialTitle, "Ikuti kami");
+    assert.equal(r.featuresTitle, null);
+    assert.equal(r.commentsSubmitError, null);
   });
 });
 
@@ -51,12 +93,27 @@ describe("writeSettings", () => {
       logoUrl: null,
       faviconUrl: null,
       emailKontak: null,
+      ...emptyLandingCopy,
     });
   });
 
   it("melewatkan kolom undefined", async () => {
     const db = fakeDb({});
-    await writeSettings(db, { namaGame: "BAREN" });
-    assert.deepEqual(db.calls, [["nama_game", "BAREN"]]);
+    await writeSettings(db, { tagline: undefined });
+    assert.deepEqual(db.calls, []);
+  });
+
+  it("upsert hanya copy landing yang diberikan", async () => {
+    const db = fakeDb({});
+    await writeSettings(db, {
+      featuresTitle: "Pilih peranmu",
+      galleryEmptyMessage: null,
+      contactDescription: "Hubungi tim BAREN.",
+    });
+    assert.deepEqual(db.calls, [
+      ["features_title", "Pilih peranmu"],
+      ["gallery_empty_message", null],
+      ["contact_description", "Hubungi tim BAREN."],
+    ]);
   });
 });

@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-const { formatWaitlistCsv, escapeCsvCell } = await import("./waitlist-csv.ts");
+const { formatWishlistCsv, escapeCsvCell } = await import("./wishlist-csv.ts");
 
 describe("escapeCsvCell", () => {
   it("handles null and undefined values", () => {
@@ -29,9 +29,9 @@ describe("escapeCsvCell", () => {
   });
 });
 
-describe("formatWaitlistCsv", () => {
+describe("formatWishlistCsv", () => {
   it("formats empty rows with BOM and header", () => {
-    const csv = formatWaitlistCsv([]);
+    const csv = formatWishlistCsv([]);
     assert.equal(csv, '\uFEFF"ID","Email","Nama","Tanggal Terdaftar"\r\n');
   });
 
@@ -63,7 +63,7 @@ describe("formatWaitlistCsv", () => {
       },
     ];
 
-    const csv = formatWaitlistCsv(rows);
+    const csv = formatWishlistCsv(rows);
 
     assert.ok(csv.startsWith("\uFEFF"));
     const lines = csv.replace(/^\uFEFF/, "").split("\r\n");

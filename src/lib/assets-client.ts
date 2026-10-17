@@ -52,6 +52,12 @@ export type ClientFileCheck = { ok: true } | { ok: false; message: string };
 const ACCEPT_BY_PURPOSE: Record<string, string[]> = {
   gallery: ["image/jpeg", "image/png", "image/webp", "video/mp4"],
   hero: ["image/jpeg", "image/png", "image/webp", "video/mp4"],
+  "hero-video": ["video/mp4"],
+  "hero-background": ["image/jpeg", "image/png", "image/webp"],
+  "how-to-play-video": ["video/mp4"],
+  "how-to-play-media": ["image/jpeg", "image/png", "image/webp", "video/mp4"],
+  "landing-image": ["image/jpeg", "image/png", "image/webp"],
+  "news-cover": ["image/jpeg", "image/png", "image/webp"],
   news: ["image/jpeg", "image/png", "image/webp"],
   logo: ["image/jpeg", "image/png", "image/webp", "image/svg+xml"],
   ikon: ["image/jpeg", "image/png", "image/webp", "image/svg+xml"],
