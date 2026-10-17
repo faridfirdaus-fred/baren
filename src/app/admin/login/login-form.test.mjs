@@ -43,7 +43,8 @@ describe("Admin Login Page & Form (Impeccable Craft)", async () => {
   it("menerapkan desain taktikal BAREN (backdrop, branding, HUD topbar/footer)", () => {
     assert.match(pageSource, /Kembali ke Situs/);
     assert.match(pageSource, /baren-mark\.svg/);
-    assert.match(pageSource, /ADM-PORTAL|TERMINAL/);
+    assert.doesNotMatch(pageSource, /ADM-PORTAL|TERMINAL/);
+    assert.doesNotMatch(pageSource, /Guard E2-4/);
     assert.match(pageSource, /border-ember/);
   });
 });
