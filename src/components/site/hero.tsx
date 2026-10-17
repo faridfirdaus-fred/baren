@@ -26,7 +26,7 @@ export async function Hero() {
       : null;
 
   return (
-    <section className="relative isolate flex min-h-[560px] h-[calc(100svh-5rem)] items-center justify-center overflow-hidden bg-ink">
+    <section className="relative isolate flex min-h-svh items-center justify-center overflow-hidden bg-ink pt-20">
       <video
         className="absolute inset-0 -z-10 h-full w-full object-cover"
         autoPlay
@@ -40,7 +40,7 @@ export async function Hero() {
         <source src={content.videoSrc} type="video/mp4" />
       </video>
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/85 via-ink/60 to-ink/95" />
-      <div className="container-baren flex flex-col items-center py-20 text-center lg:py-28">
+      <div className="container-baren flex flex-col items-center py-12 text-center lg:py-16">
         <Image
           src="/brand/baren-wordmark.png"
           width={533}
