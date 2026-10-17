@@ -28,6 +28,5 @@
         }
       }
     }
-  },
-  "model": "omniroute/openrouter/openai/gpt-5.6-luna-pro"
+  }
 }
