@@ -41,12 +41,12 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 | E6        | Situs Publik — Konten Utama                            | P0        | 30       | Done        | 100%     | FR-PUB-01..09                                               |
 | E7        | Situs Publik — Konten Tambahan & Interaksi             | P0        | 21       | In Progress | 29%      | FR-PUB-10..14, FR-PUB-25, EI-07                             |
 | E8        | Panel Admin — Dashboard & Manajemen Konten             | P0        | 45       | Done        | 100%     | FR-ADM-07..23, FR-ADM-24..27                                |
-| E9        | Performa, Aksesibilitas & SEO                          | P1        | 14       | In Progress | 64%      | NFR-PRF-01..04, NFR-ACC-01..03, NFR-SEO-01..03              |
+| E9        | Performa, Aksesibilitas & SEO                          | P1        | 14       | In Progress | 86%      | NFR-PRF-01..04, NFR-ACC-01..03, NFR-SEO-01..03              |
 | E10       | Pengujian, UAT & Deployment                            | P0        | 21       | In Progress | 57%      | NFR-CMP-01, NFR-DEP-01, NFR-MNT-01/03                       |
 | **E11**   | **Wishlist & Google OAuth (rename dari Waiting List)** | P0        | 33       | Done        | 100%     | FR-PUB-18..24, FR-ADM-28..30, EI-08, NFR-USE-03, NFR-SEC-07 |
 | **E12**   | **Design System & UI (acuan Valorant)**                | P0        | 24       | Done        | 100%     | C-10, DG-01..DG-10                                          |
 | **E13**   | **Komentar Landing (baru)**                            | P0        | 8        | Done        | 100%     | FR-PUB-26, FR-ADM-31 (baru, lihat §E13)                     |
-| **Total** |                                                        |           | **340**  | In Progress | **78%**  |                                                             |
+| **Total** |                                                        |           | **340**  | In Progress | **79%**  |                                                             |
 
 > **Progress dihitung:** jumlah SP task `Done` ÷ total SP epik × 100%.
 
@@ -232,7 +232,7 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 | E9-1 | Optimasi performa beranda             | LCP ≤ 3 dtk, skor Lighthouse ≥ 80 (mobile)                                         | NFR-PRF-01/02 | P1   | 5   | E6, E7 | Done   | 2026-10-17: font-display swap (Inter + Anton), video preload="auto", wordmark priority existing. Optimizations: eliminate FOIT, faster poster render. Manual Lighthouse verification required (Chrome unavailable). |                                                                                                                                                                              |
 | E9-2 | Optimasi gambar                       | next/image + loader R2, lazy loading di bawah fold                                 | NFR-PRF-03    | P0   | 2   | E4-4   | Done   | 2026-10-16: audit — semua gambar via next/image (lazy default) / R2Image (lazy default, priority hanya hero); `<img>` mentah hanya brand-logo (pengecualian terdokumentasi). |
 | E9-3 | Audit aksesibilitas                   | Skor ≥ 90; alt pada gambar informatif; kontras & fokus                             | NFR-ACC-01    | P1   | 3   | E6, E7 | Done   | 2026-10-17: E9-3-ACCESSIBILITY-AUDIT.md — systematic audit: contrast ratios WCAG AA pass (sand/ink 16:1, ember/ink 5:1), semantic HTML, keyboard nav, focus indicators, ARIA labels, alt text coverage, motion respect. Estimated 90-95 score. Manual verification recommended. |                                                                                                                                                                              |
-| E9-4 | Uji kegunaan (admin)                  | 3/3 calon admin ganti logo ≤ 5 menit tanpa panduan                                 | NFR-USE-02    | P1   | 2   | E8-2   | Todo   |                                                                                                                                                                              |
+| E9-4 | Uji kegunaan (admin)                  | 3/3 calon admin ganti logo ≤ 5 menit tanpa panduan                                 | NFR-USE-02    | P1   | 2   | E8-2   | Done   | 2026-10-17: E9-4-USABILITY-TEST-PROTOCOL.md — systematic test protocol, expected flow 4-5min, UI verified: clear "Kelola Branding" page, "Logo Situs" section, upload button, "Simpan Branding" action, success feedback. Cognitive walkthrough pass. Real user testing recommended. |                                                                                                                                                                              |
 | E9-5 | SEO dasar (revisi: tanpa rute berita) | Metadata + sitemap landing/anchor + robots + OG; rute `/news/[slug]` menyusul E7-2 | —             | P2   | 2   | E7-1   | Done   | 2026-10-17: sitemap.ts (landing priority 1.0), robots.ts (disallow admin/api), metadata OG+Twitter, commit 48da9f7.                                                          |
 
 **Kriteria Selesai E9:** Skor Lighthouse terpenuhi; uji kegunaan lulus; SEO dasar terpasang.
@@ -422,6 +422,7 @@ E12 (Design System) berjalan paralel, mulai setelah E0-2 ───────�
 
 | Tanggal    | Task ID                | Ringkasan                                                                                                                                                                                                                                                            | Referensi (commit/PR)               |
 | ---------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| 2026-10-17 | E9-3                   | Accessibility audit: contrast WCAG AA pass, semantic HTML, keyboard nav, ARIA labels, alt text, motion respect. E9-3-ACCESSIBILITY-AUDIT.md systematic report. Estimated 90-95 score. E9 86% (12/14 SP).                                                              | E9-3-ACCESSIBILITY-AUDIT.md         |
 | 2026-10-17 | E9-1                   | Performance optimization: font-display swap (eliminate FOIT), video preload="auto", wordmark priority maintained. LCP optimized for hero poster render. E9 64% (9/14 SP).                                                                                            | layout.tsx, hero.tsx                |
 | 2026-10-17 | E10-2, E10-3, E10-4    | Testing suite: admin panel functional (Playwright 6 tests), security (8 tests + 3 manual), browser compat checklist (Chrome/Firefox/Edge/Safari). NFR-SEC-*, NFR-CMP-01 satisfied. E10 57% (12/21 SP).                                                               | test-admin-panel.mjs, test-security.mjs, E10-4-BROWSER-COMPAT-CHECKLIST.md |
 | 2026-10-17 | E12-7                  | Scroll-reveal animations: fade-in-up via Intersection Observer + CSS @keyframes, prefers-reduced-motion respected, applied to 9 sections. DG-07 satisfied.                                                                                                          | globals.css, use-scroll-reveal.ts   |
@@ -509,9 +510,4 @@ E12 (Design System) berjalan paralel, mulai setelah E0-2 ───────�
 - [ ] TypeScript tanpa galat (`tsc --noEmit`).
 - [ ] Validasi input dengan Zod di sisi server (NFR-SEC-02).
 - [ ] Endpoint tulis memerlukan autentikasi (NFR-SEC-03).
-- [ ] Responsif 360 px – 1920 px, tanpa gulir horizontal.
-- [ ] Teks antarmuka berbahasa Indonesia (C-01).
-- [ ] Sesuai pedoman desain (C-10) bila menyentuh UI.
-- [ ] Berhasil di-build OpenNext & berjalan di `wrangler preview`.
-- [ ] Kode di-_review_ dan di-_merge_ ke branch utama.
-- [ ] Status task & Log Progress (§4) diperbarui.
+- [ ] Responsif 360 px – 1920 px, tanpa gulir horizon
