@@ -5,41 +5,9 @@ export interface NavItem {
   external?: boolean;
 }
 
-export interface NewsItem {
-  category: string;
-  date: string;
-  title: string;
-  href: string;
-}
-
-export interface FeatureItem {
-  index: string;
-  title: string;
-  description: string;
-}
-
-export interface FaqItem {
-  question: string;
-  answer: string;
-}
-
-export interface SocialItem {
-  label: string;
-  href: string;
-  icon: "instagram" | "youtube" | "discord" | "tiktok";
-}
-
 export interface LegalLink {
   label: string;
   href: string;
-}
-
-export interface HeroContent {
-  tagline: string;
-  ctaLabel: string;
-  ctaHref: string;
-  platforms: string[];
-  platformsNote: string;
 }
 
 export interface TextSection {
@@ -71,35 +39,6 @@ export const nav: NavItem[] = [
   { label: "GALERI", href: "#galeri" },
 ];
 
-export const hero: HeroContent = {
-  tagline: "BAREN — GAME AKSI TIM 5V5 TERINSPIRASI BENTENG-BENTENGAN",
-  ctaLabel: "MAIN GRATIS",
-  ctaHref: "#daftar",
-  platforms: ["Steam", "Play Store", "App Store"],
-  platformsNote: "Segera Hadir",
-};
-
-export const news: NewsItem[] = [
-  {
-    category: "ESPORTS",
-    date: "23/9/2026",
-    title: "Turnamen Baren Nusantara: Jadwal dan Hadiah",
-    href: "#berita",
-  },
-  {
-    category: "PENGUMUMAN",
-    date: "22/9/2026",
-    title: "Main dengan Respek",
-    href: "#berita",
-  },
-  {
-    category: "PEMBARUAN GAME",
-    date: "22/9/2026",
-    title: "Catatan Patch Baren 0.9",
-    href: "#berita",
-  },
-];
-
 export const event: EventContent = {
   eyebrow: "TURNAMEN",
   title: "TURNAMEN BENTENG NUSANTARA",
@@ -123,27 +62,6 @@ export const about: TextSection = {
   ctaHref: "#",
 };
 
-export const features: FeatureItem[] = [
-  {
-    index: "01",
-    title: "PERTAHANKAN BENTENGMU",
-    description:
-      "Susun pertahanan, baca pergerakan lawan, dan lindungi benteng sampai ronde terakhir.",
-  },
-  {
-    index: "02",
-    title: "KERJA SAMA TIM 5V5",
-    description:
-      "Gabungkan kemampuan setiap pemain untuk menciptakan serangan dan strategi yang tak terduga.",
-  },
-  {
-    index: "03",
-    title: "PETA ARENA BERAGAM",
-    description:
-      "Kuasai jalur, sudut, dan rahasia setiap arena untuk mengubah medan menjadi keunggulanmu.",
-  },
-];
-
 export const agents: TextSection = {
   eyebrow: "KARAKTER",
   title: "PEMAIN",
@@ -165,35 +83,6 @@ export const maps: TextSection = {
   ctaLabel: "LIHAT SEMUA ARENA",
   ctaHref: "#",
 };
-
-export const faqs: FaqItem[] = [
-  {
-    question: "Kapan BAREN dirilis?",
-    answer:
-      "BAREN sedang dalam tahap pengembangan dan akan segera hadir. Ikuti wishlist untuk mendapatkan kabar terbaru.",
-  },
-  {
-    question: "BAREN tersedia di platform apa?",
-    answer: "BAREN akan hadir di Steam, Play Store, dan App Store.",
-  },
-  {
-    question: "Apakah BAREN bisa dimainkan gratis?",
-    answer:
-      "BAREN dirancang sebagai game aksi tim 5v5 yang dapat dimainkan gratis.",
-  },
-  {
-    question: "Bagaimana cara ikut wishlist?",
-    answer:
-      "Klik tombol Gabung Wishlist lalu masuk dengan akun Google untuk menerima informasi akses awal.",
-  },
-];
-
-export const social: SocialItem[] = [
-  { label: "Instagram", href: "https://instagram.com/", icon: "instagram" },
-  { label: "YouTube", href: "https://youtube.com/", icon: "youtube" },
-  { label: "Discord", href: "https://discord.com/", icon: "discord" },
-  { label: "TikTok", href: "https://tiktok.com/", icon: "tiktok" },
-];
 
 export const legalLinks: LegalLink[] = [
   { label: "KEBIJAKAN PRIVASI", href: "#" },

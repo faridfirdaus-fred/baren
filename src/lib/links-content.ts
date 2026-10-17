@@ -1,17 +1,10 @@
-// E7-4 & E7-5: konten unduhan & media sosial untuk Server Component.
-// Tidak pernah melempar — DB kosong/gagal jatuh ke fallback/status
-// "Segera Hadir" (FR-PUB-25).
+// E7-5: konten media sosial untuk Server Component.
+// Tidak pernah melempar — DB kosong/gagal jatuh ke fallback/null.
 
 import { getDb } from "@/db";
-import { downloadLinks, socialLinks } from "@/db/schema";
-import {
-  readDownloadLinks,
-  readSocialLinks,
-  type DownloadRow,
-  type SocialRow,
-} from "./api/links";
+import { socialLinks } from "@/db/schema";
+import { readSocialLinks, type SocialRow } from "./api/links";
 
-export type DownloadItem = DownloadRow;
 export type SocialItemResolved = {
   id: number;
   label: string;
@@ -29,32 +22,7 @@ function resolveSocialIcon(platform: string): SocialItemResolved["icon"] {
 }
 
 /**
- * Daftar unduhan terurut (sortOrder lalu id).
- * Kosong = game belum rilis (UI menampilkan "Segera Hadir" — FR-PUB-25).
- */
-export async function getDownloadItems(): Promise<DownloadItem[]> {
-  try {
-    const db = getDb();
-    const rows = await db.select().from(downloadLinks);
-    const lister = {
-      list: async (): Promise<DownloadRow[]> =>
-        rows.map((r) => ({
-          id: r.id,
-          platform: r.platform,
-          label: r.label,
-          url: r.url,
-          sortOrder: r.sortOrder,
-        })),
-    };
-    return await readDownloadLinks(lister);
-  } catch {
-    return [];
-  }
-}
-
-/**
- * Daftar media sosial terurut dari DB, atau null bila gagal/kosong agar
- * pemanggil memakai fallback `content/baren.ts`.
+ * Daftar media sosial terurut dari DB, atau null bila gagal/kosong.
  */
 export async function getSocialItems(): Promise<SocialItemResolved[] | null> {
   try {

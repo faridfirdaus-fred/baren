@@ -9,6 +9,7 @@
 import { getDb } from "@/db";
 import { siteSettings } from "@/db/schema";
 import { toBranding } from "@/lib/api/settings";
+import { isEmail } from "@/lib/validation/email";
 import { site } from "@/content/baren";
 
 export type SiteBranding = {
@@ -34,10 +35,6 @@ function isHttpsUrl(value: string | null): value is string {
   } catch {
     return false;
   }
-}
-
-function isEmail(value: string | null): value is string {
-  return !!value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
 /**

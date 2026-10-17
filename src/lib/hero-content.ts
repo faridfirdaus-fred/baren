@@ -1,44 +1,20 @@
-// E6-1: konten hero dinamis untuk Server Component.
-// `getHeroContent` baca DB dan tidak pernah melempar — DB kosong/gagal →
-// null sehingga komponen memakai fallback lokal.
+// E6-1 & E14-1: konten hero dinamis untuk Server Component.
+// `getHeroContent` baca DB dan tidak pernah melempar — DB kosong/gagal/tidak terbit → null.
+// Tanpa fallback runtime ke konten statis; Hero terbit wajib ada untuk tampil.
 
 import { getDb } from "@/db";
 import { hero } from "@/db/schema";
 
-import {
-  HERO_POSTER_FALLBACK,
-  HERO_VIDEO_FALLBACK,
-  pickHeroMedia,
-} from "./hero-media";
+import { toHeroContent, type HeroContent } from "./hero-media";
 
-export type HeroContent = {
-  title: string;
-  subtitle: string | null;
-  videoSrc: string;
-  poster: string;
-  primaryCtaLabel: string | null;
-  primaryCtaUrl: string | null;
-  secondaryCtaLabel: string | null;
-  secondaryCtaUrl: string | null;
-};
+export type { HeroContent };
 
-/** Baris hero terbit dari DB, atau null bila kosong/gagal. */
+/** Baris hero terbit dari DB, atau null bila kosong/gagal/tidak valid. */
 export async function getHeroContent(): Promise<HeroContent | null> {
   try {
     const db = getDb();
     const rows = await db.select().from(hero).limit(1);
-    const row = rows[0];
-    if (!row || row.isPublished !== 1) return null;
-    return {
-      title: row.title,
-      subtitle: row.subtitle,
-      videoSrc: pickHeroMedia(row.videoUrl, HERO_VIDEO_FALLBACK),
-      poster: pickHeroMedia(row.backgroundUrl, HERO_POSTER_FALLBACK),
-      primaryCtaLabel: row.primaryCtaLabel,
-      primaryCtaUrl: row.primaryCtaUrl,
-      secondaryCtaLabel: row.secondaryCtaLabel,
-      secondaryCtaUrl: row.secondaryCtaUrl,
-    };
+    return toHeroContent(rows[0]);
   } catch {
     return null;
   }

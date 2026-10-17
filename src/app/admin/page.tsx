@@ -167,6 +167,14 @@ export default async function AdminDashboardPage() {
         <ul className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <li>
             <Link
+              href="/admin/landing"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            >
+              Kelola Konten Landing
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/admin/hero"
               className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
@@ -226,7 +234,7 @@ export default async function AdminDashboardPage() {
               href="/admin/links"
               className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
-              Kelola Tautan & Kontak
+              Kelola Tautan Sosial
             </Link>
           </li>
           <li>

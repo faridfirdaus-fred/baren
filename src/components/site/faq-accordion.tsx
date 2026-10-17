@@ -2,21 +2,29 @@
 
 import { useState } from "react";
 
-import { faqs as fallbackFaqs, type FaqItem } from "@/content/baren";
 import { useScrollReveal } from "@/lib/use-scroll-reveal";
 import { IconMinus, IconPlus } from "./icon";
 
+export type FaqItem = {
+  question: string;
+  answer: string;
+};
+
 export type FaqAccordionProps = {
-  /** E7-3: daftar dari DB. `undefined` = fallback statis; `[]` = seksi hilang. */
+  eyebrow?: string | null;
+  title?: string | null;
   items?: FaqItem[];
 };
 
-export function FaqAccordion({ items }: FaqAccordionProps) {
-  const list = items ?? fallbackFaqs;
+export function FaqAccordion({
+  eyebrow,
+  title,
+  items = [],
+}: FaqAccordionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const ref = useScrollReveal<HTMLElement>();
 
-  if (list.length === 0) return null;
+  if (!title || items.length === 0) return null;
 
   return (
     <section
@@ -25,10 +33,10 @@ export function FaqAccordion({ items }: FaqAccordionProps) {
       className="scroll-reveal bg-ink py-12 text-sand lg:py-16"
     >
       <div className="container-baren">
-        <p className="eyebrow text-ember">FAQ</p>
-        <h2 className="display-xl mt-4 text-sand">PERTANYAAN UMUM</h2>
+        {eyebrow && <p className="eyebrow text-ember">{eyebrow}</p>}
+        <h2 className="display-xl mt-4 text-sand">{title}</h2>
         <dl className="mt-10 divide-y divide-sand/15 border-y border-sand/15">
-          {list.map((f, i) => {
+          {items.map((f, i) => {
             const open = openIndex === i;
             return (
               <div key={f.question}>

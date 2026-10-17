@@ -1,16 +1,27 @@
 // E6-4: Helper untuk fetch fitur game dari CMS.
 
+import { asc } from "drizzle-orm";
+
+import { getDb } from "@/db";
+import { features } from "@/db/schema";
 import type { FeatureRow } from "@/lib/api/game";
+
+export type FeatureItem = FeatureRow;
 
 export async function getFeatures(): Promise<FeatureRow[]> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/features`,
-      { cache: "no-store" },
-    );
-    if (!res.ok) return [];
-    const json = (await res.json()) as { data?: FeatureRow[] };
-    return json.data || [];
+    const db = getDb();
+    const rows = await db
+      .select()
+      .from(features)
+      .orderBy(asc(features.sortOrder), asc(features.id));
+    return rows.map((r) => ({
+      id: r.id,
+      title: r.title,
+      description: r.description,
+      iconUrl: r.iconUrl,
+      sortOrder: r.sortOrder,
+    }));
   } catch {
     return [];
   }

@@ -20,19 +20,40 @@ type Props = {
     name: string | null;
     image: string | null;
   } | null;
+  title?: string | null;
+  loginPrompt?: string | null;
+  emptyMessage?: string | null;
+  submitLabel?: string | null;
+  submitError?: string | null;
 };
 
-export function CommentsSection({ initialComments, userSession }: Props) {
+export function CommentsSection({
+  initialComments,
+  userSession,
+  title,
+  loginPrompt,
+  emptyMessage,
+  submitLabel,
+  submitError,
+}: Props) {
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const ref = useScrollReveal<HTMLElement>();
 
+  if (!title) return null;
+
+  const resolvedSubmitLabel = submitLabel || "Kirim";
+  const resolvedSubmitError = submitError || "Gagal mengirim komentar";
+  const resolvedLoginPrompt =
+    loginPrompt || "Silakan login dengan Google untuk berkomentar";
+  const resolvedEmptyMessage = emptyMessage || "Belum ada komentar.";
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userSession) {
-      setError("Silakan login untuk berkomentar");
+      setError(resolvedLoginPrompt);
       return;
     }
 
@@ -48,14 +69,14 @@ export function CommentsSection({ initialComments, userSession }: Props) {
 
       if (!res.ok) {
         const data = (await res.json()) as { error?: string };
-        throw new Error(data.error || "Gagal mengirim komentar");
+        throw new Error(data.error || resolvedSubmitError);
       }
 
       const { comment } = (await res.json()) as { comment: Comment };
       setComments([comment, ...comments]);
       setBody("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Gagal mengirim komentar");
+      setError(err instanceof Error ? err.message : resolvedSubmitError);
     } finally {
       setSubmitting(false);
     }
@@ -68,7 +89,7 @@ export function CommentsSection({ initialComments, userSession }: Props) {
       className="scroll-reveal container mx-auto max-w-4xl px-4 py-16"
     >
       <h2 className="display-xl mb-8 text-[clamp(2rem,4vw,3.25rem)]">
-        KOMENTAR
+        {title}
       </h2>
 
       {userSession ? (
@@ -107,7 +128,7 @@ export function CommentsSection({ initialComments, userSession }: Props) {
                   disabled={submitting || !body.trim()}
                   className="rounded-lg bg-ember-700 px-6 py-2 font-bold uppercase tracking-wide text-white transition-colors hover:bg-ember-800 disabled:opacity-50"
                 >
-                  {submitting ? "Mengirim..." : "Kirim"}
+                  {submitting ? "Mengirim..." : resolvedSubmitLabel}
                 </button>
               </div>
               {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
@@ -116,15 +137,13 @@ export function CommentsSection({ initialComments, userSession }: Props) {
         </form>
       ) : (
         <div className="mb-12 rounded-lg border border-ink/20 bg-sand/50 p-6 text-center">
-          <p className="text-ink-600">
-            Silakan login dengan Google untuk berkomentar
-          </p>
+          <p className="text-ink-600">{resolvedLoginPrompt}</p>
         </div>
       )}
 
       <div className="space-y-6">
         {comments.length === 0 ? (
-          <p className="text-center text-ink-600">Belum ada komentar.</p>
+          <p className="text-center text-ink-600">{resolvedEmptyMessage}</p>
         ) : (
           comments.map((comment) => (
             <div

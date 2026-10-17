@@ -1,19 +1,12 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-const { cta, faqs, nav } = await import("./baren.ts");
+const { cta, nav } = await import("./baren.ts");
 
 describe("copy wishlist E11-4", () => {
   it("CTA memakai istilah wishlist", () => {
     assert.match(cta.joinWishlist, /wishlist/i);
     assert.doesNotMatch(cta.joinWishlist, /waiting list/i);
-  });
-
-  it("FAQ tidak lagi menyebut waiting list", () => {
-    for (const f of faqs) {
-      assert.doesNotMatch(f.question, /waiting list/i);
-      assert.doesNotMatch(f.answer, /waiting list/i);
-    }
   });
 
   it("nav tanpa Esports dan Lebih Banyak", () => {

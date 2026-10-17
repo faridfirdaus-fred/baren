@@ -18,9 +18,9 @@ export default async function AdminFaqPage() {
   if (role !== "admin") redirect("/admin/login?error=AksesDitolak");
 
   return (
-    <main>
-      <h1>Kelola FAQ</h1>
+    <div>
+      <h1 className="mb-6 text-2xl font-bold">Kelola FAQ</h1>
       <FaqManager />
-    </main>
+    </div>
   );
 }

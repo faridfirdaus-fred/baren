@@ -6,14 +6,17 @@ import type { HowToPlayContent } from "@/lib/how-to-play-content";
 
 type Props = {
   content: HowToPlayContent;
+  title?: string | null;
 };
 
-export function HowToPlay({ content }: Props) {
+export function HowToPlay({ content, title }: Props) {
+  if (!title) return null;
+
   return (
     <ScrollRevealWrapper>
       <SectionShell id="cara-main" tone="dark">
         <h2 className="display-xl text-center text-[clamp(2rem,4vw,3.25rem)]">
-          CARA BERMAIN
+          {title}
         </h2>
 
         {content.videoUrl && (
