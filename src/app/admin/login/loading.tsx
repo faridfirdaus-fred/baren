@@ -16,13 +16,6 @@ export default function AdminLoginLoading() {
         <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-sand-600">
           <span aria-hidden="true">&larr;</span> Kembali ke Situs
         </span>
-        <div className="flex items-center gap-2 text-[11px] font-mono tracking-wider text-sand-600">
-          <span
-            className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"
-            aria-hidden="true"
-          />
-          <span className="hidden sm:inline">TERMINAL // </span>ADM-PORTAL
-        </div>
       </header>
 
       {/* Center Skeleton Console */}
@@ -62,12 +55,9 @@ export default function AdminLoginLoading() {
         </div>
       </div>
 
-      {/* Footer HUD */}
-      <footer className="relative z-10 flex flex-wrap items-center justify-between gap-2 border-t border-line/60 px-4 py-3 text-[11px] text-sand-600 sm:px-8">
+      {/* Footer */}
+      <footer className="relative z-10 flex items-center justify-between border-t border-line/60 px-4 py-4 text-[11px] text-sand-600 sm:px-8">
         <span>BAREN &copy; 2026. Hak cipta dilindungi.</span>
-        <span className="font-mono uppercase tracking-wider">
-          Sesi 60m &bull; TLS 1.3 &bull; Guard E2-4
-        </span>
       </footer>
     </main>
   );
