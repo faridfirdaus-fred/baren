@@ -5,12 +5,14 @@ import "./globals.css";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const anton = Anton({
   variable: "--font-anton",
   weight: "400",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {

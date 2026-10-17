@@ -36,6 +36,7 @@ export async function Hero() {
         muted
         loop
         playsInline
+        preload="auto"
         poster={poster}
         aria-hidden="true"
       >
