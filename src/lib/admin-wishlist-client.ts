@@ -4,7 +4,7 @@ export type ClientApiResult<T> =
   | { ok: true; data: T }
   | { ok: false; error: { message: string; code?: string } };
 
-export function parseWaitlistApiResponse(
+export function parseWishlistApiResponse(
   raw: unknown,
 ): ClientApiResult<WishlistPage> {
   if (!raw || typeof raw !== "object") {
@@ -27,7 +27,7 @@ export function parseWaitlistApiResponse(
   return {
     ok: false,
     error: {
-      message: res.error?.message || "Gagal memuat data waiting list.",
+      message: res.error?.message || "Gagal memuat data wishlist.",
       code: res.error?.code,
     },
   };

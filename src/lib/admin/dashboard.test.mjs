@@ -9,7 +9,8 @@ describe("readDashboardSummary", () => {
       galleryAssets: 10,
       news: 5,
       faq: 8,
-      waitlist: 42,
+      wishlist: 42,
+      comments: 0,
       contentUpdates: [null, null, null, null, null],
     };
 
@@ -19,7 +20,7 @@ describe("readDashboardSummary", () => {
     assert.equal(result.galleryAssets, 10);
     assert.equal(result.news, 5);
     assert.equal(result.faq, 8);
-    assert.equal(result.waitlist, 42);
+    assert.equal(result.wishlist, 42);
   });
 
   it("should select the largest timestamp from content updates", () => {
@@ -32,7 +33,8 @@ describe("readDashboardSummary", () => {
       galleryAssets: 1,
       news: 1,
       faq: 1,
-      waitlist: 1,
+      wishlist: 1,
+      comments: 0,
       contentUpdates: [oldest, middle, newest, null, null],
     };
 
@@ -50,7 +52,8 @@ describe("readDashboardSummary", () => {
       galleryAssets: 2,
       news: 2,
       faq: 2,
-      waitlist: 2,
+      wishlist: 2,
+      comments: 0,
       contentUpdates: [null, older, null, newer, null],
     };
 
@@ -65,7 +68,8 @@ describe("readDashboardSummary", () => {
       galleryAssets: 0,
       news: 0,
       faq: 0,
-      waitlist: 0,
+      wishlist: 0,
+      comments: 0,
       contentUpdates: [null, null, null, null, null],
     };
 
@@ -83,7 +87,8 @@ describe("readDashboardSummary", () => {
       galleryAssets: 3,
       news: 7,
       faq: 2,
-      waitlist: 15,
+      wishlist: 15,
+      comments: 0,
       contentUpdates: [date1, null, date2, null, null],
     };
 
@@ -93,7 +98,7 @@ describe("readDashboardSummary", () => {
     assert.equal(result.galleryAssets, 3);
     assert.equal(result.news, 7);
     assert.equal(result.faq, 2);
-    assert.equal(result.waitlist, 15);
+    assert.equal(result.wishlist, 15);
     assert.equal(result.latestContentUpdatedAt?.getTime(), date2.getTime());
   });
 });

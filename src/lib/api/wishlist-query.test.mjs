@@ -1,22 +1,22 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-const { parseWaitlistQuery } = await import("./waitlist-query.ts");
+const { parseWishlistQuery } = await import("./wishlist-query.ts");
 
-describe("parseWaitlistQuery", () => {
+describe("parseWishlistQuery", () => {
   it("defaults page and omits blank trimmed search", () => {
-    assert.deepEqual(parseWaitlistQuery({}), {
+    assert.deepEqual(parseWishlistQuery({}), {
       ok: true,
       data: { page: 1 },
     });
-    assert.deepEqual(parseWaitlistQuery({ page: "3", search: "  " }), {
+    assert.deepEqual(parseWishlistQuery({ page: "3", search: "  " }), {
       ok: true,
       data: { page: 3 },
     });
   });
 
   it("trims search", () => {
-    assert.deepEqual(parseWaitlistQuery({ search: "  Rani  " }), {
+    assert.deepEqual(parseWishlistQuery({ search: "  Rani  " }), {
       ok: true,
       data: { page: 1, search: "Rani" },
     });
@@ -32,7 +32,7 @@ describe("parseWaitlistQuery", () => {
       { search: "x".repeat(321) },
       { nope: "value" },
     ]) {
-      const result = parseWaitlistQuery(query);
+      const result = parseWishlistQuery(query);
       assert.equal(result.ok, false);
       assert.equal(result.status, 400);
       assert.equal(result.code, "VALIDATION_ERROR");

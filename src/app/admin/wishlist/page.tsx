@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
-import { AdminWaitlistManager } from "@/components/admin/wishlist-manager";
+import { AdminWishlistManager } from "@/components/admin/wishlist-manager";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminWaitlistPage() {
+export default async function AdminWishlistPage() {
   let session = null;
   try {
     session = await auth();
@@ -16,5 +16,5 @@ export default async function AdminWaitlistPage() {
   if (!session?.user) redirect("/admin/login");
   if (role !== "admin") redirect("/admin/login?error=AksesDitolak");
 
-  return <AdminWaitlistManager />;
+  return <AdminWishlistManager />;
 }

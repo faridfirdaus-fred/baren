@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AssetUploader } from "./asset-uploader";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
+import type { UploadedAsset } from "@/lib/assets-client";
 
 interface NewsItem {
   id: number;
@@ -78,6 +80,15 @@ export function NewsManager() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadNews();
   }, []);
+
+  const handleCoverUploaded = (asset: UploadedAsset) => {
+    setFormData((prev) => ({ ...prev, coverUrl: asset.publicUrl }));
+    setToast({
+      message:
+        "Sampul berhasil diunggah ke R2. Klik 'Simpan' untuk menerapkan perubahan.",
+      type: "success",
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -263,12 +274,35 @@ export function NewsManager() {
               setFormData({ ...formData, coverUrl: e.target.value })
             }
             className="w-full border px-3 py-2 rounded"
+            placeholder="https://... (JPG/PNG/WebP)"
           />
+          <p className="text-xs text-gray-500 mt-1">
+            Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan tautan
+            gambar langsung.
+          </p>
           {formErrors.coverUrl && (
             <p className="text-red-600 text-sm mt-1">
               {formErrors.coverUrl[0]}
             </p>
           )}
+          {formData.coverUrl.trim() ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={formData.coverUrl}
+              alt="Pratinjau sampul berita"
+              className="mt-2 max-h-48 w-full rounded border object-cover"
+            />
+          ) : null}
+          <div className="mt-2">
+            <p className="mb-1 text-sm font-medium">
+              Unggah Sampul Baru ke R2 (JPG/PNG/WebP ≤ 5 MB)
+            </p>
+            <AssetUploader
+              purpose="news-cover"
+              onUploaded={handleCoverUploaded}
+              disabled={submitting}
+            />
+          </div>
         </div>
 
         <div className="mb-4">

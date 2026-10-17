@@ -33,6 +33,27 @@ function httpsUrl(label: string) {
   );
 }
 
+function requiredText(label: string, max: number) {
+  return z
+    .string()
+    .trim()
+    .min(1, `${label} wajib diisi.`)
+    .max(max, `${label} maksimal ${max} karakter.`)
+    .optional();
+}
+
+function optionalText(label: string, max: number) {
+  return z.preprocess(
+    emptyToNull,
+    z
+      .string()
+      .trim()
+      .max(max, `${label} maksimal ${max} karakter.`)
+      .nullable()
+      .optional(),
+  );
+}
+
 export const settingsUpdateSchema = z
   .object({
     namaGame: z
@@ -62,6 +83,30 @@ export const settingsUpdateSchema = z
         .nullable()
         .optional(),
     ),
+    featuresEyebrow: optionalText("Eyebrow fitur", 100),
+    featuresTitle: requiredText("Judul fitur", 200),
+    featuresEmptyMessage: optionalText("Pesan kosong fitur", 500),
+    howToPlayTitle: requiredText("Judul cara bermain", 200),
+    galleryEyebrow: optionalText("Eyebrow galeri", 100),
+    galleryTitle: requiredText("Judul galeri", 200),
+    galleryDescription: optionalText("Deskripsi galeri", 500),
+    galleryEmptyTitle: optionalText("Judul kosong galeri", 200),
+    galleryEmptyMessage: optionalText("Pesan kosong galeri", 500),
+    newsTitle: requiredText("Judul artikel", 200),
+    newsCtaLabel: requiredText("Label CTA artikel", 100),
+    faqEyebrow: optionalText("Eyebrow FAQ", 100),
+    faqTitle: requiredText("Judul FAQ", 200),
+    commentsTitle: requiredText("Judul komentar", 200),
+    commentsLoginPrompt: requiredText("Prompt login komentar", 500),
+    commentsEmptyMessage: optionalText("Pesan kosong komentar", 500),
+    commentsSubmitLabel: requiredText("Label kirim komentar", 100),
+    commentsSubmitError: optionalText("Pesan gagal komentar", 500),
+    contactEyebrow: optionalText("Eyebrow kontak", 100),
+    contactTitle: requiredText("Judul kontak", 200),
+    contactDescription: optionalText("Deskripsi kontak", 500),
+    contactEmailLabel: requiredText("Label email kontak", 100),
+    contactSocialTitle: requiredText("Judul sosial kontak", 200),
+    contactSocialEmptyMessage: optionalText("Pesan sosial kosong", 500),
   })
   .strict()
   .refine((v) => Object.keys(v).length > 0, "Minimal satu kolom harus diisi.");

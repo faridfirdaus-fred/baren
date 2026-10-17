@@ -46,11 +46,11 @@ export async function Hero() {
       <div className="container-baren flex flex-col items-center py-20 text-center lg:py-28">
         <Image
           src="/brand/baren-wordmark.png"
-          width={736}
-          height={138}
+          width={533}
+          height={100}
           priority
           alt="BAREN"
-          className="h-auto w-[clamp(200px,26vw,300px)]"
+          className="h-auto w-[clamp(140px,18.2vw,210px)]"
         />
         <h1 className="mt-8 max-w-3xl text-lg font-bold uppercase tracking-wider text-sand lg:text-xl">
           {tagline}

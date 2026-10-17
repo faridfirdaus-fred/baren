@@ -80,8 +80,10 @@
 - **Wishlist** — pendaftaran pengunjung via login Google OAuth (rename dari Waiting List); alur ≤ 3 langkah; istilah publik selalu "wishlist".
 - **Komentar** — satu kolom di landing; wajib login Google; langsung tayang; admin hanya hapus.
 - **FAQ** — accordion.
-- **Download** — tautan unduhan/platform distribusi.
+- **Download** — satu kartu Steam berstatus "Segera Hadir" dan tombol Gabung Wishlist.
 - **Contact** — email dan tautan media sosial.
+
+Konten promosi Hero dan copy seksi Features, Cara Bermain, Galeri, Artikel, FAQ, Komentar, serta Kontak dikelola admin tanpa deployment. Navigasi, struktur footer, dan tautan legal tetap statis.
 
 **Panel Admin (9 modul):**
 
@@ -147,34 +149,34 @@ Admin ───────┘        │
 
 ### 6.1 Situs Publik
 
-| ID        | Kebutuhan                                                                                                         | Prioritas |
-| --------- | ----------------------------------------------------------------------------------------------------------------- | --------- |
-| FR-PUB-01 | Hero: logo, nama/tagline, banner/video latar, tombol CTA sesuai data admin                                        | Must      |
-| FR-PUB-02 | Tombol CTA Hero mengarah ke tautan yang ditetapkan admin                                                          | Must      |
-| FR-PUB-03 | Banner bergantian (carousel) jika ada lebih dari satu banner                                                      | Should    |
-| FR-PUB-04 | Seksi About Game: judul, deskripsi (konsep), gambar gameplay                                                      | Must      |
-| FR-PUB-05 | Seksi Game Features: kartu ikon/gambar + judul + deskripsi sesuai urutan admin                                    | Must      |
-| FR-PUB-06 | Seksi How to Play: langkah bernomor berurutan + gambar/video                                                      | Must      |
-| FR-PUB-07 | Video demo game pada How to Play                                                                                  | Must      |
-| FR-PUB-08 | Seksi Gallery: screenshot, artwork, banner, video                                                                 | Must      |
-| FR-PUB-09 | Pengunjung dapat memperbesar gambar & memutar video di Gallery                                                    | Should    |
-| FR-PUB-10 | Daftar berita terbit di landing: maks 3 terbaru; 0 item → seksi hilang; tanpa halaman detail                      | Must      |
-| FR-PUB-11 | Halaman detail berita berbasis slug — DITUNDA (dikerjakan setelah landing baru stabil)                            | Must      |
-| FR-PUB-12 | FAQ accordion                                                                                                     | Must      |
-| FR-PUB-13 | Tombol unduhan per platform (Steam, Play Store, App Store, dll.)                                                  | Must      |
-| FR-PUB-14 | Email kontak & tautan media sosial                                                                                | Must      |
-| FR-PUB-15 | Logo, favicon, nama game tampil di seluruh halaman                                                                | Must      |
-| FR-PUB-16 | Menu navigasi sticky menuju seksi terkait                                                                         | Should    |
-| FR-PUB-17 | Menu navigasi berbentuk lipat (< 768 px)                                                                          | Must      |
-| FR-PUB-18 | Tombol Masuk/Gabung Wishlist pada header (anonim vs sudah login)                                                  | Must      |
-| FR-PUB-19 | Login Google OAuth saat pengunjung menekan tombol wishlist                                                        | Must      |
-| FR-PUB-20 | Setelah login Google, simpan email (+nama, foto) ke tabel `wishlist`                                              | Must      |
-| FR-PUB-21 | Idempoten: email terdaftar tidak duplikat; tampil status "sudah terdaftar"                                        | Must      |
-| FR-PUB-22 | Status keikutsertaan wishlist + pesan terima kasih setelah login (`#wishlist`)                                    | Must      |
-| FR-PUB-23 | Tombol logout bagi pengunjung yang sudah login                                                                    | Must      |
-| FR-PUB-24 | Email pengunjung login tampil pada menu akun                                                                      | Must      |
-| FR-PUB-25 | Selama belum rilis, tombol unduhan tampil "Segera Hadir"                                                          | Must      |
-| FR-PUB-26 | Komentar landing: login Google wajib, teks 1–500 tanpa HTML, langsung tayang; anonim ditolak; spam cepat kena 429 | Must      |
+| ID        | Kebutuhan                                                                                                                              | Prioritas |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| FR-PUB-01 | Hero: logo, nama/tagline, banner/video latar, tombol CTA sesuai data admin; tanpa fallback runtime, Hero tidak terbit disembunyikan    | Must      |
+| FR-PUB-02 | Tombol CTA Hero mengarah ke tautan yang ditetapkan admin                                                                               | Must      |
+| FR-PUB-03 | Banner bergantian (carousel) jika ada lebih dari satu banner                                                                           | Should    |
+| FR-PUB-04 | Seksi About Game: judul, deskripsi (konsep), gambar gameplay                                                                           | Must      |
+| FR-PUB-05 | Seksi Game Features: kartu ikon/gambar + judul + deskripsi sesuai urutan admin; copy pembungkus dan empty state dapat dikelola admin   | Must      |
+| FR-PUB-06 | Seksi How to Play: langkah bernomor berurutan + gambar/video; judul seksi dapat dikelola admin                                         | Must      |
+| FR-PUB-07 | Video demo game pada How to Play                                                                                                       | Must      |
+| FR-PUB-08 | Seksi Gallery: screenshot, artwork, banner, video; heading, pengantar, dan empty state dapat dikelola admin                            | Must      |
+| FR-PUB-09 | Pengunjung dapat memperbesar gambar & memutar video di Gallery                                                                         | Should    |
+| FR-PUB-10 | Daftar berita terbit di landing: maks 3 terbaru; 0 item → seksi hilang; judul dan label CTA dapat dikelola admin; tanpa halaman detail | Must      |
+| FR-PUB-11 | Halaman detail berita berbasis slug — DITUNDA (dikerjakan setelah landing baru stabil)                                                 | Must      |
+| FR-PUB-12 | FAQ accordion; heading dapat dikelola admin                                                                                            | Must      |
+| FR-PUB-13 | Satu kartu Steam berstatus "Segera Hadir" dan tombol Gabung Wishlist                                                                   | Must      |
+| FR-PUB-14 | Copy Kontak, email, dan tautan media sosial dikelola admin                                                                             | Must      |
+| FR-PUB-15 | Logo, favicon, nama game tampil di seluruh halaman                                                                                     | Must      |
+| FR-PUB-16 | Menu navigasi sticky menuju seksi terkait                                                                                              | Should    |
+| FR-PUB-17 | Menu navigasi berbentuk lipat (< 768 px)                                                                                               | Must      |
+| FR-PUB-18 | Tombol Masuk/Gabung Wishlist pada header (anonim vs sudah login)                                                                       | Must      |
+| FR-PUB-19 | Login Google OAuth saat pengunjung menekan tombol wishlist                                                                             | Must      |
+| FR-PUB-20 | Setelah login Google, simpan email (+nama, foto) ke tabel `wishlist`                                                                   | Must      |
+| FR-PUB-21 | Idempoten: email terdaftar tidak duplikat; tampil status "sudah terdaftar"                                                             | Must      |
+| FR-PUB-22 | Status keikutsertaan wishlist + pesan terima kasih setelah login (`#wishlist`)                                                         | Must      |
+| FR-PUB-23 | Tombol logout bagi pengunjung yang sudah login                                                                                         | Must      |
+| FR-PUB-24 | Email pengunjung login tampil pada menu akun                                                                                           | Must      |
+| FR-PUB-25 | Selama belum rilis, tombol unduhan tampil "Segera Hadir"                                                                               | Must      |
+| FR-PUB-26 | Komentar landing: login Google wajib, teks 1–500 tanpa HTML, langsung tayang; anonim ditolak; spam cepat kena 429                      | Must      |
 
 ### 6.2 Panel Admin
 

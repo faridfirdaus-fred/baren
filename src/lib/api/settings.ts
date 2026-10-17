@@ -18,37 +18,74 @@ export type SettingsBranding = {
   logoUrl: string | null;
   faviconUrl: string | null;
   emailKontak: string | null;
+  featuresEyebrow: string | null;
+  featuresTitle: string | null;
+  featuresEmptyMessage: string | null;
+  howToPlayTitle: string | null;
+  galleryEyebrow: string | null;
+  galleryTitle: string | null;
+  galleryDescription: string | null;
+  galleryEmptyTitle: string | null;
+  galleryEmptyMessage: string | null;
+  newsTitle: string | null;
+  newsCtaLabel: string | null;
+  faqEyebrow: string | null;
+  faqTitle: string | null;
+  commentsTitle: string | null;
+  commentsLoginPrompt: string | null;
+  commentsEmptyMessage: string | null;
+  commentsSubmitLabel: string | null;
+  commentsSubmitError: string | null;
+  contactEyebrow: string | null;
+  contactTitle: string | null;
+  contactDescription: string | null;
+  contactEmailLabel: string | null;
+  contactSocialTitle: string | null;
+  contactSocialEmptyMessage: string | null;
 };
 
-/** Petakan kolom JSON camelCase ke key DB snake_case (SRS §3.5). */
 const KEY_OF = {
   namaGame: "nama_game",
   tagline: "tagline",
   logoUrl: "logo_url",
   faviconUrl: "favicon_url",
   emailKontak: "email_kontak",
+  featuresEyebrow: "features_eyebrow",
+  featuresTitle: "features_title",
+  featuresEmptyMessage: "features_empty_message",
+  howToPlayTitle: "how_to_play_title",
+  galleryEyebrow: "gallery_eyebrow",
+  galleryTitle: "gallery_title",
+  galleryDescription: "gallery_description",
+  galleryEmptyTitle: "gallery_empty_title",
+  galleryEmptyMessage: "gallery_empty_message",
+  newsTitle: "news_title",
+  newsCtaLabel: "news_cta_label",
+  faqEyebrow: "faq_eyebrow",
+  faqTitle: "faq_title",
+  commentsTitle: "comments_title",
+  commentsLoginPrompt: "comments_login_prompt",
+  commentsEmptyMessage: "comments_empty_message",
+  commentsSubmitLabel: "comments_submit_label",
+  commentsSubmitError: "comments_submit_error",
+  contactEyebrow: "contact_eyebrow",
+  contactTitle: "contact_title",
+  contactDescription: "contact_description",
+  contactEmailLabel: "contact_email_label",
+  contactSocialTitle: "contact_social_title",
+  contactSocialEmptyMessage: "contact_social_empty_message",
 } as const;
 
-type BrandingKey = keyof typeof KEY_OF;
+type SettingsKey = keyof typeof KEY_OF;
 
-const ORDER: BrandingKey[] = [
-  "namaGame",
-  "tagline",
-  "logoUrl",
-  "faviconUrl",
-  "emailKontak",
-];
+const ORDER: SettingsKey[] = Object.keys(KEY_OF) as SettingsKey[];
 
 /** Ubah baris key/value menjadi objek branding; key asing diabaikan. */
 export function toBranding(rows: SettingsRow[]): SettingsBranding {
   const byKey = new Map(rows.map((r) => [r.key, r.value]));
-  return {
-    namaGame: byKey.get(KEY_OF.namaGame) ?? null,
-    tagline: byKey.get(KEY_OF.tagline) ?? null,
-    logoUrl: byKey.get(KEY_OF.logoUrl) ?? null,
-    faviconUrl: byKey.get(KEY_OF.faviconUrl) ?? null,
-    emailKontak: byKey.get(KEY_OF.emailKontak) ?? null,
-  };
+  return Object.fromEntries(
+    ORDER.map((field) => [field, byKey.get(KEY_OF[field]) ?? null]),
+  ) as SettingsBranding;
 }
 
 /** GET publik: seluruh branding, kolom hilang menjadi null. */

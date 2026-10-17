@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Waitlist query schema untuk pagination dan search.
+ * Wishlist query schema untuk pagination dan search.
  *
  * - page: default 1, harus integer positif
  * - search: optional, trim whitespace, ubah empty string ke undefined, max 320 karakter

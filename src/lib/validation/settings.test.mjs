@@ -50,6 +50,45 @@ describe("settingsUpdateSchema", () => {
     assert.deepEqual(r.data, { tagline: null, logoUrl: null });
   });
 
+  it("menerima copy landing wajib dan menormalisasi copy opsional kosong", () => {
+    const r = settingsUpdateSchema.safeParse({
+      featuresTitle: "  Fitur BAREN  ",
+      howToPlayTitle: "Cara Bermain",
+      galleryDescription: "",
+      commentsSubmitError: "",
+      contactTitle: "Hubungi Kami",
+    });
+    assert.equal(r.success, true);
+    assert.deepEqual(r.data, {
+      featuresTitle: "Fitur BAREN",
+      howToPlayTitle: "Cara Bermain",
+      galleryDescription: null,
+      commentsSubmitError: null,
+      contactTitle: "Hubungi Kami",
+    });
+  });
+
+  it("menolak copy landing wajib kosong, terlalu panjang, dan key typo", () => {
+    const kosong = settingsUpdateSchema.safeParse({ featuresTitle: "   " });
+    assert.equal(kosong.success, false);
+    assert.ok(
+      kosong.error.issues.some((i) => i.path.join(".") === "featuresTitle"),
+    );
+
+    const panjang = settingsUpdateSchema.safeParse({
+      galleryDescription: "a".repeat(501),
+    });
+    assert.equal(panjang.success, false);
+    assert.ok(
+      panjang.error.issues.some(
+        (i) => i.path.join(".") === "galleryDescription",
+      ),
+    );
+
+    const typo = settingsUpdateSchema.safeParse({ featuresTittle: "Salah" });
+    assert.equal(typo.success, false);
+  });
+
   it("string kosong pada email kontak juga mengosongkan, bukan error", () => {
     const r = settingsUpdateSchema.safeParse({ emailKontak: "" });
     assert.equal(r.success, true);

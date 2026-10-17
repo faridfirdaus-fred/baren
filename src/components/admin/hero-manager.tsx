@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AssetUploader } from "./asset-uploader";
 import { Toast } from "./toast";
+import type { UploadedAsset } from "@/lib/assets-client";
 
 interface HeroData {
   title: string;
@@ -68,6 +70,24 @@ export function HeroManager() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadHero();
   }, []);
+
+  const handleVideoUploaded = (asset: UploadedAsset) => {
+    setFormData((prev) => ({ ...prev, videoUrl: asset.publicUrl }));
+    setToast({
+      message:
+        "Video berhasil diunggah ke R2. Klik 'Simpan Hero' untuk menerapkan perubahan.",
+      type: "success",
+    });
+  };
+
+  const handleBackgroundUploaded = (asset: UploadedAsset) => {
+    setFormData((prev) => ({ ...prev, backgroundUrl: asset.publicUrl }));
+    setToast({
+      message:
+        "Background berhasil diunggah ke R2. Klik 'Simpan Hero' untuk menerapkan perubahan.",
+      type: "success",
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,12 +181,38 @@ export function HeroManager() {
               setFormData({ ...formData, videoUrl: e.target.value })
             }
             className="w-full border px-3 py-2 rounded"
+            placeholder="https://... (MP4)"
           />
+          <p className="text-xs text-gray-500 mt-1">
+            Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan tautan
+            MP4 langsung.
+          </p>
           {formErrors.videoUrl && (
             <p className="text-red-600 text-sm mt-1">
               {formErrors.videoUrl[0]}
             </p>
           )}
+          {formData.videoUrl.trim() ? (
+            <video
+              src={formData.videoUrl}
+              preload="metadata"
+              muted
+              playsInline
+              controls
+              className="mt-2 max-h-48 w-full rounded border"
+              aria-label="Pratinjau video hero"
+            />
+          ) : null}
+          <div className="mt-2">
+            <p className="mb-1 text-sm font-medium">
+              Unggah Video Baru ke R2 (MP4 ≤ 50 MB)
+            </p>
+            <AssetUploader
+              purpose="hero-video"
+              onUploaded={handleVideoUploaded}
+              disabled={submitting}
+            />
+          </div>
         </div>
 
         <div>
@@ -181,12 +227,35 @@ export function HeroManager() {
               setFormData({ ...formData, backgroundUrl: e.target.value })
             }
             className="w-full border px-3 py-2 rounded"
+            placeholder="https://... (JPG/PNG/WebP)"
           />
+          <p className="text-xs text-gray-500 mt-1">
+            Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan tautan
+            gambar langsung.
+          </p>
           {formErrors.backgroundUrl && (
             <p className="text-red-600 text-sm mt-1">
               {formErrors.backgroundUrl[0]}
             </p>
           )}
+          {formData.backgroundUrl.trim() ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={formData.backgroundUrl}
+              alt="Pratinjau background hero"
+              className="mt-2 max-h-48 w-full rounded border object-cover"
+            />
+          ) : null}
+          <div className="mt-2">
+            <p className="mb-1 text-sm font-medium">
+              Unggah Background Baru ke R2 (JPG/PNG/WebP ≤ 5 MB)
+            </p>
+            <AssetUploader
+              purpose="hero-background"
+              onUploaded={handleBackgroundUploaded}
+              disabled={submitting}
+            />
+          </div>
         </div>
 
         <div>
