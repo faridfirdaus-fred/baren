@@ -37,6 +37,7 @@ import {
   type UploadedAsset,
   type UploadProgress,
 } from "./assets-upload-core";
+import { compressImageIfNeeded } from "./assets-compress";
 
 export type {
   PresignTriple,
@@ -247,31 +248,46 @@ export function putToR2(
 }
 
 /**
- * Alur lengkap satu file: presign just-in-time -> PUT R2.
+ * Alur lengkap satu file: kompres (E4-7) -> presign just-in-time -> PUT R2.
+ * Kompres WAJIB sebelum presign karena Content-Type ikut ditandatangani.
  * Retry (bila diminta pemanggil) mengganti triple secara atomik:
  * `requestPresign` selalu dipanggil ulang, tak pernah pakai key/URL lama.
+ *
+ * `onCompressed` opsional untuk UI (mis. "4,2 MB → 520 KB").
  */
 export async function uploadOneFile(
   file: File,
   purpose: string,
   onProgress: UploadProgress,
   signal: AbortSignal,
+  onCompressed?: (info: {
+    originalBytes: number;
+    compressedBytes: number;
+  }) => void,
 ): Promise<
   | { ok: true; asset: UploadedAsset }
   | { ok: false; error: PresignError | PutError }
 > {
-  const presigned = await requestPresign(file, purpose);
+  const outcome = await compressImageIfNeeded(file, purpose);
+  const payload = outcome.file;
+  if (outcome.compressed) {
+    onCompressed?.({
+      originalBytes: outcome.originalBytes,
+      compressedBytes: outcome.compressedBytes,
+    });
+  }
+  const presigned = await requestPresign(payload, purpose);
   if (!presigned.ok) return presigned;
-  const put = await putToR2(file, presigned.triple, onProgress, signal);
+  const put = await putToR2(payload, presigned.triple, onProgress, signal);
   if (!put.ok) return put;
   return {
     ok: true,
     asset: {
       key: presigned.triple.key,
       publicUrl: presigned.triple.publicUrl,
-      name: file.name,
-      size: file.size,
-      mimeType: file.type,
+      name: payload.name,
+      size: payload.size,
+      mimeType: payload.type,
     },
   };
 }

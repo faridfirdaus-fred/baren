@@ -1,6 +1,7 @@
 // E3-6: GET daftar berita terbit (9/halaman) + POST berita (admin).
+// E7-2: GET by slug untuk halaman detail.
 
-import { count, desc, eq, sql } from "drizzle-orm";
+import { count, desc, eq, sql, and } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { news } from "@/db/schema";
@@ -84,9 +85,36 @@ function creator(db: Db): NewsCreator {
   };
 }
 
-/** Publik: berita terbit terbaru (?page=, ?limit= maks 9; landing memakai limit=3). */
+/** Publik: berita terbit terbaru (?page=, ?limit= maks 9; landing memakai limit=3). 
+ * E7-2: ?slug= untuk detail 1 berita published.
+ */
 export async function GET(request: Request): Promise<Response> {
   const params = new URL(request.url).searchParams;
+  const slugParam = params.get("slug");
+
+  // E7-2: jika ada ?slug=, ambil 1 berita published
+  if (slugParam) {
+    try {
+      const db = getDb();
+      const item = await db.query.news.findFirst({
+        where: and(eq(news.slug, slugParam), eq(news.status, PUBLISHED)),
+      });
+      if (!item) {
+        return fromResult({
+          ok: false,
+          code: "NOT_FOUND",
+          message: "Berita tidak ditemukan",
+          status: 404,
+        });
+      }
+      return fromResult({ ok: true, data: toRow(item) });
+    } catch (error) {
+      console.error("GET /api/news?slug= gagal:", error);
+      return fromResult(toDbResult(error));
+    }
+  }
+
+  // List berita (paginated)
   const page = parsePageParam(params.get("page"));
   if (!page.ok) return fromResult(page);
   const limit = parseLimitParam(params.get("limit"), NEWS_PER_PAGE);

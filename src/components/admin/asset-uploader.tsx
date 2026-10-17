@@ -133,22 +133,31 @@ export function AssetUploader({
     [onUploaded, patchFile],
   );
 
-  /** Unggah satu file: presign just-in-time -> PUT R2 -> callback simpan. */
+  /** Unggah satu file: kompres E4-7 -> presign just-in-time -> PUT R2 -> callback simpan. */
   const uploadFile = useCallback(
     async (id: string) => {
       const file = filesRef.current.get(id);
       if (!file) return;
       const controller = new AbortController();
       abortRef.current.set(id, controller);
-      patchFile(id, { status: "mengunggah", progress: 0, message: null });
+      patchFile(id, {
+        status: "mengunggah",
+        progress: 0,
+        message: "Menyiapkan…",
+      });
       const result = await uploadOneFile(
         file,
         purpose,
         (loaded: number, total: number) =>
           patchFile(id, {
             progress: total > 0 ? Math.round((loaded / total) * 100) : 0,
+            message: "Mengunggah…",
           }),
         controller.signal,
+        (info) =>
+          patchFile(id, {
+            message: `Dikompres ${formatBytes(info.originalBytes)} → ${formatBytes(info.compressedBytes)}. Mengunggah…`,
+          }),
       );
       abortRef.current.delete(id);
       if (result.ok) {
