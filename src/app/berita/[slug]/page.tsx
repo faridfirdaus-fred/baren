@@ -23,9 +23,12 @@ interface NewsItem {
 async function getNewsItem(slug: string): Promise<NewsItem | null> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
   try {
-    const res = await fetch(`${baseUrl}/api/news?slug=${encodeURIComponent(slug)}`, {
-      cache: "no-store",
-    });
+    const res = await fetch(
+      `${baseUrl}/api/news?slug=${encodeURIComponent(slug)}`,
+      {
+        cache: "no-store",
+      },
+    );
     if (!res.ok) return null;
     const json = (await res.json()) as { ok: boolean; data?: NewsItem };
     return json.ok && json.data ? json.data : null;

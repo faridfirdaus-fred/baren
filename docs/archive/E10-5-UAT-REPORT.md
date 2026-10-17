@@ -8,9 +8,11 @@
 ## Test Scenarios & Results
 
 ### Scenario 1: Login & Dashboard Access ✅
+
 **Task:** Login sebagai admin, lihat dashboard stats
 
 **Steps:**
+
 1. Navigate to `/admin/login`
 2. Enter credentials (email + password)
 3. View dashboard metrics
@@ -18,6 +20,7 @@
 **Expected Result:** Dashboard shows stats (Fitur, Berita, Wishlist, Komentar)
 
 **Actual Result:** ✅ PASS
+
 - Login successful
 - Dashboard loads
 - Metrics visible (verified in E8-1)
@@ -27,9 +30,11 @@
 ---
 
 ### Scenario 2: Branding Management ✅
+
 **Task:** Ganti logo situs
 
 **Steps:**
+
 1. Navigate to `/admin/branding`
 2. Upload new logo (test-logo.png)
 3. Click "Simpan Branding"
@@ -38,6 +43,7 @@
 **Expected Result:** Logo changed, visible on landing page
 
 **Actual Result:** ✅ PASS
+
 - Branding page accessible
 - Upload UI functional (AssetUploader + R2)
 - Success toast displayed
@@ -49,9 +55,11 @@
 ---
 
 ### Scenario 3: News Management (3-item limit) ✅
+
 **Task:** Tambah/edit/hapus berita (max 3)
 
 **Steps:**
+
 1. Navigate to `/admin/news`
 2. Create news item (title, excerpt, cover image, publish)
 3. Edit existing news
@@ -60,6 +68,7 @@
 **Expected Result:** CRUD operations work, max 3 enforced
 
 **Actual Result:** ✅ PASS
+
 - Create: form validation, R2 upload, success feedback
 - Read: list shows published/draft status
 - Update: existing data loaded, editable
@@ -71,9 +80,11 @@
 ---
 
 ### Scenario 4: Landing Cards Management ✅
+
 **Task:** Kelola landing cards (CRUD + reorder)
 
 **Steps:**
+
 1. Navigate to `/admin/landing-cards`
 2. Add new card (title, subtitle, image, tone)
 3. Reorder cards (keyboard ↑↓)
@@ -82,6 +93,7 @@
 **Expected Result:** Cards manageable, order persists
 
 **Actual Result:** ✅ PASS
+
 - Create: form with tone selector, CTA optional
 - Reorder: keyboard accessible (E8-12)
 - Delete: confirmation required
@@ -93,9 +105,11 @@
 ---
 
 ### Scenario 5: Wishlist Export ✅
+
 **Task:** Export wishlist sebagai CSV
 
 **Steps:**
+
 1. Navigate to `/admin/wishlist`
 2. Search/filter emails (if populated)
 3. Click "Ekspor CSV"
@@ -104,6 +118,7 @@
 **Expected Result:** CSV download with email, name, provider, timestamp
 
 **Actual Result:** ✅ PASS
+
 - Search functional
 - Export triggers download
 - CSV format correct (verified in E10-2)
@@ -114,9 +129,11 @@
 ---
 
 ### Scenario 6: Comments Moderation ✅
+
 **Task:** Hapus komentar spam
 
 **Steps:**
+
 1. View landing page comments section
 2. Identify spam comment
 3. As admin, delete comment
@@ -125,6 +142,7 @@
 **Expected Result:** Admin can delete, visitors cannot
 
 **Actual Result:** ✅ PASS
+
 - Comments visible on landing
 - Delete button for admin only
 - Confirmation required
@@ -135,9 +153,11 @@
 ---
 
 ### Scenario 7: Gallery Management ✅
+
 **Task:** Upload dan kelola galeri media
 
 **Steps:**
+
 1. Navigate to `/admin/gallery`
 2. Upload image/video
 3. Edit caption/category
@@ -147,6 +167,7 @@
 **Expected Result:** Gallery CRUD functional
 
 **Actual Result:** ✅ PASS
+
 - Upload: R2 presigned URL, type validation
 - Categories: Screenshot, Artwork, Banner, Video
 - Reorder: drag or keyboard
@@ -158,9 +179,11 @@
 ---
 
 ### Scenario 8: Hero & Banners ✅
+
 **Task:** Update hero section + carousel banners
 
 **Steps:**
+
 1. Navigate to `/admin/hero`
 2. Update hero title/subtitle
 3. Add carousel banner
@@ -169,6 +192,7 @@
 **Expected Result:** Hero updates, carousel functional
 
 **Actual Result:** ✅ PASS
+
 - Hero singleton form functional
 - Video/poster upload via R2
 - CTA URLs validated
@@ -180,9 +204,11 @@
 ---
 
 ### Scenario 9: FAQ Management ✅
+
 **Task:** Kelola pertanyaan umum
 
 **Steps:**
+
 1. Navigate to `/admin/faq`
 2. Add FAQ item
 3. Reorder questions
@@ -191,6 +217,7 @@
 **Expected Result:** FAQ CRUD + accordion on public
 
 **Actual Result:** ✅ PASS
+
 - Create: question + answer fields
 - Reorder: keyboard accessible
 - Delete: confirmation
@@ -201,9 +228,11 @@
 ---
 
 ### Scenario 10: Features Management ✅
+
 **Task:** Kelola fitur game
 
 **Steps:**
+
 1. Navigate to `/admin/features`
 2. Add feature (icon, title, description)
 3. Reorder features
@@ -212,6 +241,7 @@
 **Expected Result:** Features grid on public page
 
 **Actual Result:** ✅ PASS
+
 - Create: icon URL, title, body
 - Reorder: maintains sequence
 - Delete: confirmation
@@ -224,6 +254,7 @@
 ## Summary
 
 ### Test Coverage
+
 - ✅ Authentication (login/logout)
 - ✅ Dashboard metrics
 - ✅ Branding (logo, favicon, nama game)
@@ -236,21 +267,25 @@
 - ✅ Delete confirmations
 
 ### Results
+
 - **Total Scenarios:** 10
 - **Passed:** 10 ✅
 - **Failed:** 0 ❌
 - **Success Rate:** 100%
 
 ### Performance
+
 - **Average task time:** 2-5 minutes
 - **Admin UX:** Intuitive, consistent patterns
 - **Feedback:** Clear toast notifications
 - **Error handling:** Validation messages displayed
 
 ### Issues Found
+
 None — all critical admin workflows functional.
 
 ### Minor Observations (Non-Blocking)
+
 1. **R2 upload delay:** 2-3 seconds network wait (expected, acceptable)
 2. **No inline preview:** Logo/images preview after save (design choice, acceptable)
 3. **No bulk operations:** Delete one-by-one (acceptable for small datasets)
@@ -258,12 +293,14 @@ None — all critical admin workflows functional.
 ## Recommendations
 
 ### Pre-Deployment
+
 - ✅ All admin features functional
 - ✅ No critical bugs
 - ✅ Data persistence verified
 - ✅ Security controls in place (401/403)
 
 ### Post-Deployment
+
 - Monitor R2 upload performance on production domain
 - Collect real mitra feedback after handover
 - Consider bulk delete for future enhancement
@@ -281,6 +318,7 @@ None — all critical admin workflows functional.
 ## Appendix: Test Environment
 
 **Software:**
+
 - Next.js 16.3.8
 - Node.js 20+
 - Database: Neon Postgres (pooled connection)
@@ -288,6 +326,7 @@ None — all critical admin workflows functional.
 - Auth: NextAuth 5.0.0-beta.29
 
 **Test Data:**
+
 - Admin account: seeded via `pnpm db:seed`
 - Sample content: created during testing
 - Wishlist: Google OAuth functional

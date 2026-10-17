@@ -16,10 +16,15 @@ function required(name) {
 }
 
 async function expectText(page, text) {
-  await assert.doesNotReject(() => page.getByText(text, { timeout: 5000 }).waitFor());
+  await assert.doesNotReject(() =>
+    page.getByText(text, { timeout: 5000 }).waitFor(),
+  );
 }
 
-const browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
+const browser = await chromium.launch({
+  headless: true,
+  args: ["--no-sandbox"],
+});
 const context = await browser.newContext();
 const page = await context.newPage();
 
@@ -48,17 +53,25 @@ try {
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: /ekspor csv/i }).click();
   const download = await downloadPromise;
-  assert.ok(download.suggestedFilename().includes(".csv"), "CSV download triggered");
+  assert.ok(
+    download.suggestedFilename().includes(".csv"),
+    "CSV download triggered",
+  );
 
   // Test 4: Landing cards manager (FR-ADM-23)
   console.log("  4. Landing cards CRUD...");
-  await page.goto(`${baseUrl}/admin/landing-cards`, { waitUntil: "networkidle" });
+  await page.goto(`${baseUrl}/admin/landing-cards`, {
+    waitUntil: "networkidle",
+  });
   await expectText(page, "Kelola Landing Cards");
-  
+
   // Create test card
   await page.getByLabel("Judul").first().fill("Test Card E10-2");
   await page.getByLabel("Subjudul").first().fill("Test subtitle");
-  await page.getByRole("button", { name: /tambah kartu/i }).first().click();
+  await page
+    .getByRole("button", { name: /tambah kartu/i })
+    .first()
+    .click();
   await expectText(page, "berhasil");
   await page.reload({ waitUntil: "networkidle" });
   await expectText(page, "Test Card E10-2");
@@ -85,7 +98,7 @@ try {
   await page.goto(`${baseUrl}/admin`);
   await page.getByRole("button", { name: "Keluar" }).click();
   await page.waitForURL(`${baseUrl}/admin/login`, { timeout: 5000 });
-  
+
   // Verify redirect protection (FR-ADM-04)
   await page.goto(`${baseUrl}/admin/hero`);
   await page.waitForURL(`${baseUrl}/admin/login`, { timeout: 5000 });

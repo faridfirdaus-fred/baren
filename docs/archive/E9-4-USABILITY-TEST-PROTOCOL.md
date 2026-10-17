@@ -5,6 +5,7 @@
 ## Test Environment
 
 **Requirements:**
+
 - Browser: Chrome/Firefox/Edge (latest)
 - Screen resolution: 1366×768 minimum
 - Test account: admin credentials provided
@@ -13,6 +14,7 @@
 ## Test Scenario: Change Site Logo
 
 ### Pre-Test Setup
+
 1. Admin logged out
 2. Test logo file prepared (`test-logo.png`, 500×500px, ~100KB)
 3. Timer ready
@@ -54,27 +56,28 @@
 
 ### Observation Checklist
 
-| Step | Checkpoint | Pass/Fail | Time | Notes |
-|------|------------|-----------|------|-------|
-| 1 | Login successful | ⬜ | __:__ | |
-| 2 | Found branding section without help | ⬜ | __:__ | |
-| 3 | Located logo upload field | ⬜ | __:__ | |
-| 4 | Successfully uploaded file | ⬜ | __:__ | |
-| 5 | Saved changes | ⬜ | __:__ | |
-| 6 | Verified logo on public page | ⬜ | __:__ | |
-| **Total Time** | | | __:__ | ≤5:00 required |
+| Step           | Checkpoint                          | Pass/Fail | Time  | Notes          |
+| -------------- | ----------------------------------- | --------- | ----- | -------------- |
+| 1              | Login successful                    | ⬜        | **:** |                |
+| 2              | Found branding section without help | ⬜        | **:** |                |
+| 3              | Located logo upload field           | ⬜        | **:** |                |
+| 4              | Successfully uploaded file          | ⬜        | **:** |                |
+| 5              | Saved changes                       | ⬜        | **:** |                |
+| 6              | Verified logo on public page        | ⬜        | **:** |                |
+| **Total Time** |                                     |           | **:** | ≤5:00 required |
 
 ### Usability Issues Log
 
-| Issue | Severity | Description | Suggested Fix |
-|-------|----------|-------------|---------------|
-| | Low/Medium/High | | |
+| Issue | Severity        | Description | Suggested Fix |
+| ----- | --------------- | ----------- | ------------- |
+|       | Low/Medium/High |             |               |
 
 ## Success Criteria
 
 **Pass:** ≥3/3 participants complete task in ≤5 minutes without guidance
 
 **Metrics:**
+
 - Average completion time: _____ min
 - Success rate: ___/3 (100% required)
 - User satisfaction: ___/5 (post-task survey)
@@ -89,7 +92,9 @@
 ## Current Admin UI Analysis
 
 ### Branding Page (`/admin/branding`)
+
 **Strengths:**
+
 - ✅ Direct link from dashboard sidebar
 - ✅ "Branding" label clear and intuitive
 - ✅ Upload button prominent
@@ -97,17 +102,20 @@
 - ✅ Preview of current logo
 
 **Potential Issues:**
+
 - ⚠️ No inline preview of uploaded logo (before save)
 - ⚠️ File size limit not shown upfront
 
 ### Expected Results (Prediction)
 
 **Likely Success:** 3/3 users complete task
+
 - Navigation clear: "Branding" in sidebar
 - Upload UI standard: familiar pattern
 - Feedback immediate: toast confirmation
 
 **Possible Friction Points:**
+
 1. Finding save button (if below fold)
 2. Waiting for R2 upload (network delay)
 3. Verifying change (may need refresh)
@@ -115,16 +123,19 @@
 ## Test Execution Plan
 
 ### Participant Recruitment
+
 - Target: 3 individuals with basic computer literacy
 - No prior experience with BAREN admin required
 - Age: 20-40 (representative of target admin users)
 
 ### Scheduling
+
 - Test 1: [Date/Time]
 - Test 2: [Date/Time]
 - Test 3: [Date/Time]
 
 ### Materials
+
 - Admin credentials card
 - Test logo file (USB/email)
 - Observation sheet (printed)

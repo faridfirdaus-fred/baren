@@ -19,7 +19,11 @@ export function FaqAccordion({ items }: FaqAccordionProps) {
   if (list.length === 0) return null;
 
   return (
-    <section ref={ref} id="faq" className="scroll-reveal bg-ink py-12 text-sand lg:py-16">
+    <section
+      ref={ref}
+      id="faq"
+      className="scroll-reveal bg-ink py-12 text-sand lg:py-16"
+    >
       <div className="container-baren">
         <p className="eyebrow text-ember">FAQ</p>
         <h2 className="display-xl mt-4 text-sand">PERTANYAAN UMUM</h2>

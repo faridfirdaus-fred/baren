@@ -69,6 +69,7 @@ Di `docs/superpowers/plans/`:
 ## Rekomendasi Prioritas Next Session
 
 **Opsi 1 — E7 (Situs Publik Tambahan):** ⭐ Recommended
+
 - Selesaikan E7 sisa di `2026-10-16-situs-publik.md`
 - E7-3 (FAQ UI publik), E7-4 (download), E7-5 (kontak), E7-6 (footer)
 - Impact: Landing page lengkap untuk visitor, unblock E9-1/3 (audit)
@@ -76,6 +77,7 @@ Di `docs/superpowers/plans/`:
 - Blocker: Tidak ada, semua dep Done
 
 **Opsi 2 — E9 (Mutu/Audit yang unblocked):**
+
 - E9-4: Uji kegunaan 3 admin ganti logo (butuh user riil)
 - E9-2 sudah Done, E9-5 sudah Done
 - E9-1/3 blocked sampai E7 selesai
@@ -83,6 +85,7 @@ Di `docs/superpowers/plans/`:
 - Estimasi: ~2 SP (E9-4 saja)
 
 **Opsi 3 — E10 (Testing & Deploy):**
+
 - E10-2 (uji admin CRUD lengkap)
 - E10-3 (uji keamanan 401/403/presigned URL)
 - E10-4 (uji browser cross-platform)
@@ -91,6 +94,7 @@ Di `docs/superpowers/plans/`:
 - Blocker: Butuh env prod untuk E10-3 (staging HTTPS)
 
 **Opsi 4 — E11 (OAuth Google):**
+
 - E11-10: Setup Google OAuth kredensial + uji alur wishlist
 - Impact: Wishlist feature lengkap
 - Estimasi: ~3 SP
@@ -113,6 +117,7 @@ cat docs/superpowers/plans/2026-10-16-rilis.md         # E10
 ```
 
 Pola kerja:
+
 1. Baca `docs/TASK_BREAKDOWN.md` untuk status terkini
 2. Pilih 1 plan, identifikasi task Todo yang unblocked
 3. Untuk setiap task:
@@ -136,6 +141,7 @@ Pola kerja:
 ## Verifikasi Awal Next Session
 
 Expected state:
+
 - Clean tree, branch `main`
 - Last commit: 7fcbc79 (docs: update plan situs-publik with E6 completion checkmarks)
 - E0..E6, E8: 100% Done

@@ -30,11 +30,13 @@
 ## Pre-Deployment Checklist
 
 ### 1. Cloudflare Account Setup
+
 - [ ] Cloudflare account created
 - [ ] Workers plan: Paid ($5/month minimum for 10M requests)
 - [ ] Domain configured (optional, can use workers.dev subdomain)
 
 ### 2. R2 Bucket Setup
+
 ```bash
 # Create R2 bucket
 wrangler r2 bucket create baren-assets
@@ -44,6 +46,7 @@ wrangler r2 bucket cors put baren-assets --config r2-cors.json
 ```
 
 **r2-cors.json:**
+
 ```json
 [
   {
@@ -56,12 +59,14 @@ wrangler r2 bucket cors put baren-assets --config r2-cors.json
 ```
 
 ### 3. Neon Database
+
 - [ ] Neon account + project created
 - [ ] Pooled connection string obtained
 - [ ] Migrations applied: `pnpm db:push`
 - [ ] Admin seeded: `pnpm db:seed`
 
 ### 4. Google OAuth Setup
+
 - [ ] Google Cloud Console project created
 - [ ] OAuth 2.0 credentials configured
 - [ ] Authorized redirect URI: `https://yourdomain.com/api/auth/callback/google`
@@ -85,6 +90,7 @@ ls -la .open-next/
 ```
 
 **Expected output:**
+
 - `.open-next/server-functions/` (Workers code)
 - `.open-next/cache/` (static assets)
 
@@ -150,6 +156,7 @@ wrangler deploy
 ```
 
 **Expected output:**
+
 ```
 ✨ Uploaded 100% (XXX files)
 ✨ Published baren (X.XX sec)
@@ -169,6 +176,7 @@ wrangler domains add yourdomain.com
 ```
 
 **DNS Configuration:**
+
 - Add CNAME: `yourdomain.com` → `baren.your-subdomain.workers.dev`
 - Or use Cloudflare proxied A/AAAA records
 
@@ -177,6 +185,7 @@ wrangler domains add yourdomain.com
 ### Step 5: Update OAuth Redirect URI
 
 **Google Cloud Console:**
+
 1. Navigate to: APIs & Services → Credentials
 2. Edit OAuth 2.0 Client ID
 3. Add Authorized redirect URI:
@@ -190,6 +199,7 @@ wrangler domains add yourdomain.com
 ### Step 6: Verify Deployment
 
 **Public Landing Page:**
+
 ```bash
 curl -I https://yourdomain.com
 # Expected: 200 OK, HTML content
@@ -199,6 +209,7 @@ curl https://yourdomain.com | grep "BAREN"
 ```
 
 **Admin Login:**
+
 ```bash
 # Navigate to: https://yourdomain.com/admin/login
 # Login with ADMIN_EMAIL + ADMIN_PASSWORD
@@ -206,18 +217,21 @@ curl https://yourdomain.com | grep "BAREN"
 ```
 
 **Database Connectivity:**
+
 ```bash
 # Create test news item in admin
 # Expected: Saved to Neon, visible on public page
 ```
 
 **R2 Upload:**
+
 ```bash
 # Upload logo in /admin/branding
 # Expected: Image accessible via R2_PUBLIC_DOMAIN
 ```
 
 **Google OAuth:**
+
 ```bash
 # Click "Gabung Wishlist" → Google sign-in
 # Expected: Redirect to Google, return to site, email saved
@@ -228,6 +242,7 @@ curl https://yourdomain.com | grep "BAREN"
 ## Post-Deployment Verification
 
 ### Functional Tests
+
 - [ ] Landing page loads (hero video plays)
 - [ ] Admin login works
 - [ ] CRUD operations (news, features, gallery)
@@ -238,11 +253,13 @@ curl https://yourdomain.com | grep "BAREN"
 - [ ] Mobile responsive (360px - 1920px)
 
 ### Performance Tests
+
 - [ ] Lighthouse Performance ≥ 80
 - [ ] LCP ≤ 3 seconds
 - [ ] No console errors
 
 ### Security Tests
+
 - [ ] `/admin` redirects to login (unauthenticated)
 - [ ] API endpoints require auth (401/403)
 - [ ] HTTPS enforced
@@ -263,6 +280,7 @@ wrangler rollback <DEPLOYMENT_ID>
 ```
 
 **Or revert via dashboard:**
+
 - Cloudflare Workers → baren → Deployments → Rollback
 
 ---
@@ -270,15 +288,18 @@ wrangler rollback <DEPLOYMENT_ID>
 ## Monitoring & Logs
 
 **View real-time logs:**
+
 ```bash
 wrangler tail
 ```
 
 **Dashboard:**
+
 - Cloudflare Workers → baren → Metrics
 - Monitor: Requests/sec, Errors, CPU time
 
 **Neon Database:**
+
 - Neon Console → Project → Monitoring
 - Watch: Connection pool, Query performance
 
@@ -289,6 +310,7 @@ wrangler tail
 **Not stored as secrets (public values):**
 
 Create `wrangler.toml`:
+
 ```toml
 name = "baren"
 main = ".open-next/server-functions/index.mjs"
@@ -307,16 +329,19 @@ bucket_name = "baren-assets"
 ## Cost Estimation
 
 **Cloudflare Workers:**
+
 - Free tier: 100k requests/day
 - Paid ($5/mo): 10M requests + $0.50/million after
 
 **Cloudflare R2:**
+
 - Storage: $0.015/GB/month
 - Class A operations (upload): $4.50/million
 - Class B operations (download): $0.36/million
 - Egress: FREE
 
 **Neon Postgres:**
+
 - Free tier: 0.5GB storage, 100 compute hours/month
 - Pro: $19/mo + usage
 
@@ -327,18 +352,22 @@ bucket_name = "baren-assets"
 ## Troubleshooting
 
 ### Issue: 500 Error on Deploy
+
 **Cause:** Missing secrets or incorrect DATABASE_URL  
 **Fix:** Verify all 12 secrets, check Neon pooled connection string
 
 ### Issue: OAuth Redirect Mismatch
+
 **Cause:** Redirect URI not whitelisted in Google Console  
 **Fix:** Add production domain to Authorized redirect URIs
 
 ### Issue: R2 Upload Fails
+
 **Cause:** CORS not configured or wrong bucket name  
 **Fix:** Apply r2-cors.json, verify R2_BUCKET_NAME secret
 
 ### Issue: Database Connection Timeout
+
 **Cause:** Using direct connection instead of pooled  
 **Fix:** Use Neon pooled connection string (ends with `?sslmode=require`)
 

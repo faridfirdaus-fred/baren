@@ -62,7 +62,11 @@ export function CommentsSection({ initialComments, userSession }: Props) {
   };
 
   return (
-    <section ref={ref} id="komentar" className="scroll-reveal container mx-auto max-w-4xl px-4 py-16">
+    <section
+      ref={ref}
+      id="komentar"
+      className="scroll-reveal container mx-auto max-w-4xl px-4 py-16"
+    >
       <h2 className="display-xl mb-8 text-[clamp(2rem,4vw,3.25rem)]">
         KOMENTAR
       </h2>

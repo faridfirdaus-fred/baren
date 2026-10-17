@@ -127,64 +127,64 @@ export async function ContactSection({
   return (
     <ScrollRevealWrapper>
       <SectionShell id="kontak" tone="light" className="border-t border-ink/10">
-      <div className="grid gap-10 lg:grid-cols-2">
-        <div className="min-w-0">
-          <p className="eyebrow text-ember-700">Kontak</p>
-          <h2 className="display-lg mt-4 text-ink">Hubungi Kami</h2>
-          <p className="mt-4 max-w-xl leading-7 text-ink/75">
-            Ada pertanyaan, masukan, atau kebutuhan kerja sama? Kirim surel ke
-            alamat di bawah atau ikuti media sosial resmi Baren.
-          </p>
-          <p className="eyebrow mt-8 text-ink/60">Surel kontak</p>
-          <a
-            href={`mailto:${email}`}
-            aria-label={`Kirim surel ke ${email}`}
-            className="mt-3 inline-flex max-w-full items-center gap-2 break-words text-lg font-medium text-ember-700 transition-colors hover:text-ember-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-          >
-            <IconMail className="h-5 w-5 shrink-0" aria-hidden="true" />
-            {email}
-          </a>
-        </div>
-
-        <nav aria-label="Media sosial Baren" className="min-w-0">
-          <p className="eyebrow text-ink/60">Ikuti Baren</p>
-          {list.length > 0 ? (
-            <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-              {list.map((item) => (
-                <li key={`${item.platform}-${item.url}`} className="min-w-0">
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${item.platform} Baren (membuka tab baru)`}
-                    className="flex min-w-0 items-center gap-3 border border-ink/15 bg-sand px-4 py-3 text-ink transition-colors hover:border-ember-700 hover:text-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="flex h-10 w-10 shrink-0 items-center justify-center bg-ink text-sand"
-                    >
-                      <SocialIcon platform={item.platform} />
-                    </span>
-                    <span className="min-w-0 flex-1 truncate text-sm font-semibold uppercase tracking-[0.08em]">
-                      {item.platform}
-                    </span>
-                    <IconArrowUpRight
-                      className="h-4 w-4 shrink-0"
-                      aria-hidden="true"
-                    />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="mt-4 leading-7 text-ink/75">
-              Tautan media sosial resmi belum tersedia. Pantau kembali halaman
-              ini.
+        <div className="grid gap-10 lg:grid-cols-2">
+          <div className="min-w-0">
+            <p className="eyebrow text-ember-700">Kontak</p>
+            <h2 className="display-lg mt-4 text-ink">Hubungi Kami</h2>
+            <p className="mt-4 max-w-xl leading-7 text-ink/75">
+              Ada pertanyaan, masukan, atau kebutuhan kerja sama? Kirim surel ke
+              alamat di bawah atau ikuti media sosial resmi Baren.
             </p>
-          )}
-        </nav>
-      </div>
-    </SectionShell>
+            <p className="eyebrow mt-8 text-ink/60">Surel kontak</p>
+            <a
+              href={`mailto:${email}`}
+              aria-label={`Kirim surel ke ${email}`}
+              className="mt-3 inline-flex max-w-full items-center gap-2 break-words text-lg font-medium text-ember-700 transition-colors hover:text-ember-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            >
+              <IconMail className="h-5 w-5 shrink-0" aria-hidden="true" />
+              {email}
+            </a>
+          </div>
+
+          <nav aria-label="Media sosial Baren" className="min-w-0">
+            <p className="eyebrow text-ink/60">Ikuti Baren</p>
+            {list.length > 0 ? (
+              <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                {list.map((item) => (
+                  <li key={`${item.platform}-${item.url}`} className="min-w-0">
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${item.platform} Baren (membuka tab baru)`}
+                      className="flex min-w-0 items-center gap-3 border border-ink/15 bg-sand px-4 py-3 text-ink transition-colors hover:border-ember-700 hover:text-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="flex h-10 w-10 shrink-0 items-center justify-center bg-ink text-sand"
+                      >
+                        <SocialIcon platform={item.platform} />
+                      </span>
+                      <span className="min-w-0 flex-1 truncate text-sm font-semibold uppercase tracking-[0.08em]">
+                        {item.platform}
+                      </span>
+                      <IconArrowUpRight
+                        className="h-4 w-4 shrink-0"
+                        aria-hidden="true"
+                      />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-4 leading-7 text-ink/75">
+                Tautan media sosial resmi belum tersedia. Pantau kembali halaman
+                ini.
+              </p>
+            )}
+          </nav>
+        </div>
+      </SectionShell>
     </ScrollRevealWrapper>
   );
 }

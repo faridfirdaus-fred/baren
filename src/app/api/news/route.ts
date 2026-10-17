@@ -85,7 +85,7 @@ function creator(db: Db): NewsCreator {
   };
 }
 
-/** Publik: berita terbit terbaru (?page=, ?limit= maks 9; landing memakai limit=3). 
+/** Publik: berita terbit terbaru (?page=, ?limit= maks 9; landing memakai limit=3).
  * E7-2: ?slug= untuk detail 1 berita published.
  */
 export async function GET(request: Request): Promise<Response> {

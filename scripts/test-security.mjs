@@ -16,7 +16,10 @@ function required(name) {
   return value;
 }
 
-const browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
+const browser = await chromium.launch({
+  headless: true,
+  args: ["--no-sandbox"],
+});
 const context = await browser.newContext();
 const page = await context.newPage();
 
@@ -30,14 +33,20 @@ try {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ title: "Hack attempt" }),
   });
-  assert.strictEqual(response401.status, 401, "Expected 401 for anon admin API");
+  assert.strictEqual(
+    response401.status,
+    401,
+    "Expected 401 for anon admin API",
+  );
   console.log("    ✓ API rejects anonymous requests");
 
   // Test 2: 403 Forbidden - non-admin user
   console.log("  2. 403 Forbidden (visitor to admin API)...");
   // Login as visitor via Google would require OAuth flow; skip for E10-3
   // Manual test: visitor token → admin endpoint → 403
-  console.log("    ⚠ Manual verification required: visitor session → admin API → 403");
+  console.log(
+    "    ⚠ Manual verification required: visitor session → admin API → 403",
+  );
 
   // Test 3: Password hash (NFR-SEC-01)
   console.log("  3. Password hash verification...");
@@ -54,11 +63,14 @@ try {
   console.log("  4. OAuth email verification...");
   // Import google-profile validator
   const { verifiedGoogleEmail } = await import("../src/lib/google-profile.mjs");
-  
+
   const verifiedProfile = { email: "test@example.com", email_verified: true };
-  const unverifiedProfile = { email: "test@example.com", email_verified: false };
+  const unverifiedProfile = {
+    email: "test@example.com",
+    email_verified: false,
+  };
   const missingProfile = { email: "test@example.com" };
-  
+
   assert.strictEqual(verifiedGoogleEmail(verifiedProfile), "test@example.com");
   assert.strictEqual(verifiedGoogleEmail(unverifiedProfile), null);
   assert.strictEqual(verifiedGoogleEmail(missingProfile), null);
@@ -71,7 +83,7 @@ try {
   await page.getByLabel("Kata sandi").fill(adminPassword);
   await page.getByRole("button", { name: "Masuk" }).click();
   await page.waitForURL(`${baseUrl}/admin`, { timeout: 10000 });
-  
+
   // Request presigned URL
   const presignedResponse = await page.evaluate(async () => {
     const res = await fetch("/api/admin/upload-url", {
@@ -81,10 +93,13 @@ try {
     });
     return res.json();
   });
-  
+
   if (presignedResponse.url) {
     const url = new URL(presignedResponse.url);
-    assert.ok(url.searchParams.has("X-Amz-Expires"), "Presigned URL has expiry param");
+    assert.ok(
+      url.searchParams.has("X-Amz-Expires"),
+      "Presigned URL has expiry param",
+    );
     const expires = parseInt(url.searchParams.get("X-Amz-Expires"));
     assert.ok(expires > 0 && expires <= 3600, "Expiry should be ≤1 hour");
     console.log(`    ✓ Presigned URL expires in ${expires}s`);
@@ -95,7 +110,7 @@ try {
   // Test 6: Rate limit (comments)
   console.log("  6. Rate limit (comments POST)...");
   await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
-  
+
   // Attempt rapid comments (would need Google auth, skip for E10-3)
   console.log("    ⚠ Manual verification: 3 comments in 10min → 429 on 4th");
 
@@ -112,7 +127,7 @@ try {
   await page.goto(`${baseUrl}/admin`);
   await page.getByRole("button", { name: "Keluar" }).click();
   await page.waitForURL(`${baseUrl}/admin/login`, { timeout: 5000 });
-  
+
   await page.goto(`${baseUrl}/admin/hero`);
   await page.waitForURL(`${baseUrl}/admin/login`, { timeout: 5000 });
   console.log("    ✓ Unauthenticated redirects to login");
