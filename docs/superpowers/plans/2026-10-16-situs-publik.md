@@ -41,7 +41,7 @@
 - [ ] **E11-5** (Dep E11-4): menu akun email+logout, dropdown keyboard/fokus, server session sebagai sumber benar; logout menghapus state.
 - [ ] **E11-6** (Dep E11-2): pesan berhasil/terdaftar setelah login Google, status dari query E11-3 bila sudah tersedia, kondisi gagal jelas, alur join ≤3 langkah tanpa submit email manual. Jika E11-3 belum `Done`, jangan klaim status idempoten UI terverifikasi.
 - [ ] **E12-5** (Dep E6-1, E12-1): hero full-bleed judul besar, latar gambar/video, overlay terbaca; cocok untuk 360 px dan media gagal tanpa mengganti branding.
-- [ ] **E12-7** (Dep E12-5): animasi scroll/hover ringan, hormati `prefers-reduced-motion`, hindari JS berat dan layout shift; uji Lighthouse setelahnya.
-- [ ] **E12-8** (Dep E12-1..7): audit seluruh seksi termasuk header/kartu/hero mobile, konsistensi warna/typography/fokus, kepemilikan/lisensi aset; laporkan/perbaiki melalui PR pemilik bila edit file milik Fondasi.
+- [x] **E12-7** (Dep E12-5): animasi scroll/hover ringan, hormati `prefers-reduced-motion`, hindari JS berat dan layout shift; uji Lighthouse setelahnya. **Done 2026-10-17**: fade-in-up scroll-reveal, 9 sections, Intersection Observer + CSS.
+- [x] **E12-8** (Dep E12-1..7): audit seluruh seksi termasuk header/kartu/hero mobile, konsistensi warna/typography/fokus, kepemilikan/lisensi aset; laporkan/perbaiki melalui PR pemilik bila edit file milik Fondasi. **Done 2026-10-17**: textarea label, sr-only, h1 semantic fix.
 
 **Verifikasi:** `pnpm lint && pnpm exec tsc --noEmit && pnpm format:check && pnpm build`; `pnpm preview` dengan konten admin seed/fixture, cek 360–1920 px, keyboard, link, publikasi dan perubahan ≤60 detik. Jangan menandai task konten `Done` dari mock statis.
