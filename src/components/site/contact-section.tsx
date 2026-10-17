@@ -1,18 +1,10 @@
-// E7-5 — Seksi kontak situs publik (Server Component).
-// Surel kontak dibaca dari `site_settings` (`email_kontak`, E3-2) dan tautan
-// media sosial dari tabel `social_links` (E3-8). DB gagal dibaca → fallback
-// statis Indonesia agar seksi tidak pernah blank; DB berhasil tapi medsos
-// kosong → hanya surel yang tampil beserta catatan menyusul. Tautan medsos
-// adalah tautan keluar sehingga memakai `target="_blank"`
-// `rel="noopener noreferrer"` (E7-6/EI-07); `mailto:` dan anchor internal
-// tidak memakai atribut tab baru.
+// E7-5 & E14-3 — Seksi kontak situs publik (Server Component).
+// Copy dan surel disuplai dari settings, dan tautan sosial dari social_links.
+// Tautan medsos adalah tautan keluar sehingga memakai target="_blank"
+// rel="noopener noreferrer" (E7-6/EI-07); mailto: tidak memakai atribut tab baru.
 
-import { getDb } from "@/db";
-import { siteSettings, socialLinks } from "@/db/schema";
-import { toBranding } from "@/lib/api/settings";
-import { readSocialLinks, type SocialRow } from "@/lib/api/links";
-import { site, social as fallbackSocial } from "@/content/baren";
 import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
+import { isEmail } from "@/lib/validation/email";
 import {
   IconArrowUpRight,
   IconDiscord,
@@ -29,22 +21,15 @@ export type ContactSocialItem = {
 };
 
 export type ContactSectionProps = {
-  /** Override dari integrator. `undefined` = baca DB di sini. */
-  contactEmail?: string;
-  socials?: ContactSocialItem[];
+  eyebrow?: string | null;
+  title?: string | null;
+  description?: string | null;
+  emailLabel?: string | null;
+  contactEmail?: string | null;
+  socialTitle?: string | null;
+  socialEmptyMessage?: string | null;
+  socials?: ContactSocialItem[] | null;
 };
-
-function isHttpsUrl(value: string): boolean {
-  try {
-    return new URL(value).protocol === "https:";
-  } catch {
-    return false;
-  }
-}
-
-function isEmail(value: string | null): value is string {
-  return !!value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
 
 function SocialIcon({
   platform,
@@ -69,85 +54,54 @@ function SocialIcon({
   return <IconArrowUpRight className={className} />;
 }
 
-/** Baca surel + medsos dari DB. Gagal → surel fallback dan medsos null. */
-async function getContactFromDb(): Promise<{
-  email: string;
-  socials: ContactSocialItem[] | null;
-}> {
-  try {
-    const db = getDb();
-    const [settingRows, socialRows] = await Promise.all([
-      db
-        .select({ key: siteSettings.key, value: siteSettings.value })
-        .from(siteSettings),
-      db.select().from(socialLinks),
-    ]);
-    const branding = toBranding(
-      settingRows.map((r) => ({ key: r.key, value: r.value })),
-    );
-    const email = isEmail(branding.emailKontak)
-      ? branding.emailKontak
-      : site.email;
-    const lister = {
-      list: async (): Promise<SocialRow[]> =>
-        socialRows.map((r) => ({
-          id: r.id,
-          platform: r.platform,
-          url: r.url,
-          sortOrder: r.sortOrder,
-        })),
-    };
-    const ordered = await readSocialLinks(lister);
-    return {
-      email,
-      socials: ordered
-        .filter((r) => isHttpsUrl(r.url))
-        .map((r) => ({ platform: r.platform, url: r.url })),
-    };
-  } catch {
-    return { email: site.email, socials: null };
-  }
-}
-
-export async function ContactSection({
+export function ContactSection({
+  eyebrow,
+  title,
+  description,
+  emailLabel,
   contactEmail,
+  socialTitle,
+  socialEmptyMessage,
   socials,
 }: ContactSectionProps) {
-  const needsFetch = contactEmail === undefined || socials === undefined;
-  const fetched = needsFetch ? await getContactFromDb() : null;
+  if (!title) return null;
 
-  const email = contactEmail ?? fetched?.email ?? site.email;
-  const list: ContactSocialItem[] =
-    socials ??
-    fetched?.socials ??
-    fallbackSocial
-      .filter((s) => isHttpsUrl(s.href))
-      .map((s) => ({ platform: s.label, url: s.href }));
+  const validEmail = isEmail(contactEmail) ? contactEmail!.trim() : null;
+  const list = socials ?? [];
 
   return (
     <ScrollRevealWrapper>
       <SectionShell id="kontak" tone="light" className="border-t border-ink/10">
         <div className="grid gap-10 lg:grid-cols-2">
           <div className="min-w-0">
-            <p className="eyebrow text-ember-700">Kontak</p>
-            <h2 className="display-lg mt-4 text-ink">Hubungi Kami</h2>
-            <p className="mt-4 max-w-xl leading-7 text-ink/75">
-              Ada pertanyaan, masukan, atau kebutuhan kerja sama? Kirim surel ke
-              alamat di bawah atau ikuti media sosial resmi Baren.
-            </p>
-            <p className="eyebrow mt-8 text-ink/60">Surel kontak</p>
-            <a
-              href={`mailto:${email}`}
-              aria-label={`Kirim surel ke ${email}`}
-              className="mt-3 inline-flex max-w-full items-center gap-2 break-words text-lg font-medium text-ember-700 transition-colors hover:text-ember-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              <IconMail className="h-5 w-5 shrink-0" aria-hidden="true" />
-              {email}
-            </a>
+            {eyebrow && <p className="eyebrow text-ember-700">{eyebrow}</p>}
+            <h2 className="display-lg mt-4 text-ink">{title}</h2>
+            {description && (
+              <p className="mt-4 max-w-xl leading-7 text-ink/75">
+                {description}
+              </p>
+            )}
+            {validEmail && (
+              <>
+                {emailLabel && (
+                  <p className="eyebrow mt-8 text-ink/60">{emailLabel}</p>
+                )}
+                <a
+                  href={`mailto:${validEmail}`}
+                  aria-label={`Kirim surel ke ${validEmail}`}
+                  className="mt-3 inline-flex max-w-full items-center gap-2 break-words text-lg font-medium text-ember-700 transition-colors hover:text-ember-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                >
+                  <IconMail className="h-5 w-5 shrink-0" aria-hidden="true" />
+                  {validEmail}
+                </a>
+              </>
+            )}
           </div>
 
           <nav aria-label="Media sosial Baren" className="min-w-0">
-            <p className="eyebrow text-ink/60">Ikuti Baren</p>
+            {socialTitle && (
+              <p className="eyebrow text-ink/60">{socialTitle}</p>
+            )}
             {list.length > 0 ? (
               <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                 {list.map((item) => (
@@ -177,10 +131,11 @@ export async function ContactSection({
                 ))}
               </ul>
             ) : (
-              <p className="mt-4 leading-7 text-ink/75">
-                Tautan media sosial resmi belum tersedia. Pantau kembali halaman
-                ini.
-              </p>
+              socialEmptyMessage && (
+                <p className="mt-4 leading-7 text-ink/75">
+                  {socialEmptyMessage}
+                </p>
+              )
             )}
           </nav>
         </div>

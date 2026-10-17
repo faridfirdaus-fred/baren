@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { cta } from "@/content/baren";
 import { IconArrowUpRight } from "@/components/site/icon";
 import { SectionShell } from "@/components/site/section-shell";
 import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
@@ -9,29 +8,36 @@ import type { NewsItem } from "@/lib/news-content";
 
 type Props = {
   items: NewsItem[];
+  title?: string | null;
+  ctaLabel?: string | null;
 };
 
-export function LatestNews({ items }: Props) {
+export function LatestNews({ items, title, ctaLabel }: Props) {
+  if (items.length === 0) return null;
+  const resolvedTitle = title?.trim() || "BERITA TERBARU";
+
   return (
     <ScrollRevealWrapper>
       <SectionShell id="berita" tone="light">
         <div className="flex items-end justify-between gap-6 border-b border-ink/15 pb-5">
           <h2 className="display-xl text-[clamp(2rem,4vw,3.25rem)]">
-            ARTIKEL TERBARU
+            {resolvedTitle}
           </h2>
-          <a
-            href="#berita"
-            className="eyebrow inline-flex items-center gap-2 text-ink hover:text-ember-700"
-          >
-            {cta.newsAll}
-            <IconArrowUpRight className="h-4 w-4" />
-          </a>
+          {ctaLabel && (
+            <a
+              href="#berita"
+              className="eyebrow inline-flex items-center gap-2 text-ink hover:text-ember-700"
+            >
+              {ctaLabel}
+              <IconArrowUpRight className="h-4 w-4" />
+            </a>
+          )}
         </div>
         <div className="mt-10 grid gap-8 md:grid-cols-3">
           {items.map((item) => (
             <Link
               key={item.id}
-              href={`/news/${item.slug}`}
+              href={`/berita/${item.slug}`}
               className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember"
             >
               <div className="relative aspect-video overflow-hidden bg-ink-700">

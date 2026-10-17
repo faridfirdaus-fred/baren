@@ -44,6 +44,8 @@ export type SettingsBranding = {
   contactSocialEmptyMessage: string | null;
 };
 
+export type LandingSettings = SettingsBranding;
+
 const KEY_OF = {
   namaGame: "nama_game",
   tagline: "tagline",

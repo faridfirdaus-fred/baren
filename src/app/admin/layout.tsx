@@ -4,14 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { adminSignOutAction } from "./account-actions";
+
 /**
- * E5-6 — Kerangka panel admin (milik Fondasi; isi milik CMS/E8).
+ * E5-6 — Kerangka panel admin (milik Fondasi; isi milik CMS/E8 & E14).
  * - Sidebar + topbar + main; layar kecil: sidebar menjadi drawer dialog
  *   (<md) yang dapat dinavigasi keyboard/sentuh (target ≥44px, Escape,
  *   fokus kembali, scroll-lock).
- * - Tautan Keluar tersedia setelah E2 masuk (guard + sesi milik E2-4);
- *   layout ini tidak membuat halaman admin publik dan tidak mengunci rute.
- * - Boundary: CMS (E8) mengisi <main>; Fondasi hanya shell + navigasi dasar.
+ * - Tautan Keluar tersedia setelah E2 masuk (guard + sesi milik E2-4).
  */
 export default function AdminLayout({
   children,
@@ -45,59 +45,36 @@ export default function AdminLayout({
 
   if (pathname === "/admin/login") return children;
 
+  const navLinks = [
+    { href: "/admin", label: "Dasbor" },
+    { href: "/admin/landing", label: "Konten Landing" },
+    { href: "/admin/hero", label: "Hero" },
+    { href: "/admin/landing-cards", label: "Kartu Landing" },
+    { href: "/admin/news", label: "Berita" },
+    { href: "/admin/how-to-play", label: "Cara Bermain" },
+    { href: "/admin/branding", label: "Branding" },
+    { href: "/admin/faq", label: "FAQ" },
+    { href: "/admin/gallery", label: "Galeri" },
+    { href: "/admin/links", label: "Tautan Sosial" },
+    { href: "/admin/comments", label: "Komentar" },
+    { href: "/admin/wishlist", label: "Wishlist" },
+  ];
+
   const navItems = (
     <ul className="flex flex-col gap-1">
-      <li>
-        <Link
-          href="/admin"
-          onClick={closeNav}
-          aria-current={pathname === "/admin" ? "page" : undefined}
-          className="flex min-h-11 items-center rounded-none px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-        >
-          Dasbor
-        </Link>
-      </li>
-      <li>
-        <Link
-          href="/admin/faq"
-          onClick={closeNav}
-          aria-current={pathname === "/admin/faq" ? "page" : undefined}
-          className="flex min-h-11 items-center rounded-none px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-        >
-          FAQ
-        </Link>
-      </li>
-      <li>
-        <Link
-          href="/admin/links"
-          onClick={closeNav}
-          aria-current={pathname === "/admin/links" ? "page" : undefined}
-          className="flex min-h-11 items-center rounded-none px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-        >
-          Tautan & Kontak
-        </Link>
-      </li>
-      <li>
-        <Link
-          href="/admin/gallery"
-          onClick={closeNav}
-          aria-current={pathname === "/admin/gallery" ? "page" : undefined}
-          className="flex min-h-11 items-center rounded-none px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-        >
-          Galeri
-        </Link>
-      </li>
-      <li>
-        <Link
-          href="/admin/wishlist"
-          onClick={closeNav}
-          aria-current={pathname === "/admin/wishlist" ? "page" : undefined}
-          className="flex min-h-11 items-center rounded-none px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-        >
-          Wishlist
-        </Link>
-      </li>
-      <li>
+      {navLinks.map((link) => (
+        <li key={link.href}>
+          <Link
+            href={link.href}
+            onClick={closeNav}
+            aria-current={pathname === link.href ? "page" : undefined}
+            className="flex min-h-11 items-center rounded-none px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+          >
+            {link.label}
+          </Link>
+        </li>
+      ))}
+      <li className="mt-2 border-t border-ink-700 pt-2">
         <Link
           href="/"
           onClick={closeNav}
@@ -107,15 +84,14 @@ export default function AdminLayout({
         </Link>
       </li>
       <li>
-        {/* E2-1..4 akan mengganti dengan aksi keluar sesi sungguhan. */}
-        <button
-          type="button"
-          disabled
-          title="Tautan keluar aktif setelah autentikasi E2 masuk"
-          className="flex min-h-11 w-full cursor-not-allowed items-center rounded-none px-4 py-3 text-left text-sm font-semibold uppercase tracking-[0.08em] text-sand/40 disabled:opacity-60"
-        >
-          Keluar (menyusul E2)
-        </button>
+        <form action={adminSignOutAction}>
+          <button
+            type="submit"
+            className="flex min-h-11 w-full items-center rounded-none px-4 py-3 text-left text-sm font-semibold uppercase tracking-[0.08em] text-sand/75 transition-colors hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+          >
+            Keluar
+          </button>
+        </form>
       </li>
     </ul>
   );
@@ -136,85 +112,115 @@ export default function AdminLayout({
           type="button"
           onClick={() => setNavOpen((v) => !v)}
           aria-expanded={navOpen}
-          aria-controls="navigasi-admin"
-          aria-label={navOpen ? "Tutup navigasi admin" : "Buka navigasi admin"}
-          className="flex h-11 w-11 items-center justify-center rounded-none text-sand transition-colors hover:bg-ink-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+          aria-controls="navigasi-admin-drawer"
+          className="flex min-h-11 min-w-11 items-center justify-center p-2 text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
         >
-          {navOpen ? (
-            <span aria-hidden="true" className="text-xl leading-none">
-              ×
-            </span>
-          ) : (
-            <span aria-hidden="true" className="text-xl leading-none">
-              ☰
-            </span>
-          )}
+          <span className="sr-only">
+            {navOpen ? "Tutup menu navigasi admin" : "Buka menu navigasi admin"}
+          </span>
+          <svg
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
         </button>
-        <p className="truncate font-display text-lg uppercase tracking-wide">
-          BAREN Admin
-        </p>
-        <span className="w-11" aria-hidden="true" />
+        <span className="font-display text-lg uppercase tracking-wider text-sand">
+          Admin BAREN
+        </span>
+        <div className="w-11" aria-hidden="true" />
       </header>
 
       {/* Sidebar desktop */}
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-ink-700 bg-ink-800 md:flex">
-        <p className="px-4 pb-2 pt-6 font-display text-xl uppercase tracking-wide">
-          BAREN Admin
-        </p>
-        <p className="eyebrow px-4 text-sand/50">Panel Admin</p>
-        <nav aria-label="Navigasi admin" className="mt-4 flex-1 px-2">
+      <aside
+        id="navigasi-admin"
+        aria-label="Navigasi admin"
+        className="hidden w-64 shrink-0 flex-col border-r border-ink-700 bg-ink-800 md:flex"
+      >
+        <div className="flex h-16 items-center border-b border-ink-700 px-6">
+          <Link
+            href="/admin"
+            className="font-display text-xl uppercase tracking-wider text-sand hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+          >
+            Admin BAREN
+          </Link>
+        </div>
+        <nav aria-label="Menu admin desktop" className="flex-1 p-4">
           {navItems}
         </nav>
-        <p className="px-4 py-6 text-xs leading-5 text-sand/50">
-          Guard rute dan sesi milik E2-4. Modul konten milik CMS (E8).
-        </p>
       </aside>
 
       {/* Drawer seluler */}
       {navOpen && (
         <div
-          ref={drawerRef}
-          id="navigasi-admin"
+          id="navigasi-admin-drawer"
           role="dialog"
           aria-modal="true"
-          aria-label="Navigasi admin"
-          tabIndex={-1}
-          className="fixed inset-y-0 left-0 z-50 flex max-h-dvh w-72 max-w-[85vw] flex-col overflow-y-auto bg-ink-800 focus:outline-none md:hidden"
+          aria-label="Menu navigasi admin"
+          className="fixed inset-0 z-50 flex md:hidden"
         >
-          <div className="flex h-16 items-center justify-between border-b border-ink-700 px-4">
-            <p className="font-display text-lg uppercase">BAREN Admin</p>
-            <button
-              type="button"
-              onClick={closeNav}
-              aria-label="Tutup navigasi admin"
-              className="flex h-11 w-11 items-center justify-center rounded-none text-sand hover:bg-ink-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              <span aria-hidden="true" className="text-xl leading-none">
-                ×
+          <div
+            className="fixed inset-0 bg-ink/80 transition-opacity"
+            onClick={closeNav}
+            aria-hidden="true"
+          />
+          <div
+            ref={drawerRef}
+            tabIndex={-1}
+            className="relative flex w-full max-w-xs flex-1 flex-col bg-ink-800 p-4 shadow-xl focus:outline-none"
+          >
+            <div className="mb-4 flex items-center justify-between border-b border-ink-700 pb-4">
+              <span className="font-display text-lg uppercase tracking-wider text-sand">
+                Admin BAREN
               </span>
-            </button>
+              <button
+                type="button"
+                onClick={closeNav}
+                className="flex min-h-11 min-w-11 items-center justify-center p-2 text-sand hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+              >
+                <span className="sr-only">Tutup menu admin</span>
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <nav
+              aria-label="Menu admin seluler"
+              className="flex-1 overflow-y-auto"
+            >
+              {navItems}
+            </nav>
           </div>
-          <nav aria-label="Navigasi admin" className="flex-1 px-2 py-4">
-            {navItems}
-          </nav>
         </div>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="hidden items-center justify-between gap-4 border-b border-ink-700 bg-ink px-6 py-4 md:flex">
-          <p className="eyebrow text-sand/50">Panel Admin</p>
-          <p className="text-sm text-sand/60">
-            Pengaturan akun dan keluar menyusul E2
-          </p>
-        </header>
-        <main
-          id="konten-admin"
-          tabIndex={-1}
-          className="min-w-0 flex-1 px-4 py-8 focus:outline-none md:px-6"
-        >
-          {children}
-        </main>
-      </div>
+      {/* Area konten */}
+      <main
+        id="konten-admin"
+        tabIndex={-1}
+        className="flex min-w-0 flex-1 flex-col p-6 outline-none md:p-8"
+      >
+        {children}
+      </main>
     </div>
   );
 }

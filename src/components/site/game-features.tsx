@@ -1,20 +1,31 @@
 import Image from "next/image";
 
-import { getFeatures } from "@/lib/features-content";
 import { SectionShell } from "@/components/site/section-shell";
 import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
+import type { FeatureItem } from "@/lib/features-content";
 
-export async function GameFeatures() {
-  const features = await getFeatures();
+export type GameFeaturesProps = {
+  eyebrow?: string | null;
+  title?: string | null;
+  emptyMessage?: string | null;
+  features?: FeatureItem[];
+};
+
+export function GameFeatures({
+  eyebrow,
+  title,
+  emptyMessage,
+  features = [],
+}: GameFeaturesProps) {
+  const resolvedTitle = title?.trim() || "FITUR UTAMA";
 
   if (features.length === 0) {
+    if (!emptyMessage) return null;
     return (
       <SectionShell id="fitur" tone="light" className="border-t border-ink/10">
-        <p className="eyebrow text-ember-700">KEUNGGULAN</p>
-        <h2 className="display-xl mt-4 text-ink">FITUR UTAMA</h2>
-        <p className="mt-6 text-ink/60">
-          Fitur belum tersedia. Tambahkan melalui panel admin.
-        </p>
+        {eyebrow && <p className="eyebrow text-ember-700">{eyebrow}</p>}
+        <h2 className="display-xl mt-4 text-ink">{resolvedTitle}</h2>
+        <p className="mt-6 text-ink/60">{emptyMessage}</p>
       </SectionShell>
     );
   }
@@ -22,8 +33,8 @@ export async function GameFeatures() {
   return (
     <ScrollRevealWrapper>
       <SectionShell id="fitur" tone="light" className="border-t border-ink/10">
-        <p className="eyebrow text-ember-700">KEUNGGULAN</p>
-        <h2 className="display-xl mt-4 text-ink">FITUR UTAMA</h2>
+        {eyebrow && <p className="eyebrow text-ember-700">{eyebrow}</p>}
+        <h2 className="display-xl mt-4 text-ink">{resolvedTitle}</h2>
         <div className="mt-10 grid gap-8 md:grid-cols-3">
           {features.map((feature, index) => (
             <article

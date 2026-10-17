@@ -1,4 +1,4 @@
-import { legalLinks, nav, site, social } from "@/content/baren";
+import { legalLinks, nav, site } from "@/content/baren";
 import { externalLinkProps } from "@/lib/external-link";
 import type { SocialItemResolved } from "@/lib/links-content";
 import { BrandLogo } from "./brand-logo";
@@ -17,7 +17,7 @@ export type SiteFooterProps = {
   brandDescription?: string;
   contactEmail?: string;
   logoSrc?: string;
-  /** E7-5 — Tautan media sosial dari DB (fallback ke content/baren.ts). */
+  /** E7-5 — Tautan media sosial dari DB. */
   socialLinks?: SocialItemResolved[] | null;
 };
 
@@ -41,15 +41,7 @@ export function SiteFooter({
     other: IconGlobe,
   };
 
-  const listSocial =
-    socialLinks && socialLinks.length > 0
-      ? socialLinks
-      : social.map((s, idx) => ({
-          id: idx + 1,
-          label: s.label,
-          url: s.href,
-          icon: s.icon,
-        }));
+  const listSocial = socialLinks && socialLinks.length > 0 ? socialLinks : [];
 
   return (
     <footer className="overflow-x-clip bg-ink text-sand">

@@ -262,7 +262,13 @@ Admin ───────┘        │
 | --------- | ------------------------------------------------ | --------- |
 | FR-ADM-31 | Hapus komentar dengan konfirmasi; tanpa edit isi | Must      |
 
-**3.3.12 Kebutuhan Umum Panel Admin**
+**3.3.12 Konten Landing Management**
+
+| ID        | Kebutuhan                                                                                            | Prioritas |
+| --------- | ---------------------------------------------------------------------------------------------------- | --------- |
+| FR-ADM-32 | Kelola copy seksi landing (eyebrow, judul, deskripsi, pesan kosong) tanpa deployment atau ganti kode | Must      |
+
+**3.3.13 Kebutuhan Umum Panel Admin**
 
 | ID        | Kebutuhan                                                            | Prioritas |
 | --------- | -------------------------------------------------------------------- | --------- |

@@ -324,7 +324,13 @@ Autentikasi memakai Auth.js v5 dengan Drizzle adapter dan mendukung dua jalur:
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | FR-ADM-31 | Sistem harus memungkinkan admin menghapus komentar dengan konfirmasi; tanpa mengubah isi komentar. Daftar admin boleh menampilkan email pelapor. |
 
-#### 3.3.11 Kebutuhan Umum Panel Admin
+#### 3.3.12 Konten Landing Management
+
+| ID        | Kebutuhan                                                                                                                                            |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-ADM-32 | Sistem harus memungkinkan admin mengubah copy seksi landing page (eyebrow, judul, deskripsi, pesan kosong) melalui antarmuka admin tanpa deployment. |
+
+#### 3.3.13 Kebutuhan Umum Panel Admin
 
 | ID        | Kebutuhan                                                                                                                                                         |
 | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |

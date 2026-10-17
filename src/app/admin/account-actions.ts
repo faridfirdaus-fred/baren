@@ -3,7 +3,7 @@
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
-import { auth, db, normalizeEmail } from "@/auth";
+import { auth, db, normalizeEmail, signOut } from "@/auth";
 import { users } from "@/db/schema";
 import { adminPasswordSchema, adminProfileSchema } from "@/lib/auth-validation";
 
@@ -97,4 +97,8 @@ export async function updateAdminPasswordAction(
 
 export async function normalizeEmailAction(value: string): Promise<string> {
   return normalizeEmail(value);
+}
+
+export async function adminSignOutAction(): Promise<void> {
+  await signOut({ redirectTo: "/admin/login" });
 }
