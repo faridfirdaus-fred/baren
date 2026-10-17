@@ -43,6 +43,8 @@ export default function AdminLayout({
 
   const closeNav = () => setNavOpen(false);
 
+  if (pathname === "/admin/login") return children;
+
   const navItems = (
     <ul className="flex flex-col gap-1">
       <li>

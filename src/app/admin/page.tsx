@@ -108,51 +108,67 @@ export default async function AdminDashboardPage() {
   });
 
   return (
-    <main>
-      <h1>Dasbor Admin</h1>
-      <p>Masuk sebagai {(session.user as { email?: string }).email}</p>
-      <dl>
-        <div>
-          <dt>Fitur</dt>
-          <dd>{dashboard.features}</dd>
+    <section className="space-y-8">
+      <header>
+        <h1 className="font-display text-4xl uppercase tracking-wide text-sand">
+          Dasbor Admin
+        </h1>
+        <p className="mt-2 text-sm text-sand-600">
+          Masuk sebagai {(session.user as { email?: string }).email}
+        </p>
+      </header>
+      <dl className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="border border-line bg-ink-800 p-5">
+          <dt className="text-sm text-sand-600">Fitur</dt>
+          <dd className="mt-2 text-3xl font-bold text-sand">
+            {dashboard.features}
+          </dd>
         </div>
-        <div>
-          <dt>Galeri</dt>
-          <dd>{dashboard.galleryAssets}</dd>
+        <div className="border border-line bg-ink-800 p-5">
+          <dt className="text-sm text-sand-600">Galeri</dt>
+          <dd className="mt-2 text-3xl font-bold text-sand">
+            {dashboard.galleryAssets}
+          </dd>
         </div>
-        <div>
-          <dt>Berita</dt>
-          <dd>{dashboard.news}</dd>
+        <div className="border border-line bg-ink-800 p-5">
+          <dt className="text-sm text-sand-600">Berita</dt>
+          <dd className="mt-2 text-3xl font-bold text-sand">
+            {dashboard.news}
+          </dd>
         </div>
-        <div>
-          <dt>FAQ</dt>
-          <dd>{dashboard.faq}</dd>
+        <div className="border border-line bg-ink-800 p-5">
+          <dt className="text-sm text-sand-600">FAQ</dt>
+          <dd className="mt-2 text-3xl font-bold text-sand">{dashboard.faq}</dd>
         </div>
-        <div>
-          <dt>Wishlist</dt>
-          <dd>{dashboard.wishlist}</dd>
+        <div className="border border-line bg-ink-800 p-5">
+          <dt className="text-sm text-sand-600">Wishlist</dt>
+          <dd className="mt-2 text-3xl font-bold text-sand">
+            {dashboard.wishlist}
+          </dd>
         </div>
-        <div>
-          <dt>Komentar</dt>
-          <dd>{dashboard.comments}</dd>
+        <div className="border border-line bg-ink-800 p-5">
+          <dt className="text-sm text-sand-600">Komentar</dt>
+          <dd className="mt-2 text-3xl font-bold text-sand">
+            {dashboard.comments}
+          </dd>
         </div>
-        <div>
-          <dt>Pembaruan konten terakhir</dt>
-          <dd>
+        <div className="border border-line bg-ink-800 p-5 sm:col-span-2 xl:col-span-3">
+          <dt className="text-sm text-sand-600">Pembaruan konten terakhir</dt>
+          <dd className="mt-2 text-sm font-medium text-sand">
             {dashboard.latestContentUpdatedAt?.toISOString() ??
               "Belum ada pembaruan konten."}
           </dd>
         </div>
       </dl>
-      <nav aria-label="Navigasi Modul Admin" className="my-6">
+      <nav aria-label="Navigasi Modul Admin">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-sand-600">
           Modul Konten
         </h2>
-        <ul className="mt-2 flex flex-wrap gap-3">
+        <ul className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <li>
             <Link
               href="/admin/hero"
-              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
               Kelola Hero
             </Link>
@@ -160,7 +176,7 @@ export default async function AdminDashboardPage() {
           <li>
             <Link
               href="/admin/landing-cards"
-              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
               Kelola Kartu Landing
             </Link>
@@ -168,7 +184,7 @@ export default async function AdminDashboardPage() {
           <li>
             <Link
               href="/admin/news"
-              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
               Kelola Berita
             </Link>
@@ -176,7 +192,7 @@ export default async function AdminDashboardPage() {
           <li>
             <Link
               href="/admin/how-to-play"
-              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
               Kelola How to Play
             </Link>
@@ -184,7 +200,7 @@ export default async function AdminDashboardPage() {
           <li>
             <Link
               href="/admin/branding"
-              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
               Kelola Branding
             </Link>
@@ -192,7 +208,7 @@ export default async function AdminDashboardPage() {
           <li>
             <Link
               href="/admin/faq"
-              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
               Kelola FAQ
             </Link>
@@ -200,7 +216,7 @@ export default async function AdminDashboardPage() {
           <li>
             <Link
               href="/admin/gallery"
-              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
               Kelola Galeri
             </Link>
@@ -208,7 +224,7 @@ export default async function AdminDashboardPage() {
           <li>
             <Link
               href="/admin/links"
-              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
               Kelola Tautan & Kontak
             </Link>
@@ -216,7 +232,7 @@ export default async function AdminDashboardPage() {
           <li>
             <Link
               href="/admin/wishlist"
-              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
               Wishlist
             </Link>
@@ -224,7 +240,7 @@ export default async function AdminDashboardPage() {
           <li>
             <Link
               href="/admin/comments"
-              className="inline-block border border-line bg-ink-800 px-4 py-2 text-sm font-semibold text-sand hover:border-ember hover:text-ember"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
               Komentar
             </Link>
@@ -243,6 +259,6 @@ export default async function AdminDashboardPage() {
       >
         <button type="submit">Keluar</button>
       </form>
-    </main>
+    </section>
   );
 }
