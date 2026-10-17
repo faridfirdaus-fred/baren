@@ -51,7 +51,7 @@ export async function Hero() {
           alt="BAREN"
           className="h-auto w-[clamp(200px,26vw,300px)]"
         />
-        <h1 className="eyebrow mt-8 max-w-3xl text-sand/90 lg:text-base">
+        <h1 className="mt-8 max-w-3xl text-lg font-bold uppercase tracking-wider text-sand lg:text-xl">
           {tagline}
         </h1>
         {subtitle ? (

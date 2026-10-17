@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { faqs as fallbackFaqs, type FaqItem } from "@/content/baren";
+import { useScrollReveal } from "@/lib/use-scroll-reveal";
 import { IconMinus, IconPlus } from "./icon";
 
 export type FaqAccordionProps = {
@@ -13,11 +14,12 @@ export type FaqAccordionProps = {
 export function FaqAccordion({ items }: FaqAccordionProps) {
   const list = items ?? fallbackFaqs;
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const ref = useScrollReveal<HTMLElement>();
 
   if (list.length === 0) return null;
 
   return (
-    <section id="faq" className="bg-ink py-12 text-sand lg:py-16">
+    <section ref={ref} id="faq" className="scroll-reveal bg-ink py-12 text-sand lg:py-16">
       <div className="container-baren">
         <p className="eyebrow text-ember">FAQ</p>
         <h2 className="display-xl mt-4 text-sand">PERTANYAAN UMUM</h2>

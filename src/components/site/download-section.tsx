@@ -2,6 +2,7 @@ import { getDownloadItems } from "@/lib/links-content";
 import { externalLinkProps } from "@/lib/external-link";
 import { hero } from "@/content/baren";
 import { SectionShell } from "@/components/site/section-shell";
+import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
 import { IconArrowUpRight, IconDownload } from "@/components/site/icon";
 
 export type DownloadSectionItem = {
@@ -37,7 +38,8 @@ export async function DownloadSection({ items }: DownloadSectionProps = {}) {
   const belumRilis = list.length === 0;
 
   return (
-    <SectionShell id="unduh" tone="dark" className="border-t border-sand/15">
+    <ScrollRevealWrapper>
+      <SectionShell id="unduh" tone="dark" className="border-t border-sand/15">
       <div className="flex flex-col items-center text-center">
         <p className="eyebrow text-ember">DISTRIBUSI</p>
         <h2 className="display-xl mt-4 text-sand">UNDUH GAME BAREN</h2>
@@ -93,5 +95,6 @@ export async function DownloadSection({ items }: DownloadSectionProps = {}) {
         )}
       </div>
     </SectionShell>
+    </ScrollRevealWrapper>
   );
 }

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { SectionShell } from "@/components/site/section-shell";
+import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
 import type { LandingCard } from "@/lib/landing-cards-content";
 
 type Props = {
@@ -15,7 +16,8 @@ export function LandingCards({ cards }: Props) {
         const tone = card.tone === "light" ? "light" : "dark";
 
         return (
-          <SectionShell key={card.id} tone={tone}>
+          <ScrollRevealWrapper key={card.id}>
+            <SectionShell tone={tone}>
             <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
               {card.imageUrl && (
                 <div className="relative aspect-video overflow-hidden rounded-lg bg-ink-700">
@@ -54,6 +56,7 @@ export function LandingCards({ cards }: Props) {
               </div>
             </div>
           </SectionShell>
+          </ScrollRevealWrapper>
         );
       })}
     </>

@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { getFeatures } from "@/lib/features-content";
 import { SectionShell } from "@/components/site/section-shell";
+import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
 
 export async function GameFeatures() {
   const features = await getFeatures();
@@ -19,7 +20,8 @@ export async function GameFeatures() {
   }
 
   return (
-    <SectionShell id="fitur" tone="light" className="border-t border-ink/10">
+    <ScrollRevealWrapper>
+      <SectionShell id="fitur" tone="light" className="border-t border-ink/10">
       <p className="eyebrow text-ember-700">KEUNGGULAN</p>
       <h2 className="display-xl mt-4 text-ink">FITUR UTAMA</h2>
       <div className="mt-10 grid gap-8 md:grid-cols-3">
@@ -52,5 +54,6 @@ export async function GameFeatures() {
         ))}
       </div>
     </SectionShell>
+    </ScrollRevealWrapper>
   );
 }

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 
+import { useScrollReveal } from "@/lib/use-scroll-reveal";
+
 type Comment = {
   id: number;
   body: string;
@@ -25,6 +27,7 @@ export function CommentsSection({ initialComments, userSession }: Props) {
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const ref = useScrollReveal<HTMLElement>();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +62,7 @@ export function CommentsSection({ initialComments, userSession }: Props) {
   };
 
   return (
-    <section id="komentar" className="container mx-auto max-w-4xl px-4 py-16">
+    <section ref={ref} id="komentar" className="scroll-reveal container mx-auto max-w-4xl px-4 py-16">
       <h2 className="display-xl mb-8 text-[clamp(2rem,4vw,3.25rem)]">
         KOMENTAR
       </h2>
@@ -77,7 +80,11 @@ export function CommentsSection({ initialComments, userSession }: Props) {
               />
             )}
             <div className="flex-1">
+              <label htmlFor="comment-textarea" className="sr-only">
+                Tulis komentar Anda
+              </label>
               <textarea
+                id="comment-textarea"
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 placeholder="Tulis komentar..."
@@ -85,9 +92,10 @@ export function CommentsSection({ initialComments, userSession }: Props) {
                 rows={3}
                 maxLength={500}
                 disabled={submitting}
+                aria-describedby="char-count"
               />
               <div className="mt-2 flex items-center justify-between">
-                <span className="text-sm text-ink-600">
+                <span id="char-count" className="text-sm text-ink-600">
                   {body.length}/500 karakter
                 </span>
                 <button

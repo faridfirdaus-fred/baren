@@ -4,6 +4,7 @@ import Link from "next/link";
 import { cta } from "@/content/baren";
 import { IconArrowUpRight } from "@/components/site/icon";
 import { SectionShell } from "@/components/site/section-shell";
+import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
 import type { NewsItem } from "@/lib/news-content";
 
 type Props = {
@@ -12,7 +13,8 @@ type Props = {
 
 export function LatestNews({ items }: Props) {
   return (
-    <SectionShell id="berita" tone="light">
+    <ScrollRevealWrapper>
+      <SectionShell id="berita" tone="light">
       <div className="flex items-end justify-between gap-6 border-b border-ink/15 pb-5">
         <h2 className="display-xl text-[clamp(2rem,4vw,3.25rem)]">
           ARTIKEL TERBARU
@@ -68,5 +70,6 @@ export function LatestNews({ items }: Props) {
         ))}
       </div>
     </SectionShell>
+    </ScrollRevealWrapper>
   );
 }

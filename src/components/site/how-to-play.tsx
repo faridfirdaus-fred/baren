@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { SectionShell } from "@/components/site/section-shell";
+import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
 import type { HowToPlayContent } from "@/lib/how-to-play-content";
 
 type Props = {
@@ -9,7 +10,8 @@ type Props = {
 
 export function HowToPlay({ content }: Props) {
   return (
-    <SectionShell id="cara-main" tone="dark">
+    <ScrollRevealWrapper>
+      <SectionShell id="cara-main" tone="dark">
       <h2 className="display-xl text-center text-[clamp(2rem,4vw,3.25rem)]">
         CARA BERMAIN
       </h2>
@@ -60,5 +62,6 @@ export function HowToPlay({ content }: Props) {
         ))}
       </div>
     </SectionShell>
+    </ScrollRevealWrapper>
   );
 }

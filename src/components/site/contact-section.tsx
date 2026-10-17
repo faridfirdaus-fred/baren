@@ -12,6 +12,7 @@ import { siteSettings, socialLinks } from "@/db/schema";
 import { toBranding } from "@/lib/api/settings";
 import { readSocialLinks, type SocialRow } from "@/lib/api/links";
 import { site, social as fallbackSocial } from "@/content/baren";
+import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
 import {
   IconArrowUpRight,
   IconDiscord,
@@ -124,7 +125,8 @@ export async function ContactSection({
       .map((s) => ({ platform: s.label, url: s.href }));
 
   return (
-    <SectionShell id="kontak" tone="light">
+    <ScrollRevealWrapper>
+      <SectionShell id="kontak" tone="light" className="border-t border-ink/10">
       <div className="grid gap-10 lg:grid-cols-2">
         <div className="min-w-0">
           <p className="eyebrow text-ember-700">Kontak</p>
@@ -183,5 +185,6 @@ export async function ContactSection({
         </nav>
       </div>
     </SectionShell>
+    </ScrollRevealWrapper>
   );
 }

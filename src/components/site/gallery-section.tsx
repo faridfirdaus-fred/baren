@@ -1,5 +1,6 @@
 import { getGalleryItems } from "@/lib/gallery-content";
 import { SectionShell } from "@/components/site/section-shell";
+import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
 
 import { GalleryGrid } from "./gallery-grid";
 
@@ -8,7 +9,8 @@ export async function GallerySection() {
   const kosong = !items || items.length === 0;
 
   return (
-    <SectionShell id="galeri" tone="light" className="border-t border-ink/10">
+    <ScrollRevealWrapper>
+      <SectionShell id="galeri" tone="light" className="border-t border-ink/10">
       <div className="flex flex-col items-center text-center">
         <p className="eyebrow text-ember-700">MEDIA RESMI</p>
         <h2 className="display-xl mt-4 text-ink">GALERI & AKSI</h2>
@@ -34,5 +36,6 @@ export async function GallerySection() {
         )}
       </div>
     </SectionShell>
+    </ScrollRevealWrapper>
   );
 }
