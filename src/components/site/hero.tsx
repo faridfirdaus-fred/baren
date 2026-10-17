@@ -29,7 +29,7 @@ export async function Hero() {
       : null;
 
   return (
-    <section className="relative isolate flex min-h-[560px] items-center justify-center overflow-hidden bg-ink lg:min-h-[720px]">
+    <section className="relative isolate flex min-h-[560px] h-[calc(100svh-5rem)] items-center justify-center overflow-hidden bg-ink">
       <video
         className="absolute inset-0 -z-10 h-full w-full object-cover"
         autoPlay
