@@ -22,8 +22,8 @@ describe("DownloadSection Steam-only (E14-4)", () => {
     assert.doesNotMatch(content, /App Store/i);
   });
 
-  it("memiliki tombol Gabung Wishlist menuju #daftar", () => {
-    assert.match(content, /href=["']#daftar["']/);
+  it("memiliki tombol Gabung Wishlist dengan aksi login", () => {
+    assert.match(content, /joinWishlistAction/);
     assert.match(content, /Gabung Wishlist/);
   });
 

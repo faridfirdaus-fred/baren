@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 
 import { useScrollReveal } from "@/lib/use-scroll-reveal";
+import { joinWishlistAction } from "@/components/site/actions";
 
 type Comment = {
   id: number;
@@ -137,7 +138,15 @@ export function CommentsSection({
         </form>
       ) : (
         <div className="mb-12 rounded-lg border border-ink/20 bg-sand/50 p-6 text-center">
-          <p className="text-ink-600">{resolvedLoginPrompt}</p>
+          <p className="mb-4 text-ink-600">{resolvedLoginPrompt}</p>
+          <form action={joinWishlistAction} className="inline-flex">
+            <button
+              type="submit"
+              className="cursor-pointer rounded-lg bg-ember-700 px-6 py-2.5 font-bold uppercase tracking-wide text-white transition-colors hover:bg-ember-800"
+            >
+              Masuk dengan Google
+            </button>
+          </form>
         </div>
       )}
 

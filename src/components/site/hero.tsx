@@ -1,7 +1,9 @@
 import Image from "next/image";
 
+import { auth } from "@/auth";
 import { CtaButton } from "@/components/site/cta-button";
 import { HeroCarousel } from "@/components/site/hero-carousel";
+import { joinWishlistAction } from "@/components/site/actions";
 import { getHeroContent } from "@/lib/hero-content";
 import { getHeroBanners } from "@/lib/hero-banners";
 
@@ -11,14 +13,20 @@ import { getHeroBanners } from "@/lib/hero-banners";
 // E6-2: banner dari tabel `hero_banners` (0 = hilang, 1 = statis,
 // >1 = carousel di <HeroCarousel />).
 export async function Hero() {
-  const [content, banners] = await Promise.all([
+  const [content, banners, session] = await Promise.all([
     getHeroContent(),
     getHeroBanners(),
+    auth().catch(() => null),
   ]);
 
   if (!content) {
     return <div id="daftar" className="sr-only" />;
   }
+
+  const isLoggedIn = Boolean(session?.user?.email);
+  const isWishlistCta =
+    content.primaryCtaUrl === "#daftar" ||
+    content.primaryCtaUrl === "#wishlist";
 
   const secondary =
     content.secondaryCtaLabel && content.secondaryCtaUrl
@@ -58,9 +66,23 @@ export async function Hero() {
           </p>
         ) : null}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <CtaButton href={content.primaryCtaUrl} variant="ember">
-            {content.primaryCtaLabel}
-          </CtaButton>
+          {isWishlistCta ? (
+            isLoggedIn ? (
+              <CtaButton href="#unduh" variant="ember">
+                SUDAH TERDAFTAR
+              </CtaButton>
+            ) : (
+              <form action={joinWishlistAction} className="inline-flex">
+                <CtaButton type="submit" variant="ember">
+                  {content.primaryCtaLabel}
+                </CtaButton>
+              </form>
+            )
+          ) : (
+            <CtaButton href={content.primaryCtaUrl} variant="ember">
+              {content.primaryCtaLabel}
+            </CtaButton>
+          )}
           {secondary ? (
             <CtaButton href={secondary.href} variant="ghost">
               {secondary.label}

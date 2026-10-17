@@ -107,7 +107,7 @@ export default async function SiteHomePage() {
         title={faqCopy.title}
         items={faqs ?? []}
       />
-      <DownloadSection />
+      <DownloadSection isLoggedIn={Boolean(session?.user?.email)} />
       <ContactSection
         eyebrow={contactCopy.eyebrow}
         title={contactCopy.title}
