@@ -87,9 +87,26 @@ function creator(db: Db): NewsCreator {
 
 /** Publik: berita terbit terbaru (?page=, ?limit= maks 9; landing memakai limit=3).
  * E7-2: ?slug= untuk detail 1 berita published.
+ * E15-1: ?scope=admin untuk daftar semua berita admin (draf + terbit, termasuk body).
  */
 export async function GET(request: Request): Promise<Response> {
   const params = new URL(request.url).searchParams;
+
+  if (params.get("scope") === "admin") {
+    const denied = await requireAdminResponse("GET /api/news?scope=admin");
+    if (denied) return denied;
+    try {
+      const rows = await getDb()
+        .select()
+        .from(news)
+        .orderBy(desc(news.updatedAt), desc(news.id));
+      return fromResult({ ok: true, data: rows.map(toRow) });
+    } catch (error) {
+      console.error("GET /api/news?scope=admin gagal:", error);
+      return fromResult(toDbResult(error));
+    }
+  }
+
   const slugParam = params.get("slug");
 
   // E7-2: jika ada ?slug=, ambil 1 berita published

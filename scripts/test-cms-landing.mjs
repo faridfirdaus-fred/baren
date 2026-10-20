@@ -40,11 +40,13 @@ try {
   await page.getByRole("button", { name: "Simpan Hero" }).click();
   await expectText(page, "Hero disimpan");
 
-  // 3. News: tambah berita test
+  // 3. News: daftar dan tambah berita test
   await page.goto(`${baseUrl}/admin/news`, { waitUntil: "networkidle" });
-  await expectText(page, "Kelola Berita");
+  await expectText(page, "Daftar Berita");
+  assert.ok(!(await page.textContent("body")).includes("Gagal memuat berita"));
   await expectText(page, "maksimal 3");
   await page.getByLabel("Judul").fill("Berita Test E2E");
+  assert.equal(await page.getByLabel("Slug *").inputValue(), "berita-test-e2e");
   await page
     .getByLabel("Isi")
     .fill("Konten berita untuk pengujian end-to-end.");
@@ -70,9 +72,15 @@ try {
   await page.getByRole("button", { name: "Simpan" }).click();
   await expectText(page, "Langkah ditambahkan");
 
-  // 6. Komentar admin: lihat daftar
+  // 6. Komentar admin: tunggu daftar atau empty state, bukan heading server saja
   await page.goto(`${baseUrl}/admin/comments`, { waitUntil: "networkidle" });
-  await expectText(page, "Kelola Komentar");
+  await Promise.race([
+    page.getByText("Belum ada komentar.").waitFor(),
+    page.getByText("Oleh:", { exact: false }).first().waitFor(),
+  ]);
+  assert.ok(
+    !(await page.textContent("body")).includes("Gagal memuat komentar"),
+  );
 
   // 7. Wishlist: lihat daftar
   await page.goto(`${baseUrl}/admin/wishlist`, { waitUntil: "networkidle" });
