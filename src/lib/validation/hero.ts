@@ -29,6 +29,28 @@ function httpsUrl(label: string, max = URL_MAX) {
   );
 }
 
+function httpsOrAnchorUrl(label: string, max = URL_MAX) {
+  return z.preprocess(
+    emptyToNull,
+    z
+      .string()
+      .trim()
+      .max(max, `${label} maksimal ${max} karakter.`)
+      .refine((v) => {
+        if (v.startsWith("#")) {
+          return /^#[a-z0-9_-]+$/i.test(v);
+        }
+        try {
+          return new URL(v).protocol === "https:";
+        } catch {
+          return false;
+        }
+      }, `${label} harus diawali https:// atau ID anchor valid (contoh: #wishlist).`)
+      .nullable()
+      .optional(),
+  );
+}
+
 const ctaLabel = (label: string) =>
   z.preprocess(
     emptyToNull,
@@ -60,9 +82,9 @@ export const heroUpdateSchema = z
     backgroundUrl: httpsUrl("URL latar"),
     videoUrl: httpsUrl("URL video"),
     primaryCtaLabel: ctaLabel("Label CTA utama"),
-    primaryCtaUrl: httpsUrl("URL CTA utama"),
+    primaryCtaUrl: httpsOrAnchorUrl("URL CTA utama"),
     secondaryCtaLabel: ctaLabel("Label CTA kedua"),
-    secondaryCtaUrl: httpsUrl("URL CTA kedua"),
+    secondaryCtaUrl: httpsOrAnchorUrl("URL CTA kedua"),
     isPublished: z.boolean().optional(),
   })
   .strict();

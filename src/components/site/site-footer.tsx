@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { legalLinks, nav, site } from "@/content/baren";
 import { externalLinkProps } from "@/lib/external-link";
 import type { SocialItemResolved } from "@/lib/links-content";
@@ -71,7 +73,7 @@ export function SiteFooter({
                 ))}
             </ul>
           </nav>
-          <div className="min-w-0" id="kontak">
+          <div className="min-w-0">
             <p className="eyebrow text-sand/50">Kontak</p>
             <a
               href={`mailto:${contactEmail}`}
@@ -107,12 +109,12 @@ export function SiteFooter({
           <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
             {legalLinks.map((l) => (
               <li key={l.label}>
-                <a
+                <Link
                   href={l.href}
                   className="eyebrow text-sand/60 transition-colors hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
                 >
                   {l.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

@@ -45,7 +45,7 @@ describe("landingCardCreateSchema", () => {
     );
   });
 
-  it("menolak URL http dan tone asing", () => {
+  it("menolak URL http, anchor kosong (#), dan tone asing", () => {
     assert.equal(
       landingCardCreateSchema.safeParse({
         title: "X",
@@ -53,6 +53,22 @@ describe("landingCardCreateSchema", () => {
         ctaUrl: "http://contoh.id/main",
       }).success,
       false,
+    );
+    assert.equal(
+      landingCardCreateSchema.safeParse({
+        title: "X",
+        ctaLabel: "Main",
+        ctaUrl: "#",
+      }).success,
+      false,
+    );
+    assert.equal(
+      landingCardCreateSchema.safeParse({
+        title: "X",
+        ctaLabel: "Main",
+        ctaUrl: "#fitur",
+      }).success,
+      true,
     );
     assert.equal(
       landingCardCreateSchema.safeParse({ title: "X", tone: "neon" }).success,

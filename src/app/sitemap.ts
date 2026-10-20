@@ -29,6 +29,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 1,
     },
+    {
+      url: `${baseUrl}/berita`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
     ...newsUrls,
   ];
 }

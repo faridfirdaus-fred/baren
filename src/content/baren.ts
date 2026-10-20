@@ -85,9 +85,8 @@ export const maps: TextSection = {
 };
 
 export const legalLinks: LegalLink[] = [
-  { label: "KEBIJAKAN PRIVASI", href: "#" },
-  { label: "KETENTUAN PENGGUNAAN", href: "#" },
-  { label: "PREFERENSI COOKIE", href: "#" },
+  { label: "KEBIJAKAN PRIVASI", href: "/kebijakan-privasi" },
+  { label: "KETENTUAN PENGGUNAAN", href: "/ketentuan-penggunaan" },
 ];
 
 export const cta = {

@@ -114,7 +114,7 @@ export function SiteHeader({
         <div className="flex items-center gap-3 justify-self-end">
           {accountSlot ?? (
             <a
-              href="#daftar"
+              href="#wishlist"
               className="hidden rounded-none bg-ember-700 px-5 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ember-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember md:inline-flex"
             >
               {cta.login}
@@ -166,7 +166,7 @@ export function SiteHeader({
             <div className="mt-4" onClick={closeMenu}>
               {accountSlot ?? (
                 <a
-                  href="#daftar"
+                  href="#wishlist"
                   className="inline-flex w-full items-center justify-center rounded-none bg-ember-700 px-5 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ember-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
                 >
                   {cta.login}

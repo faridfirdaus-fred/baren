@@ -33,6 +33,21 @@ describe("heroUpdateSchema", () => {
     const asing = heroUpdateSchema.safeParse({ title: "BAREN", foo: 1 });
     assert.equal(asing.success, false);
   });
+
+  it("menerima anchor internal valid dan menolak anchor kosong (#)", () => {
+    const validAnchor = heroUpdateSchema.safeParse({
+      title: "BAREN",
+      primaryCtaUrl: "#wishlist",
+      secondaryCtaUrl: "#unduh",
+    });
+    assert.equal(validAnchor.success, true);
+
+    const emptyAnchor = heroUpdateSchema.safeParse({
+      title: "BAREN",
+      primaryCtaUrl: "#",
+    });
+    assert.equal(emptyAnchor.success, false);
+  });
 });
 
 describe("bannerCreateSchema/bannerUpdateSchema", () => {

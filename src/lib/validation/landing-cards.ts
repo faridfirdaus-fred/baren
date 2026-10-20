@@ -10,9 +10,15 @@ const httpsOrAnchor = z
   .trim()
   .min(1, "Tautan tidak boleh kosong.")
   .max(2048, "Tautan maksimal 2048 karakter.")
-  .refine((v) => v.startsWith("https://") || v.startsWith("#"), {
-    message: "Tautan harus diawali https:// atau #.",
-  });
+  .refine(
+    (v) =>
+      v.startsWith("https://") ||
+      (v.startsWith("#") && /^#[a-z0-9_-]+$/i.test(v)),
+    {
+      message:
+        "Tautan harus diawali https:// atau ID anchor valid (contoh: #fitur).",
+    },
+  );
 
 const tone = z.enum(["dark", "light", "ember"]);
 
