@@ -45,14 +45,26 @@ export function LandingCards({ cards }: Props) {
                       {card.body}
                     </p>
                   )}
-                  {card.ctaLabel && card.ctaUrl && (
-                    <Link
-                      href={card.ctaUrl}
-                      className="mt-8 inline-block rounded-lg bg-ember-700 px-8 py-4 font-bold uppercase tracking-wide text-white transition-colors hover:bg-ember-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember"
-                    >
-                      {card.ctaLabel}
-                    </Link>
-                  )}
+                  {card.ctaLabel &&
+                    card.ctaUrl &&
+                    card.ctaUrl !== "#" &&
+                    (card.ctaUrl.startsWith("https://") ? (
+                      <a
+                        href={card.ctaUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-8 inline-block rounded-lg bg-ember-700 px-8 py-4 font-bold uppercase tracking-wide text-white transition-colors hover:bg-ember-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember"
+                      >
+                        {card.ctaLabel}
+                      </a>
+                    ) : (
+                      <Link
+                        href={card.ctaUrl}
+                        className="mt-8 inline-block rounded-lg bg-ember-700 px-8 py-4 font-bold uppercase tracking-wide text-white transition-colors hover:bg-ember-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember"
+                      >
+                        {card.ctaLabel}
+                      </Link>
+                    ))}
                 </div>
               </div>
             </SectionShell>

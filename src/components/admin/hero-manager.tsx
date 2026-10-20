@@ -284,13 +284,16 @@ export function HeroManager() {
           </label>
           <input
             id="primaryCtaUrl"
-            type="url"
+            type="text"
             value={formData.primaryCtaUrl}
             onChange={(e) =>
               setFormData({ ...formData, primaryCtaUrl: e.target.value })
             }
             className="w-full border px-3 py-2 rounded"
           />
+          <p className="text-xs text-gray-500 mt-1">
+            Diawali https:// atau ID anchor (contoh: #wishlist).
+          </p>
           {formErrors.primaryCtaUrl && (
             <p className="text-red-600 text-sm mt-1">
               {formErrors.primaryCtaUrl[0]}
@@ -324,13 +327,16 @@ export function HeroManager() {
           </label>
           <input
             id="secondaryCtaUrl"
-            type="url"
+            type="text"
             value={formData.secondaryCtaUrl}
             onChange={(e) =>
               setFormData({ ...formData, secondaryCtaUrl: e.target.value })
             }
             className="w-full border px-3 py-2 rounded"
           />
+          <p className="text-xs text-gray-500 mt-1">
+            Diawali https:// atau ID anchor (contoh: #unduh).
+          </p>
           {formErrors.secondaryCtaUrl && (
             <p className="text-red-600 text-sm mt-1">
               {formErrors.secondaryCtaUrl[0]}

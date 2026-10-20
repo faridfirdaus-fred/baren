@@ -29,7 +29,9 @@ export async function Hero() {
     content.primaryCtaUrl === "#wishlist";
 
   const secondary =
-    content.secondaryCtaLabel && content.secondaryCtaUrl
+    content.secondaryCtaLabel &&
+    content.secondaryCtaUrl &&
+    content.secondaryCtaUrl !== "#"
       ? { label: content.secondaryCtaLabel, href: content.secondaryCtaUrl }
       : null;
 

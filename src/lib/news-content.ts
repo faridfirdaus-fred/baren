@@ -41,3 +41,31 @@ export async function getLatestNews(): Promise<NewsItem[] | null> {
     return null;
   }
 }
+
+/** Ambil seluruh berita terbit untuk halaman indeks /berita. */
+export async function getAllPublishedNews(limit = 50): Promise<NewsItem[]> {
+  try {
+    const db = getDb();
+    const items = await db
+      .select({
+        id: news.id,
+        slug: news.slug,
+        title: news.title,
+        excerpt: news.excerpt,
+        coverUrl: news.coverUrl,
+        publishedAt: news.publishedAt,
+      })
+      .from(news)
+      .where(eq(news.status, "published"))
+      .orderBy(desc(news.publishedAt), desc(news.id))
+      .limit(limit);
+
+    return items.map((item) => ({
+      ...item,
+      publishedAt: item.publishedAt?.toISOString() ?? null,
+    }));
+  } catch (error) {
+    console.error("getAllPublishedNews error:", error);
+    return [];
+  }
+}

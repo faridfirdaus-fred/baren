@@ -24,13 +24,13 @@ export function LatestNews({ items, title, ctaLabel }: Props) {
             {resolvedTitle}
           </h2>
           {ctaLabel && (
-            <a
-              href="#berita"
-              className="eyebrow inline-flex items-center gap-2 text-ink hover:text-ember-700"
+            <Link
+              href="/berita"
+              className="eyebrow inline-flex items-center gap-2 text-ink hover:text-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
               {ctaLabel}
               <IconArrowUpRight className="h-4 w-4" />
-            </a>
+            </Link>
           )}
         </div>
         <div className="mt-10 grid gap-8 md:grid-cols-3">
