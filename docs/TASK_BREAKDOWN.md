@@ -47,7 +47,8 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 | **E12**   | **Design System & UI (acuan Valorant)**                | P0        | 24       | Done     | 100%     | C-10, DG-01..DG-10                                               |
 | **E13**   | **Komentar Landing (baru)**                            | P0        | 8        | Done     | 100%     | FR-PUB-26, FR-ADM-31 (baru, lihat §E13)                          |
 | **E14**   | **Konten Landing & Download Steam**                    | P0        | 16       | Done     | 100%     | FR-PUB-01, FR-PUB-05..14, FR-PUB-25/26, FR-ADM-22..25, FR-ADM-32 |
-| **Total** |                                                        |           | **359**  | **Done** | **100%** |                                                                  |
+| **E15**   | **Perbaikan Regresi Admin Berita & Komentar**          | P0        | 9        | Done     | 100%     | FR-ADM-18/19/31, NFR-MNT-03                                      |
+| **Total** |                                                        |           | **368**  | **Done** | **100%** |                                                                  |
 
 > **Progress dihitung:** jumlah SP task `Done` ÷ total SP epik × 100%.
 
@@ -329,6 +330,21 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 
 ---
 
+## E15 — Perbaikan Regresi Modul Admin Berita & Komentar (Issue #2)
+
+**Tujuan:** Menyelesaikan bug runtime render dan integrasi CRUD pada `/admin/news` dan `/admin/comments`.
+
+| ID    | Task                      | Detail                                                        | FR/Terkait   | Prio | SP  | Dep          | Status | Catatan                                                                              |
+| ----- | ------------------------- | ------------------------------------------------------------- | ------------ | ---- | --- | ------------ | ------ | ------------------------------------------------------------------------------------ |
+| E15-1 | API daftar berita admin   | `GET /api/news?scope=admin`, guard admin, semua status + body | FR-ADM-18/19 | P0   | 2   | E3-6         | Done   | 2026-10-20: admin-only, draf+terbit, body, urut update terbaru                       |
+| E15-2 | Perbaikan NewsManager     | Amplop respons, slug auto+input, mutasi by ID, body, error    | FR-ADM-18/19 | P0   | 3   | E15-1        | Done   | 2026-10-20: CRUD ID, slug otomatis/editable, validasi per kolom, daftar admin aman   |
+| E15-3 | Perbaikan CommentsManager | Field datar userName/userPhotoUrl, error envelope, avatar     | FR-ADM-31    | P0   | 2   | E3-12        | Done   | 2026-10-20: normalisasi respons datar, avatar inisial, hapus aman                    |
+| E15-4 | Tes regresi admin         | Unit parser/slug/comments + Playwright kedua halaman          | NFR-MNT-03   | P0   | 2   | E15-2, E15-3 | Done   | 2026-10-20: 224 unit tests, Playwright preview berita/komentar lulus tanpa pageerror |
+
+**Kriteria Selesai E15:** `/admin/news` dan `/admin/comments` memuat data tanpa error konsol, form berita create/edit/delete berjalan lancar, avatar fallback komentar tampil, seluruh tes unit dan Playwright lolos.
+
+---
+
 ## 2. Matriks Ketertelusuran (Requirement → Task)
 
 | Requirement                                              | Task Utama                         |
@@ -345,7 +361,7 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 | FR-PUB-11                                                | E7-2 (DITUNDA)                     |
 | FR-PUB-12                                                | E7-3                               |
 | FR-PUB-26 (baru: komentar langsung tayang, login Google) | E13-1..3                           |
-| FR-ADM-31 (baru: hapus komentar)                         | E13-2/3                            |
+| FR-ADM-31 (baru: hapus komentar)                         | E13-2/3, E15-3                     |
 | FR-PUB-13                                                | E7-4                               |
 | FR-PUB-14                                                | E7-5                               |
 | FR-PUB-15                                                | E5-2                               |
@@ -369,7 +385,7 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 | FR-ADM-11/12                                             | E8-4                               |
 | FR-ADM-13/14                                             | E8-5                               |
 | FR-ADM-15/16/17                                          | E4-2/3/6, E8-6                     |
-| FR-ADM-18/19                                             | E8-7                               |
+| FR-ADM-18/19                                             | E8-7, E15-1, E15-2                 |
 | FR-ADM-20                                                | E8-8                               |
 | FR-ADM-21/22/23                                          | E8-9                               |
 | FR-ADM-24                                                | E3-9, E8-11                        |
@@ -440,6 +456,7 @@ E12 (Design System) berjalan paralel, mulai setelah E0-2 ───────�
 
 | Tanggal    | Task ID                    | Ringkasan                                                                                                                                                                                                                                                                                                                           | Referensi (commit/PR)                                                                                           |
 | ---------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| 2026-10-20 | E15-1..4                   | Perbaikan regresi #2: endpoint berita admin draf+terbit; NewsManager memakai kontrak array, slug auto/editable, mutasi ID; CommentsManager memakai field datar dan avatar inisial; 224 unit test serta Playwright preview lulus tanpa `pageerror`.                                                                                  | `src/app/api/news/route.ts`, `src/components/admin/`, `scripts/test-admin-content.mjs`                          |
 | 2026-10-20 | Audit CTA & Nav            | Eliminasi seluruh dead link `href="#"`, self-looping anchor `#berita`, buat halaman `/berita`, `/kebijakan-privasi`, `/ketentuan-penggunaan`, sitemap `/berita`, perbaiki validasi Zod hero/landing-cards (tolak `#` murni, izinkan anchor internal), hapus duplikasi ID DOM `#kontak`, dan bersihkan komponen legacy tak terpakai. | `src/app/`, `src/components/site/`, `src/lib/validation/`                                                       |
 | 2026-10-17 | E2-7                       | Revamp UI login admin (impeccable craft): konsol HUD bertema BAREN, aksen siku ember, toggle visibilitas kata sandi, alert penolakan akses (AksesDitolak), loading shell login khusus (`login/loading.tsx`), dan perbaikan konsol `admin/loading.tsx`.                                                                              | `src/app/admin/login/`, `src/components/admin/login-form.tsx`, `src/app/admin/loading.tsx`                      |
 | 2026-10-17 | E11-4, E14-4, E13-3        | Tombol Gabung Wishlist (Hero, Steam card, Komentar) memicu alur login Google OAuth via server action joinWishlistAction, status akun pengunjung menampilkan Sudah Terdaftar, serta domain avatar googleusercontent diizinkan di next.config.ts.                                                                                     | `src/components/site/`, `next.config.ts`                                                                        |

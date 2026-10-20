@@ -5,51 +5,32 @@ import { AssetUploader } from "./asset-uploader";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
-
-interface NewsItem {
-  id: number;
-  slug: string;
-  title: string;
-  excerpt: string;
-  body: string;
-  coverUrl: string | null;
-  status: "draft" | "published";
-  publishedAt: string | null;
-}
-
-interface NewsFormData {
-  title: string;
-  excerpt: string;
-  body: string;
-  coverUrl: string;
-  status: "draft" | "published";
-}
-
-interface ApiResponse {
-  ok: boolean;
-  data?: NewsItem[];
-  message?: string;
-  fields?: Record<string, string[]>;
-}
+import {
+  parseAdminNewsList,
+  slugifyTitle,
+  type AdminNewsFormData,
+  type AdminNewsItem,
+} from "@/lib/admin-news-client";
+import { parseApiEnvelope } from "@/lib/api/client-response";
 
 export function NewsManager() {
-  const [items, setItems] = useState<NewsItem[]>([]);
+  const [items, setItems] = useState<AdminNewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<NewsFormData>({
+  const [formData, setFormData] = useState<AdminNewsFormData>({
     title: "",
+    slug: "",
     excerpt: "",
     body: "",
     coverUrl: "",
     status: "draft",
   });
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editingSlug, setEditingSlug] = useState<string | null>(null);
+  const [slugTouched, setSlugTouched] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string[]>>({});
   const [submitting, setSubmitting] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{
     id: number;
-    slug: string;
     title: string;
   } | null>(null);
   const [toast, setToast] = useState<{
@@ -57,17 +38,31 @@ export function NewsManager() {
     type: "success" | "error";
   } | null>(null);
 
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      slug: "",
+      excerpt: "",
+      body: "",
+      coverUrl: "",
+      status: "draft",
+    });
+    setEditingId(null);
+    setSlugTouched(false);
+    setFormErrors({});
+  };
+
   const loadNews = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/news?limit=999");
-      const json = (await res.json()) as ApiResponse;
-      if (!json.ok) {
-        setError(json.message || "Gagal memuat berita");
+      const res = await fetch("/api/news?scope=admin", { cache: "no-store" });
+      const parsed = parseAdminNewsList(await res.json());
+      if (!parsed.ok) {
+        setError(parsed.message);
         return;
       }
-      setItems(json.data || []);
+      setItems(parsed.data);
     } catch (err) {
       setError("Gagal memuat berita");
       console.error(err);
@@ -96,21 +91,23 @@ export function NewsManager() {
     setSubmitting(true);
 
     try {
-      const url = editingSlug ? `/api/news/${editingSlug}` : "/api/news";
-      const method = editingSlug ? "PUT" : "POST";
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const json = (await res.json()) as ApiResponse;
+      const isEditing = editingId !== null;
+      const res = await fetch(
+        isEditing ? `/api/news/${editingId}` : "/api/news",
+        {
+          method: isEditing ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        },
+      );
+      const parsed = parseApiEnvelope<AdminNewsItem>(await res.json());
 
-      if (!json.ok) {
-        if (json.fields) {
-          setFormErrors(json.fields);
+      if (!parsed.ok) {
+        if (parsed.fields) {
+          setFormErrors(parsed.fields);
         } else {
           setToast({
-            message: json.message || "Gagal menyimpan berita",
+            message: parsed.message || "Gagal menyimpan berita",
             type: "error",
           });
         }
@@ -118,18 +115,10 @@ export function NewsManager() {
       }
 
       setToast({
-        message: editingSlug ? "Berita diperbarui" : "Berita ditambahkan",
+        message: isEditing ? "Berita diperbarui" : "Berita ditambahkan",
         type: "success",
       });
-      setFormData({
-        title: "",
-        excerpt: "",
-        body: "",
-        coverUrl: "",
-        status: "draft",
-      });
-      setEditingId(null);
-      setEditingSlug(null);
+      resetForm();
       await loadNews();
     } catch (err) {
       setToast({ message: "Gagal menyimpan berita", type: "error" });
@@ -139,42 +128,34 @@ export function NewsManager() {
     }
   };
 
-  const handleEdit = (item: NewsItem) => {
+  const handleEdit = (item: AdminNewsItem) => {
     setFormData({
       title: item.title,
-      excerpt: item.excerpt,
+      slug: item.slug,
+      excerpt: item.excerpt ?? "",
       body: item.body,
-      coverUrl: item.coverUrl || "",
+      coverUrl: item.coverUrl ?? "",
       status: item.status,
     });
     setEditingId(item.id);
-    setEditingSlug(item.slug);
+    setSlugTouched(true);
     setFormErrors({});
   };
 
   const handleCancelEdit = () => {
-    setFormData({
-      title: "",
-      excerpt: "",
-      body: "",
-      coverUrl: "",
-      status: "draft",
-    });
-    setEditingId(null);
-    setEditingSlug(null);
-    setFormErrors({});
+    resetForm();
   };
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
     try {
-      const res = await fetch(`/api/news/${deleteTarget.slug}`, {
+      const res = await fetch(`/api/news/${deleteTarget.id}`, {
         method: "DELETE",
       });
-      const json = (await res.json()) as ApiResponse;
-      if (!json.ok) {
+      const parsed = parseApiEnvelope<AdminNewsItem>(await res.json());
+      if (!parsed.ok) {
         setToast({
-          message: json.message || "Gagal menghapus berita",
+          message: parsed.message || "Gagal menghapus berita",
           type: "error",
         });
         return;
@@ -198,8 +179,8 @@ export function NewsManager() {
         <p className="text-sm text-gray-700">
           <strong>Catatan:</strong> Hanya{" "}
           <strong>maksimal 3 berita terbaru</strong> yang tampil di landing
-          page. Jika kosong, seksi berita akan hilang. Saat ini belum ada
-          halaman detail berita.
+          page. Jika kosong, seksi berita akan hilang. Berita yang
+          dipublikasikan dapat diakses di /berita/[slug].
         </p>
       </div>
 
@@ -216,14 +197,46 @@ export function NewsManager() {
             id="title"
             type="text"
             value={formData.title}
-            onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
-            }
+            onChange={(e) => {
+              const title = e.target.value;
+              setFormData((prev) => ({
+                ...prev,
+                title,
+                slug:
+                  editingId === null && !slugTouched
+                    ? slugifyTitle(title)
+                    : prev.slug,
+              }));
+            }}
             className="w-full border px-3 py-2 rounded"
             required
           />
           {formErrors.title && (
             <p className="text-red-600 text-sm mt-1">{formErrors.title[0]}</p>
+          )}
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="slug" className="block font-medium mb-1">
+            Slug *
+          </label>
+          <input
+            id="slug"
+            type="text"
+            value={formData.slug}
+            onChange={(e) => {
+              setSlugTouched(true);
+              setFormData({ ...formData, slug: e.target.value });
+            }}
+            className="w-full border px-3 py-2 rounded"
+            required
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Dipakai di URL /berita/[slug]. Terisi otomatis dari judul; bisa
+            diubah.
+          </p>
+          {formErrors.slug && (
+            <p className="text-red-600 text-sm mt-1">{formErrors.slug[0]}</p>
           )}
         </div>
 
@@ -370,7 +383,6 @@ export function NewsManager() {
                   onClick={() =>
                     setDeleteTarget({
                       id: item.id,
-                      slug: item.slug,
                       title: item.title,
                     })
                   }
