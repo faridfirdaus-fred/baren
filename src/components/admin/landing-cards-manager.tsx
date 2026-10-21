@@ -3,6 +3,15 @@
 import { useEffect, useState } from "react";
 import { AssetUploader } from "./asset-uploader";
 import { adminButtonClass } from "./button-styles";
+import {
+  adminInputClass,
+  adminTextareaClass,
+  adminSelectClass,
+  adminCheckboxClass,
+  adminLabelClass,
+  adminErrorClass,
+  adminHelpClass,
+} from "./form-styles";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
@@ -263,20 +272,20 @@ export function LandingCardsManager() {
   };
 
   if (loading) return <p>Memuat kartu...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
+  if (error) return <p className="text-ember">{error}</p>;
 
   return (
     <div>
       <form
         onSubmit={handleSubmit}
-        className="mb-8 p-4 border rounded space-y-4"
+        className="mb-8 space-y-4 border border-line bg-ink-800 p-6"
       >
-        <h3 className="font-bold mb-4">
+        <h3 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
           {editingId ? "Edit Kartu" : "Tambah Kartu"}
         </h3>
 
         <div>
-          <label htmlFor="slot" className="block font-medium mb-1">
+          <label htmlFor="slot" className={adminLabelClass}>
             Slot
           </label>
           <input
@@ -284,15 +293,15 @@ export function LandingCardsManager() {
             type="text"
             value={formData.slot}
             onChange={(e) => setFormData({ ...formData, slot: e.target.value })}
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
           />
           {formErrors.slot && (
-            <p className="text-red-600 text-sm mt-1">{formErrors.slot[0]}</p>
+            <p className={adminErrorClass}>{formErrors.slot[0]}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="title" className="block font-medium mb-1">
+          <label htmlFor="title" className={adminLabelClass}>
             Judul *
           </label>
           <input
@@ -302,16 +311,16 @@ export function LandingCardsManager() {
             onChange={(e) =>
               setFormData({ ...formData, title: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
             required
           />
           {formErrors.title && (
-            <p className="text-red-600 text-sm mt-1">{formErrors.title[0]}</p>
+            <p className={adminErrorClass}>{formErrors.title[0]}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="eyebrow" className="block font-medium mb-1">
+          <label htmlFor="eyebrow" className={adminLabelClass}>
             Eyebrow
           </label>
           <input
@@ -321,12 +330,12 @@ export function LandingCardsManager() {
             onChange={(e) =>
               setFormData({ ...formData, eyebrow: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
           />
         </div>
 
         <div>
-          <label htmlFor="subtitle" className="block font-medium mb-1">
+          <label htmlFor="subtitle" className={adminLabelClass}>
             Subjudul
           </label>
           <input
@@ -336,25 +345,25 @@ export function LandingCardsManager() {
             onChange={(e) =>
               setFormData({ ...formData, subtitle: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
           />
         </div>
 
         <div>
-          <label htmlFor="body" className="block font-medium mb-1">
+          <label htmlFor="body" className={adminLabelClass}>
             Isi
           </label>
           <textarea
             id="body"
             value={formData.body}
             onChange={(e) => setFormData({ ...formData, body: e.target.value })}
-            className="w-full border px-3 py-2 rounded"
+            className={adminTextareaClass}
             rows={3}
           />
         </div>
 
         <div>
-          <label htmlFor="imageUrl" className="block font-medium mb-1">
+          <label htmlFor="imageUrl" className={adminLabelClass}>
             URL Gambar
           </label>
           <input
@@ -364,10 +373,10 @@ export function LandingCardsManager() {
             onChange={(e) =>
               setFormData({ ...formData, imageUrl: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
             placeholder="https://... (JPG/PNG/WebP)"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className={adminHelpClass}>
             Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan tautan
             gambar langsung.
           </p>
@@ -392,7 +401,7 @@ export function LandingCardsManager() {
         </div>
 
         <div>
-          <label htmlFor="ctaLabel" className="block font-medium mb-1">
+          <label htmlFor="ctaLabel" className={adminLabelClass}>
             Label CTA
           </label>
           <input
@@ -402,12 +411,12 @@ export function LandingCardsManager() {
             onChange={(e) =>
               setFormData({ ...formData, ctaLabel: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
           />
         </div>
 
         <div>
-          <label htmlFor="ctaUrl" className="block font-medium mb-1">
+          <label htmlFor="ctaUrl" className={adminLabelClass}>
             URL CTA
           </label>
           <input
@@ -417,12 +426,12 @@ export function LandingCardsManager() {
             onChange={(e) =>
               setFormData({ ...formData, ctaUrl: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
           />
         </div>
 
         <div>
-          <label htmlFor="tone" className="block font-medium mb-1">
+          <label htmlFor="tone" className={adminLabelClass}>
             Tone
           </label>
           <select
@@ -434,7 +443,7 @@ export function LandingCardsManager() {
                 tone: e.target.value as "dark" | "light" | "ember",
               })
             }
-            className="border px-3 py-2 rounded"
+            className={adminSelectClass}
           >
             <option value="dark">Dark</option>
             <option value="light">Light</option>
@@ -443,7 +452,7 @@ export function LandingCardsManager() {
         </div>
 
         <div>
-          <label htmlFor="sortOrder" className="block font-medium mb-1">
+          <label htmlFor="sortOrder" className={adminLabelClass}>
             Urutan
           </label>
           <input
@@ -453,7 +462,7 @@ export function LandingCardsManager() {
             onChange={(e) =>
               setFormData({ ...formData, sortOrder: Number(e.target.value) })
             }
-            className="border px-3 py-2 rounded"
+            className={adminInputClass}
           />
         </div>
 
@@ -462,11 +471,17 @@ export function LandingCardsManager() {
             id="isPublished"
             type="checkbox"
             checked={formData.isPublished}
+            className={adminCheckboxClass}
             onChange={(e) =>
               setFormData({ ...formData, isPublished: e.target.checked })
             }
           />
-          <label htmlFor="isPublished">Terbit</label>
+          <label
+            htmlFor="isPublished"
+            className="cursor-pointer text-sm font-medium text-sand"
+          >
+            Terbit
+          </label>
         </div>
 
         <div className="flex gap-2">
@@ -489,18 +504,20 @@ export function LandingCardsManager() {
         </div>
       </form>
 
-      <h3 className="font-bold mb-4">Daftar Kartu</h3>
+      <h3 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
+        Daftar Kartu
+      </h3>
       {items.length === 0 ? (
-        <p className="text-gray-500">Belum ada kartu.</p>
+        <p className="text-sand-600">Belum ada kartu.</p>
       ) : (
         <div className="space-y-4">
           {items.map((item, idx) => (
-            <div key={item.id} className="p-4 border rounded">
+            <div key={item.id} className="border border-line bg-ink-800 p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <h4 className="font-bold">{item.title}</h4>
-                  <p className="text-sm text-gray-600">{item.subtitle}</p>
-                  <p className="text-xs text-gray-500 mt-2">
+                  <p className="text-sm text-sand-600">{item.subtitle}</p>
+                  <p className="text-xs text-sand-600 mt-2">
                     Slot: {item.slot} | Tone: {item.tone} | Terbit:{" "}
                     {item.isPublished ? "Ya" : "Tidak"}
                   </p>

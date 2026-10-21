@@ -11,6 +11,12 @@ import {
 } from "@/app/admin/account-actions";
 import { adminButtonClass } from "./button-styles";
 import {
+  adminErrorClass,
+  adminHelpClass,
+  adminInputClass,
+  adminLabelClass,
+} from "./form-styles";
+import {
   adminPasswordSchema,
   adminProfileSchema,
   type AdminPasswordInput,
@@ -58,32 +64,47 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
           onSubmit={profileForm.handleSubmit(submitProfile)}
         >
           <div>
-            <label htmlFor="admin-name">Nama</label>
+            <label htmlFor="admin-name" className={adminLabelClass}>
+              Nama
+            </label>
             <input
               id="admin-name"
               autoComplete="name"
+              className={adminInputClass}
               {...profileForm.register("name")}
               aria-invalid={Boolean(profileForm.formState.errors.name)}
             />
             {profileForm.formState.errors.name ? (
-              <p role="alert">{profileForm.formState.errors.name.message}</p>
+              <p role="alert" className={adminErrorClass}>
+                {profileForm.formState.errors.name.message}
+              </p>
             ) : null}
           </div>
           <div>
-            <label htmlFor="admin-email">Email akun</label>
+            <label htmlFor="admin-email" className={adminLabelClass}>
+              Email akun
+            </label>
             <input
               id="admin-email"
               type="email"
               autoComplete="email"
+              className={adminInputClass}
               {...profileForm.register("email")}
               aria-invalid={Boolean(profileForm.formState.errors.email)}
             />
             {profileForm.formState.errors.email ? (
-              <p role="alert">{profileForm.formState.errors.email.message}</p>
+              <p role="alert" className={adminErrorClass}>
+                {profileForm.formState.errors.email.message}
+              </p>
             ) : null}
           </div>
           {profileMessage ? (
             <p
+              className={
+                profileMessage.startsWith("Profil berhasil")
+                  ? adminHelpClass
+                  : adminErrorClass
+              }
               role={
                 profileMessage.startsWith("Profil berhasil")
                   ? "status"
@@ -96,7 +117,7 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
           <button
             type="submit"
             disabled={profileForm.formState.isSubmitting}
-            className={adminButtonClass("primary", "md")}
+            className={adminButtonClass("primary", "md", "justify-self-start")}
           >
             {profileForm.formState.isSubmitting
               ? "Menyimpan..."
@@ -113,39 +134,50 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
           onSubmit={passwordForm.handleSubmit(submitPassword)}
         >
           <div>
-            <label htmlFor="current-password">Kata sandi saat ini</label>
+            <label htmlFor="current-password" className={adminLabelClass}>
+              Kata sandi saat ini
+            </label>
             <input
               id="current-password"
               type="password"
               autoComplete="current-password"
+              className={adminInputClass}
               {...passwordForm.register("currentPassword")}
               aria-invalid={Boolean(
                 passwordForm.formState.errors.currentPassword,
               )}
             />
             {passwordForm.formState.errors.currentPassword ? (
-              <p role="alert">
+              <p role="alert" className={adminErrorClass}>
                 {passwordForm.formState.errors.currentPassword.message}
               </p>
             ) : null}
           </div>
           <div>
-            <label htmlFor="new-password">Kata sandi baru</label>
+            <label htmlFor="new-password" className={adminLabelClass}>
+              Kata sandi baru
+            </label>
             <input
               id="new-password"
               type="password"
               autoComplete="new-password"
+              className={adminInputClass}
               {...passwordForm.register("newPassword")}
               aria-invalid={Boolean(passwordForm.formState.errors.newPassword)}
             />
             {passwordForm.formState.errors.newPassword ? (
-              <p role="alert">
+              <p role="alert" className={adminErrorClass}>
                 {passwordForm.formState.errors.newPassword.message}
               </p>
             ) : null}
           </div>
           {passwordMessage ? (
             <p
+              className={
+                passwordMessage.startsWith("Kata sandi berhasil")
+                  ? adminHelpClass
+                  : adminErrorClass
+              }
               role={
                 passwordMessage.startsWith("Kata sandi berhasil")
                   ? "status"
@@ -158,7 +190,7 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
           <button
             type="submit"
             disabled={passwordForm.formState.isSubmitting}
-            className={adminButtonClass("primary", "md")}
+            className={adminButtonClass("primary", "md", "justify-self-start")}
           >
             {passwordForm.formState.isSubmitting
               ? "Mengubah..."

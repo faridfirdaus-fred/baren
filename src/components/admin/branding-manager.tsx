@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
+import { adminInputClass, adminLabelClass } from "./form-styles";
 
 import { AssetUploader } from "@/components/admin/asset-uploader";
 import { adminButtonClass } from "@/components/admin/button-styles";
@@ -254,10 +255,7 @@ export function AdminBrandingManager() {
             </h2>
 
             <div>
-              <label
-                htmlFor="namaGame"
-                className="block text-xs font-semibold uppercase tracking-wider text-sand-600"
-              >
+              <label htmlFor="namaGame" className={adminLabelClass}>
                 Nama Game <span className="text-ember">*</span>
               </label>
               <input
@@ -268,7 +266,7 @@ export function AdminBrandingManager() {
                 aria-describedby={
                   errors.namaGame ? "namaGame-error" : "namaGame-help"
                 }
-                className="mt-1.5 w-full border border-line bg-ink px-3 py-2 text-sm text-sand focus:border-ember focus:outline-none"
+                className={adminInputClass}
                 placeholder="Contoh: BAREN"
               />
               <p id="namaGame-help" className="mt-1 text-xs text-sand-600">
@@ -286,10 +284,7 @@ export function AdminBrandingManager() {
             </div>
 
             <div>
-              <label
-                htmlFor="tagline"
-                className="block text-xs font-semibold uppercase tracking-wider text-sand-600"
-              >
+              <label htmlFor="tagline" className={adminLabelClass}>
                 Tagline Game
               </label>
               <input
@@ -300,7 +295,7 @@ export function AdminBrandingManager() {
                 aria-describedby={
                   errors.tagline ? "tagline-error" : "tagline-help"
                 }
-                className="mt-1.5 w-full border border-line bg-ink px-3 py-2 text-sm text-sand focus:border-ember focus:outline-none"
+                className={adminInputClass}
                 placeholder="Contoh: Rebut benteng. Kuasai arena."
               />
               <p id="tagline-help" className="mt-1 text-xs text-sand-600">
@@ -367,10 +362,7 @@ export function AdminBrandingManager() {
 
             {/* Input URL Logo */}
             <div>
-              <label
-                htmlFor="logoUrl"
-                className="block text-xs font-semibold uppercase tracking-wider text-sand-600"
-              >
+              <label htmlFor="logoUrl" className={adminLabelClass}>
                 URL Logo (HTTPS)
               </label>
               <input
@@ -381,7 +373,7 @@ export function AdminBrandingManager() {
                 aria-describedby={
                   errors.logoUrl ? "logoUrl-error" : "logoUrl-help"
                 }
-                className="mt-1.5 w-full border border-line bg-ink px-3 py-2 text-sm text-sand focus:border-ember focus:outline-none"
+                className={adminInputClass}
                 placeholder="https://..."
               />
               <p id="logoUrl-help" className="mt-1 text-xs text-sand-600">
@@ -463,10 +455,7 @@ export function AdminBrandingManager() {
 
             {/* Input URL Favicon */}
             <div>
-              <label
-                htmlFor="faviconUrl"
-                className="block text-xs font-semibold uppercase tracking-wider text-sand-600"
-              >
+              <label htmlFor="faviconUrl" className={adminLabelClass}>
                 URL Favicon (HTTPS)
               </label>
               <input
@@ -477,7 +466,7 @@ export function AdminBrandingManager() {
                 aria-describedby={
                   errors.faviconUrl ? "faviconUrl-error" : "faviconUrl-help"
                 }
-                className="mt-1.5 w-full border border-line bg-ink px-3 py-2 text-sm text-sand focus:border-ember focus:outline-none"
+                className={adminInputClass}
                 placeholder="https://..."
               />
               <p id="faviconUrl-help" className="mt-1 text-xs text-sand-600">
