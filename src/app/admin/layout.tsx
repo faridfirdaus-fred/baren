@@ -52,6 +52,7 @@ export default function AdminLayout({
     { href: "/admin/landing-cards", label: "Kartu Landing" },
     { href: "/admin/news", label: "Berita" },
     { href: "/admin/how-to-play", label: "Cara Bermain" },
+    { href: "/admin/features", label: "Fitur" },
     { href: "/admin/branding", label: "Branding" },
     { href: "/admin/faq", label: "FAQ" },
     { href: "/admin/gallery", label: "Galeri" },

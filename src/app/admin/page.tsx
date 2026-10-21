@@ -1,9 +1,10 @@
-import { count, max } from "drizzle-orm";
+import { count, desc, eq, max } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { auth, signOut } from "@/auth";
 import { AdminAccountForm } from "@/components/admin/account-form";
+import { RecentComments } from "@/components/admin/recent-comments";
 import { getDb } from "@/db";
 import {
   about,
@@ -19,9 +20,12 @@ import {
   news,
   siteSettings,
   socialLinks,
+  users,
   wishlist,
 } from "@/db/schema";
 import { readDashboardSummary } from "@/lib/admin/dashboard";
+import { buildDashboardMetrics } from "@/lib/admin/dashboard-metrics";
+import { formatDateTimeId, toDateTimeAttribute } from "@/lib/admin/datetime";
 
 export const dynamic = "force-dynamic";
 
@@ -107,6 +111,22 @@ export default async function AdminDashboardPage() {
     ],
   });
 
+  const metrics = buildDashboardMetrics(dashboard);
+  const latestContentUpdatedAt = dashboard.latestContentUpdatedAt;
+
+  // E16-4: satu kueri untuk widget komentar terbaru.
+  const recentComments = await db
+    .select({
+      id: comments.id,
+      body: comments.body,
+      userName: users.name,
+      createdAt: comments.createdAt,
+    })
+    .from(comments)
+    .leftJoin(users, eq(comments.userId, users.id))
+    .orderBy(desc(comments.createdAt), desc(comments.id))
+    .limit(3);
+
   return (
     <section className="space-y-8">
       <header>
@@ -117,49 +137,61 @@ export default async function AdminDashboardPage() {
           Masuk sebagai {(session.user as { email?: string }).email}
         </p>
       </header>
-      <dl className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+
+      <section aria-labelledby="ringkasan-metrik" className="space-y-4">
+        <h2 id="ringkasan-metrik" className="sr-only">
+          Ringkasan metrik
+        </h2>
+        <p className="text-sm text-sand-600">
+          Angka dihitung langsung dari basis data saat halaman dimuat. Pilih
+          kartu untuk melihat dan mengelola data sumbernya.
+        </p>
+        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {metrics.map((metric) => (
+            <li key={metric.key}>
+              <Link
+                href={metric.href}
+                data-testid={`metric-${metric.key}`}
+                className="group flex h-full flex-col border border-line bg-ink-800 p-5 transition-colors hover:border-ember hover:bg-ink-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+              >
+                <span className="text-sm text-sand-600">{metric.label}</span>
+                <span
+                  className="mt-2 text-3xl font-bold text-sand"
+                  data-testid={`metric-value-${metric.key}`}
+                >
+                  {metric.value}
+                </span>
+                <span className="mt-1 text-sm text-sand-600">
+                  {metric.description}
+                </span>
+                <span className="mt-auto pt-4 text-xs font-semibold uppercase tracking-wider text-sand-600 group-hover:text-ember">
+                  {metric.actionLabel} <span aria-hidden="true">&rarr;</span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+
         <div className="border border-line bg-ink-800 p-5">
-          <dt className="text-sm text-sand-600">Fitur</dt>
-          <dd className="mt-2 text-3xl font-bold text-sand">
-            {dashboard.features}
-          </dd>
+          <h3 className="text-sm text-sand-600">Pembaruan konten terakhir</h3>
+          <p className="mt-2 text-sm font-medium text-sand">
+            {latestContentUpdatedAt ? (
+              <time dateTime={toDateTimeAttribute(latestContentUpdatedAt)}>
+                {formatDateTimeId(latestContentUpdatedAt)}
+              </time>
+            ) : (
+              "Belum ada pembaruan konten."
+            )}
+          </p>
+          <p className="mt-2 text-xs text-sand-600">
+            Maksimum dari waktu pembaruan konten; tidak termasuk komentar dan
+            wishlist.
+          </p>
         </div>
-        <div className="border border-line bg-ink-800 p-5">
-          <dt className="text-sm text-sand-600">Galeri</dt>
-          <dd className="mt-2 text-3xl font-bold text-sand">
-            {dashboard.galleryAssets}
-          </dd>
-        </div>
-        <div className="border border-line bg-ink-800 p-5">
-          <dt className="text-sm text-sand-600">Berita</dt>
-          <dd className="mt-2 text-3xl font-bold text-sand">
-            {dashboard.news}
-          </dd>
-        </div>
-        <div className="border border-line bg-ink-800 p-5">
-          <dt className="text-sm text-sand-600">FAQ</dt>
-          <dd className="mt-2 text-3xl font-bold text-sand">{dashboard.faq}</dd>
-        </div>
-        <div className="border border-line bg-ink-800 p-5">
-          <dt className="text-sm text-sand-600">Wishlist</dt>
-          <dd className="mt-2 text-3xl font-bold text-sand">
-            {dashboard.wishlist}
-          </dd>
-        </div>
-        <div className="border border-line bg-ink-800 p-5">
-          <dt className="text-sm text-sand-600">Komentar</dt>
-          <dd className="mt-2 text-3xl font-bold text-sand">
-            {dashboard.comments}
-          </dd>
-        </div>
-        <div className="border border-line bg-ink-800 p-5 sm:col-span-2 xl:col-span-3">
-          <dt className="text-sm text-sand-600">Pembaruan konten terakhir</dt>
-          <dd className="mt-2 text-sm font-medium text-sand">
-            {dashboard.latestContentUpdatedAt?.toISOString() ??
-              "Belum ada pembaruan konten."}
-          </dd>
-        </div>
-      </dl>
+      </section>
+
+      <RecentComments comments={recentComments} />
+
       <nav aria-label="Navigasi Modul Admin">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-sand-600">
           Modul Konten
@@ -203,6 +235,14 @@ export default async function AdminDashboardPage() {
               className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >
               Kelola How to Play
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/admin/features"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            >
+              Kelola Fitur
             </Link>
           </li>
           <li>
