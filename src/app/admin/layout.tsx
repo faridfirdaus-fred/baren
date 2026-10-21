@@ -141,13 +141,13 @@ export default function AdminLayout({
         <div className="w-11" aria-hidden="true" />
       </header>
 
-      {/* Sidebar desktop */}
+      {/* Sidebar desktop — menempel saat halaman digulir, nav bergulir sendiri */}
       <aside
         id="navigasi-admin"
         aria-label="Navigasi admin"
-        className="hidden w-64 shrink-0 flex-col border-r border-ink-700 bg-ink-800 md:flex"
+        className="hidden w-64 shrink-0 flex-col border-r border-ink-700 bg-ink-800 md:sticky md:top-0 md:flex md:h-dvh md:self-start"
       >
-        <div className="flex h-16 items-center border-b border-ink-700 px-6">
+        <div className="flex h-16 shrink-0 items-center border-b border-ink-700 px-6">
           <Link
             href="/admin"
             className="font-display text-xl uppercase tracking-wider text-sand hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
@@ -155,7 +155,10 @@ export default function AdminLayout({
             Admin BAREN
           </Link>
         </div>
-        <nav aria-label="Menu admin desktop" className="flex-1 p-4">
+        <nav
+          aria-label="Menu admin desktop"
+          className="admin-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain p-4"
+        >
           {navItems}
         </nav>
       </aside>
@@ -207,7 +210,7 @@ export default function AdminLayout({
             </div>
             <nav
               aria-label="Menu admin seluler"
-              className="flex-1 overflow-y-auto"
+              className="admin-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain"
             >
               {navItems}
             </nav>

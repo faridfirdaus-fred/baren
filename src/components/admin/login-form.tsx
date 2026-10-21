@@ -5,6 +5,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Eye, EyeOff, Loader2, ShieldAlert } from "lucide-react";
+import {
+  adminInputClass,
+  adminInputWithActionClass,
+  adminLabelClass,
+} from "./form-styles";
 
 import { adminLoginSchema, type AdminLoginInput } from "@/lib/auth-validation";
 import { loginAdminAction } from "@/app/admin/login/actions";
@@ -80,10 +85,7 @@ export function AdminLoginForm({
       ) : null}
 
       <div className="space-y-1.5">
-        <label
-          htmlFor="email"
-          className="block text-xs font-semibold uppercase tracking-wider text-sand-600"
-        >
+        <label htmlFor="email" className={adminLabelClass}>
           Email
         </label>
         <input
@@ -93,7 +95,7 @@ export function AdminLoginForm({
           placeholder="admin@baren.id"
           {...register("email")}
           aria-invalid={Boolean(errors.email)}
-          className="w-full rounded-none border border-line bg-ink px-3.5 py-2.5 text-sm text-sand placeholder:text-sand/30 transition-colors focus:border-ember focus:bg-ink-700/50 focus:outline-none focus:ring-1 focus:ring-ember"
+          className={adminInputClass}
         />
         {errors.email ? (
           <p role="alert" className="text-xs text-ember">
@@ -103,10 +105,7 @@ export function AdminLoginForm({
       </div>
 
       <div className="space-y-1.5">
-        <label
-          htmlFor="password"
-          className="block text-xs font-semibold uppercase tracking-wider text-sand-600"
-        >
+        <label htmlFor="password" className={adminLabelClass}>
           Kata sandi
         </label>
         <div className="relative flex items-center">
@@ -117,7 +116,7 @@ export function AdminLoginForm({
             placeholder="••••••••"
             {...register("password")}
             aria-invalid={Boolean(errors.password)}
-            className="w-full rounded-none border border-line bg-ink px-3.5 py-2.5 pr-11 text-sm text-sand placeholder:text-sand/30 transition-colors focus:border-ember focus:bg-ink-700/50 focus:outline-none focus:ring-1 focus:ring-ember"
+            className={adminInputWithActionClass}
           />
           <button
             type="button"

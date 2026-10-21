@@ -3,6 +3,12 @@
 import { useEffect, useState } from "react";
 
 import { adminButtonClass } from "./button-styles";
+import {
+  adminErrorClass,
+  adminInputClass,
+  adminLabelClass,
+  adminTextareaClass,
+} from "./form-styles";
 
 interface FaqItem {
   id: number;
@@ -140,24 +146,32 @@ export function FaqManager() {
     }
   };
 
-  if (loading) return <p>Memuat FAQ...</p>;
+  if (loading) return <p className="text-sand-600">Memuat FAQ...</p>;
 
   return (
-    <div>
-      {error && (
+    <div className="grid max-w-3xl gap-8">
+      {error ? (
         <div
-          style={{ padding: "1rem", background: "#fee", marginBottom: "1rem" }}
+          role="alert"
+          className="border border-ember/40 bg-ember/10 px-4 py-3 text-sm text-ember"
         >
           {error}
         </div>
-      )}
+      ) : null}
 
       {/* Form tambah/edit */}
-      <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
-        <h2>{editingId ? "Edit FAQ" : "Tambah FAQ"}</h2>
+      <form
+        onSubmit={handleSubmit}
+        className="border border-line bg-ink-800 p-6"
+      >
+        <h2 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
+          {editingId ? "Edit FAQ" : "Tambah FAQ"}
+        </h2>
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="question">Pertanyaan</label>
+        <div className="mb-4">
+          <label htmlFor="question" className={adminLabelClass}>
+            Pertanyaan
+          </label>
           <input
             id="question"
             type="text"
@@ -166,17 +180,17 @@ export function FaqManager() {
               setFormData((prev) => ({ ...prev, question: e.target.value }))
             }
             disabled={submitting}
-            style={{ display: "block", width: "100%", padding: "0.5rem" }}
+            className={adminInputClass}
           />
-          {formErrors.question && (
-            <div style={{ color: "red", fontSize: "0.875rem" }}>
-              {formErrors.question.join(", ")}
-            </div>
-          )}
+          {formErrors.question ? (
+            <p className={adminErrorClass}>{formErrors.question.join(", ")}</p>
+          ) : null}
         </div>
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="answer">Jawaban</label>
+        <div className="mb-4">
+          <label htmlFor="answer" className={adminLabelClass}>
+            Jawaban
+          </label>
           <textarea
             id="answer"
             value={formData.answer}
@@ -185,17 +199,17 @@ export function FaqManager() {
             }
             disabled={submitting}
             rows={4}
-            style={{ display: "block", width: "100%", padding: "0.5rem" }}
+            className={adminTextareaClass}
           />
-          {formErrors.answer && (
-            <div style={{ color: "red", fontSize: "0.875rem" }}>
-              {formErrors.answer.join(", ")}
-            </div>
-          )}
+          {formErrors.answer ? (
+            <p className={adminErrorClass}>{formErrors.answer.join(", ")}</p>
+          ) : null}
         </div>
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="sortOrder">Urutan</label>
+        <div className="mb-4">
+          <label htmlFor="sortOrder" className={adminLabelClass}>
+            Urutan
+          </label>
           <input
             id="sortOrder"
             type="number"
@@ -207,13 +221,11 @@ export function FaqManager() {
               }))
             }
             disabled={submitting}
-            style={{ display: "block", width: "100%", padding: "0.5rem" }}
+            className={`${adminInputClass} max-w-40`}
           />
-          {formErrors.sortOrder && (
-            <div style={{ color: "red", fontSize: "0.875rem" }}>
-              {formErrors.sortOrder.join(", ")}
-            </div>
-          )}
+          {formErrors.sortOrder ? (
+            <p className={adminErrorClass}>{formErrors.sortOrder.join(", ")}</p>
+          ) : null}
         </div>
 
         <div className="flex flex-wrap gap-3">
@@ -241,55 +253,49 @@ export function FaqManager() {
         </div>
       </form>
 
-      {/* Empty state */}
-      {items.length === 0 && (
-        <p style={{ color: "#666" }}>Belum ada FAQ. Tambahkan yang pertama!</p>
-      )}
-
-      {/* FAQ list */}
-      {items.length > 0 && (
-        <div>
-          <h2>Daftar FAQ</h2>
-          <ul style={{ listStyle: "none", padding: 0 }}>
+      <section aria-labelledby="faq-list-heading" className="grid gap-3">
+        <h2
+          id="faq-list-heading"
+          className="font-display text-xl font-bold uppercase tracking-wider text-sand"
+        >
+          Daftar FAQ
+        </h2>
+        {items.length === 0 ? (
+          <p className="text-sand-600">
+            Belum ada FAQ. Tambahkan yang pertama!
+          </p>
+        ) : (
+          <ul className="grid gap-3">
             {items.map((item) => (
-              <li
-                key={item.id}
-                style={{
-                  border: "1px solid #ddd",
-                  padding: "1rem",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                <div style={{ marginBottom: "0.5rem" }}>
-                  <strong>Urutan:</strong> {item.sortOrder}
+              <li key={item.id} className="border border-line bg-ink-800 p-4">
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-sand-600">
+                    Urutan {item.sortOrder}
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleEdit(item)}
+                      className={adminButtonClass("secondary", "sm")}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(item.id)}
+                      className={adminButtonClass("danger", "sm")}
+                    >
+                      Hapus
+                    </button>
+                  </div>
                 </div>
-                <div style={{ marginBottom: "0.5rem" }}>
-                  <strong>Pertanyaan:</strong> {item.question}
-                </div>
-                <div style={{ marginBottom: "1rem" }}>
-                  <strong>Jawaban:</strong> {item.answer}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleEdit(item)}
-                    className={adminButtonClass("secondary", "sm")}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(item.id)}
-                    className={adminButtonClass("danger", "sm")}
-                  >
-                    Hapus
-                  </button>
-                </div>
+                <p className="font-semibold text-sand">{item.question}</p>
+                <p className="mt-1 text-sm text-sand-600">{item.answer}</p>
               </li>
             ))}
           </ul>
-        </div>
-      )}
+        )}
+      </section>
     </div>
   );
 }

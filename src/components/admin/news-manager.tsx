@@ -3,6 +3,14 @@
 import { useEffect, useState } from "react";
 import { AssetUploader } from "./asset-uploader";
 import { adminButtonClass } from "./button-styles";
+import {
+  adminInputClass,
+  adminTextareaClass,
+  adminSelectClass,
+  adminLabelClass,
+  adminErrorClass,
+  adminHelpClass,
+} from "./form-styles";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
@@ -172,12 +180,12 @@ export function NewsManager() {
   };
 
   if (loading) return <p>Memuat berita...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
+  if (error) return <p className="text-ember">{error}</p>;
 
   return (
     <div>
-      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded">
-        <p className="text-sm text-gray-700">
+      <div className="mb-6 border border-line border-l-2 border-l-ember bg-ink-800 p-4">
+        <p className="text-sm text-sand">
           <strong>Catatan:</strong> Hanya{" "}
           <strong>maksimal 3 berita terbaru</strong> yang tampil di landing
           page. Jika kosong, seksi berita akan hilang. Berita yang
@@ -185,13 +193,16 @@ export function NewsManager() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="mb-8 p-4 border rounded">
-        <h3 className="font-bold mb-4">
+      <form
+        onSubmit={handleSubmit}
+        className="mb-8 border border-line bg-ink-800 p-6"
+      >
+        <h3 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
           {editingId ? "Edit Berita" : "Tambah Berita"}
         </h3>
 
         <div className="mb-4">
-          <label htmlFor="title" className="block font-medium mb-1">
+          <label htmlFor="title" className={adminLabelClass}>
             Judul *
           </label>
           <input
@@ -209,16 +220,16 @@ export function NewsManager() {
                     : prev.slug,
               }));
             }}
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
             required
           />
           {formErrors.title && (
-            <p className="text-red-600 text-sm mt-1">{formErrors.title[0]}</p>
+            <p className={adminErrorClass}>{formErrors.title[0]}</p>
           )}
         </div>
 
         <div className="mb-4">
-          <label htmlFor="slug" className="block font-medium mb-1">
+          <label htmlFor="slug" className={adminLabelClass}>
             Slug *
           </label>
           <input
@@ -229,20 +240,20 @@ export function NewsManager() {
               setSlugTouched(true);
               setFormData({ ...formData, slug: e.target.value });
             }}
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
             required
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className={adminHelpClass}>
             Dipakai di URL /berita/[slug]. Terisi otomatis dari judul; bisa
             diubah.
           </p>
           {formErrors.slug && (
-            <p className="text-red-600 text-sm mt-1">{formErrors.slug[0]}</p>
+            <p className={adminErrorClass}>{formErrors.slug[0]}</p>
           )}
         </div>
 
         <div className="mb-4">
-          <label htmlFor="excerpt" className="block font-medium mb-1">
+          <label htmlFor="excerpt" className={adminLabelClass}>
             Ringkasan
           </label>
           <textarea
@@ -251,33 +262,33 @@ export function NewsManager() {
             onChange={(e) =>
               setFormData({ ...formData, excerpt: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminTextareaClass}
             rows={2}
           />
           {formErrors.excerpt && (
-            <p className="text-red-600 text-sm mt-1">{formErrors.excerpt[0]}</p>
+            <p className={adminErrorClass}>{formErrors.excerpt[0]}</p>
           )}
         </div>
 
         <div className="mb-4">
-          <label htmlFor="body" className="block font-medium mb-1">
+          <label htmlFor="body" className={adminLabelClass}>
             Isi *
           </label>
           <textarea
             id="body"
             value={formData.body}
             onChange={(e) => setFormData({ ...formData, body: e.target.value })}
-            className="w-full border px-3 py-2 rounded"
+            className={adminTextareaClass}
             rows={5}
             required
           />
           {formErrors.body && (
-            <p className="text-red-600 text-sm mt-1">{formErrors.body[0]}</p>
+            <p className={adminErrorClass}>{formErrors.body[0]}</p>
           )}
         </div>
 
         <div className="mb-4">
-          <label htmlFor="coverUrl" className="block font-medium mb-1">
+          <label htmlFor="coverUrl" className={adminLabelClass}>
             URL Cover
           </label>
           <input
@@ -287,17 +298,15 @@ export function NewsManager() {
             onChange={(e) =>
               setFormData({ ...formData, coverUrl: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
             placeholder="https://... (JPG/PNG/WebP)"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className={adminHelpClass}>
             Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan tautan
             gambar langsung.
           </p>
           {formErrors.coverUrl && (
-            <p className="text-red-600 text-sm mt-1">
-              {formErrors.coverUrl[0]}
-            </p>
+            <p className={adminErrorClass}>{formErrors.coverUrl[0]}</p>
           )}
           {formData.coverUrl.trim() ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -320,7 +329,7 @@ export function NewsManager() {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="status" className="block font-medium mb-1">
+          <label htmlFor="status" className={adminLabelClass}>
             Status
           </label>
           <select
@@ -332,7 +341,7 @@ export function NewsManager() {
                 status: e.target.value as "draft" | "published",
               })
             }
-            className="border px-3 py-2 rounded"
+            className={adminSelectClass}
           >
             <option value="draft">Draft</option>
             <option value="published">Published</option>
@@ -359,19 +368,21 @@ export function NewsManager() {
         </div>
       </form>
 
-      <h3 className="font-bold mb-4">Daftar Berita</h3>
+      <h3 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
+        Daftar Berita
+      </h3>
       {items.length === 0 ? (
-        <p className="text-gray-500">Belum ada berita.</p>
+        <p className="text-sand-600">Belum ada berita.</p>
       ) : (
         <div className="space-y-4">
           {items.map((item) => (
-            <div key={item.id} className="p-4 border rounded">
+            <div key={item.id} className="border border-line bg-ink-800 p-4">
               <h4 className="font-bold">{item.title}</h4>
-              <p className="text-sm text-gray-600 mb-2">{item.excerpt}</p>
-              <p className="text-xs text-gray-500 mb-2">
+              <p className="text-sm text-sand-600 mb-2">{item.excerpt}</p>
+              <p className="text-xs text-sand-600 mb-2">
                 Status: {item.status} | Slug: {item.slug}
               </p>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={() => handleEdit(item)}

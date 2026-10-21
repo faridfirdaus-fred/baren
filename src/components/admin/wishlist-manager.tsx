@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { adminInputClass } from "./form-styles";
 
 import { adminButtonClass } from "@/components/admin/button-styles";
 import type { WishlistPage } from "@/lib/api/wishlist";
@@ -154,7 +155,7 @@ export function AdminWishlistManager() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Cari email atau nama pendaftar..."
-              className="w-full min-h-11 border border-ink-600 bg-ink-800 px-4 py-2 text-sm text-sand placeholder:text-sand/40 focus-visible:border-ember focus-visible:outline-none"
+              className={adminInputClass}
             />
           </div>
           <div className="flex gap-2">
@@ -188,7 +189,7 @@ export function AdminWishlistManager() {
         {error ? (
           <div
             role="alert"
-            className="flex items-center justify-between border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200"
+            className="flex items-center justify-between border border-ember/40 bg-ember/10 p-4 text-sm text-ember"
           >
             <p>{error}</p>
             <button

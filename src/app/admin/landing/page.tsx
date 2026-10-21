@@ -22,7 +22,7 @@ export default async function AdminLandingPage() {
         <h1 className="text-3xl font-bold uppercase tracking-wider text-sand">
           Kelola Konten Landing
         </h1>
-        <p className="mt-2 text-sand-500">
+        <p className="mt-2 text-sand-600">
           Ubah judul, eyebrow, deskripsi seksi, dan pesan kosong halaman utama
           tanpa deployment.
         </p>

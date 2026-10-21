@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import {
+  adminInputClass,
+  adminLabelClass,
+  adminErrorClass,
+} from "./form-styles";
 
 import { adminButtonClass } from "@/components/admin/button-styles";
 
@@ -147,7 +152,7 @@ export function LinksManager() {
             <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
               Email & Copy Seksi Kontak
             </h2>
-            <p className="mt-1 text-sm text-sand-500">
+            <p className="mt-1 text-sm text-sand-600">
               Email resmi, judul seksi, deskripsi, dan pesan kosong sekarang
               dikelola di halaman Konten Landing.
             </p>
@@ -166,13 +171,13 @@ export function LinksManager() {
         <h2 className="text-xl font-bold uppercase tracking-wider text-sand">
           Tautan Media Sosial Resmi
         </h2>
-        <p className="mt-1 text-sm text-sand-500">
+        <p className="mt-1 text-sm text-sand-600">
           Tautan ke platform sosial seperti Discord, Instagram, YouTube, atau
           TikTok.
         </p>
 
         {socialError && (
-          <div className="mt-4 rounded bg-red-900/40 p-4 text-sm text-red-300">
+          <div className="mt-4 border border-ember/40 bg-ember/10 p-4 text-sm text-ember">
             {socialError}
           </div>
         )}
@@ -186,10 +191,7 @@ export function LinksManager() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label
-                htmlFor="social-platform"
-                className="block text-sm font-medium text-sand-400"
-              >
+              <label htmlFor="social-platform" className={adminLabelClass}>
                 Platform
               </label>
               <input
@@ -205,20 +207,17 @@ export function LinksManager() {
                 }
                 disabled={socialSubmitting}
                 placeholder="discord, instagram, youtube, tiktok"
-                className="mt-1 w-full rounded border border-line bg-ink-900 px-3 py-2 text-sand focus:border-ember focus:outline-none"
+                className={adminInputClass}
               />
               {socialFormErrors.platform && (
-                <p className="mt-1 text-sm text-red-400">
+                <p className={adminErrorClass}>
                   {socialFormErrors.platform.join(", ")}
                 </p>
               )}
             </div>
 
             <div>
-              <label
-                htmlFor="social-sort"
-                className="block text-sm font-medium text-sand-400"
-              >
+              <label htmlFor="social-sort" className={adminLabelClass}>
                 Urutan (Sort Order)
               </label>
               <input
@@ -232,10 +231,10 @@ export function LinksManager() {
                   }))
                 }
                 disabled={socialSubmitting}
-                className="mt-1 w-full rounded border border-line bg-ink-900 px-3 py-2 text-sand focus:border-ember focus:outline-none"
+                className={adminInputClass}
               />
               {socialFormErrors.sortOrder && (
-                <p className="mt-1 text-sm text-red-400">
+                <p className={adminErrorClass}>
                   {socialFormErrors.sortOrder.join(", ")}
                 </p>
               )}
@@ -243,10 +242,7 @@ export function LinksManager() {
           </div>
 
           <div>
-            <label
-              htmlFor="social-url"
-              className="block text-sm font-medium text-sand-400"
-            >
+            <label htmlFor="social-url" className={adminLabelClass}>
               URL Lengkap (wajib diawali https://)
             </label>
             <input
@@ -259,10 +255,10 @@ export function LinksManager() {
               }
               disabled={socialSubmitting}
               placeholder="https://discord.gg/baren"
-              className="mt-1 w-full rounded border border-line bg-ink-900 px-3 py-2 text-sand focus:border-ember focus:outline-none"
+              className={adminInputClass}
             />
             {socialFormErrors.url && (
-              <p className="mt-1 text-sm text-red-400">
+              <p className={adminErrorClass}>
                 {socialFormErrors.url.join(", ")}
               </p>
             )}
@@ -300,15 +296,15 @@ export function LinksManager() {
           </h3>
 
           {socialLoading ? (
-            <p className="text-sand-500">Memuat tautan sosial...</p>
+            <p className="text-sand-600">Memuat tautan sosial...</p>
           ) : socialLinks.length === 0 ? (
-            <p className="text-sand-500">
+            <p className="text-sand-600">
               Belum ada tautan sosial. Tambahkan tautan di atas.
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm text-sand">
-                <thead className="border-b border-line bg-ink-900 text-xs uppercase text-sand-400">
+                <thead className="border-b border-line bg-ink text-xs uppercase text-sand-600">
                   <tr>
                     <th className="px-4 py-3">Platform</th>
                     <th className="px-4 py-3">URL</th>
@@ -322,7 +318,7 @@ export function LinksManager() {
                       <td className="px-4 py-3 font-medium uppercase text-sand">
                         {link.platform}
                       </td>
-                      <td className="max-w-xs truncate px-4 py-3 text-sand-400">
+                      <td className="max-w-xs truncate px-4 py-3 text-sand-600">
                         <a
                           href={link.url}
                           target="_blank"
@@ -332,7 +328,7 @@ export function LinksManager() {
                           {link.url}
                         </a>
                       </td>
-                      <td className="px-4 py-3 text-sand-400">
+                      <td className="px-4 py-3 text-sand-600">
                         {link.sortOrder}
                       </td>
                       <td className="space-x-2 px-4 py-3 text-right">

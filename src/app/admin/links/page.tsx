@@ -22,7 +22,7 @@ export default async function AdminLinksPage() {
         <h1 className="text-3xl font-bold uppercase tracking-wider text-sand">
           Kelola Tautan Sosial
         </h1>
-        <p className="mt-2 text-sand-500">
+        <p className="mt-2 text-sand-600">
           Kelola daftar tautan media sosial resmi game BAREN.
         </p>
       </div>

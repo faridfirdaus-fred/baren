@@ -7,6 +7,13 @@ import { useForm, type FieldPath } from "react-hook-form";
 import { AssetUploader } from "@/components/admin/asset-uploader";
 import { adminButtonClass } from "@/components/admin/button-styles";
 import {
+  adminErrorClass,
+  adminHelpClass,
+  adminInputClass,
+  adminLabelClass,
+  adminSelectClass,
+} from "@/components/admin/form-styles";
+import {
   parseGalleryApiResult,
   type GalleryAsset,
   type GalleryDeleteData,
@@ -228,24 +235,34 @@ export function AdminGalleryManager() {
           onSubmit={(event) => {
             void handleSubmit(submit)(event);
           }}
-          className="grid gap-4"
+          className="grid gap-4 border border-line bg-ink-800 p-6"
         >
           <div>
-            <label htmlFor="gallery-file">Berkas</label>
+            <label htmlFor="gallery-file" className={adminLabelClass}>
+              Berkas
+            </label>
             <AssetUploader
               purpose="galeri"
               onUploaded={(asset) => setUploaded(asset)}
             />
             {editingId === null && uploaded ? (
-              <p>Terunggah: {uploaded.publicUrl}</p>
+              <p className={adminHelpClass}>Terunggah: {uploaded.publicUrl}</p>
             ) : null}
             {editingId !== null ? (
-              <p>Kosongkan unggahan untuk mempertahankan berkas lama.</p>
+              <p className={adminHelpClass}>
+                Kosongkan unggahan untuk mempertahankan berkas lama.
+              </p>
             ) : null}
           </div>
           <div>
-            <label htmlFor="gallery-kind">Jenis</label>
-            <select id="gallery-kind" {...register("kind")}>
+            <label htmlFor="gallery-kind" className={adminLabelClass}>
+              Jenis
+            </label>
+            <select
+              id="gallery-kind"
+              className={adminSelectClass}
+              {...register("kind")}
+            >
               {galleryKinds.map((kind) => (
                 <option key={kind} value={kind}>
                   {kindLabels[kind]}
@@ -253,37 +270,63 @@ export function AdminGalleryManager() {
               ))}
             </select>
             {errors.kind ? (
-              <p id="gallery-kind-error" role="alert">
+              <p
+                id="gallery-kind-error"
+                role="alert"
+                className={adminErrorClass}
+              >
                 {errors.kind.message}
               </p>
             ) : null}
           </div>
           <div>
-            <label htmlFor="gallery-title">Judul (opsional)</label>
-            <input id="gallery-title" type="text" {...register("title")} />
+            <label htmlFor="gallery-title" className={adminLabelClass}>
+              Judul (opsional)
+            </label>
+            <input
+              id="gallery-title"
+              type="text"
+              className={adminInputClass}
+              {...register("title")}
+            />
             {errors.title ? (
-              <p id="gallery-title-error" role="alert">
+              <p
+                id="gallery-title-error"
+                role="alert"
+                className={adminErrorClass}
+              >
                 {errors.title.message}
               </p>
             ) : null}
           </div>
           <div>
-            <label htmlFor="gallery-sort-order">Urutan</label>
+            <label htmlFor="gallery-sort-order" className={adminLabelClass}>
+              Urutan
+            </label>
             <input
               id="gallery-sort-order"
               type="number"
               min={0}
               step={1}
               required
+              className={`${adminInputClass} max-w-40`}
               {...register("sortOrder", { valueAsNumber: true })}
             />
             {errors.sortOrder ? (
-              <p id="gallery-sort-order-error" role="alert">
+              <p
+                id="gallery-sort-order-error"
+                role="alert"
+                className={adminErrorClass}
+              >
                 {errors.sortOrder.message}
               </p>
             ) : null}
           </div>
-          {errors.root ? <p role="alert">{errors.root.message}</p> : null}
+          {errors.root ? (
+            <p role="alert" className={adminErrorClass}>
+              {errors.root.message}
+            </p>
+          ) : null}
           <div className="flex flex-wrap gap-4">
             <button
               type="submit"
@@ -309,13 +352,21 @@ export function AdminGalleryManager() {
           </div>
         </form>
       </section>
-      <section aria-labelledby="gallery-list-heading">
-        <h2 id="gallery-list-heading">Daftar aset</h2>
-        <div>
-          <label htmlFor="gallery-filter">Saring jenis</label>
+      <section aria-labelledby="gallery-list-heading" className="grid gap-4">
+        <h2
+          id="gallery-list-heading"
+          className="font-display text-xl font-bold uppercase tracking-wider text-sand"
+        >
+          Daftar aset
+        </h2>
+        <div className="max-w-xs">
+          <label htmlFor="gallery-filter" className={adminLabelClass}>
+            Saring jenis
+          </label>
           <select
             id="gallery-filter"
             value={kindFilter}
+            className={adminSelectClass}
             onChange={(event) =>
               setKindFilter(event.target.value as "semua" | GalleryKind)
             }

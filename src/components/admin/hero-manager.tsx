@@ -3,6 +3,13 @@
 import { useEffect, useState } from "react";
 import { AssetUploader } from "./asset-uploader";
 import { adminButtonClass } from "./button-styles";
+import {
+  adminInputClass,
+  adminCheckboxClass,
+  adminLabelClass,
+  adminErrorClass,
+  adminHelpClass,
+} from "./form-styles";
 import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
 
@@ -126,13 +133,16 @@ export function HeroManager() {
   };
 
   if (loading) return <p>Memuat hero...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
+  if (error) return <p className="text-ember">{error}</p>;
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4 border border-line bg-ink-800 p-6"
+      >
         <div>
-          <label htmlFor="title" className="block font-medium mb-1">
+          <label htmlFor="title" className={adminLabelClass}>
             Judul *
           </label>
           <input
@@ -142,16 +152,16 @@ export function HeroManager() {
             onChange={(e) =>
               setFormData({ ...formData, title: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
             required
           />
           {formErrors.title && (
-            <p className="text-red-600 text-sm mt-1">{formErrors.title[0]}</p>
+            <p className={adminErrorClass}>{formErrors.title[0]}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="subtitle" className="block font-medium mb-1">
+          <label htmlFor="subtitle" className={adminLabelClass}>
             Subjudul
           </label>
           <input
@@ -161,17 +171,15 @@ export function HeroManager() {
             onChange={(e) =>
               setFormData({ ...formData, subtitle: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
           />
           {formErrors.subtitle && (
-            <p className="text-red-600 text-sm mt-1">
-              {formErrors.subtitle[0]}
-            </p>
+            <p className={adminErrorClass}>{formErrors.subtitle[0]}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="videoUrl" className="block font-medium mb-1">
+          <label htmlFor="videoUrl" className={adminLabelClass}>
             Video URL
           </label>
           <input
@@ -181,17 +189,15 @@ export function HeroManager() {
             onChange={(e) =>
               setFormData({ ...formData, videoUrl: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
             placeholder="https://... (MP4)"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className={adminHelpClass}>
             Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan tautan
             MP4 langsung.
           </p>
           {formErrors.videoUrl && (
-            <p className="text-red-600 text-sm mt-1">
-              {formErrors.videoUrl[0]}
-            </p>
+            <p className={adminErrorClass}>{formErrors.videoUrl[0]}</p>
           )}
           {formData.videoUrl.trim() ? (
             <video
@@ -217,7 +223,7 @@ export function HeroManager() {
         </div>
 
         <div>
-          <label htmlFor="backgroundUrl" className="block font-medium mb-1">
+          <label htmlFor="backgroundUrl" className={adminLabelClass}>
             Background URL
           </label>
           <input
@@ -227,17 +233,15 @@ export function HeroManager() {
             onChange={(e) =>
               setFormData({ ...formData, backgroundUrl: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
             placeholder="https://... (JPG/PNG/WebP)"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className={adminHelpClass}>
             Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan tautan
             gambar langsung.
           </p>
           {formErrors.backgroundUrl && (
-            <p className="text-red-600 text-sm mt-1">
-              {formErrors.backgroundUrl[0]}
-            </p>
+            <p className={adminErrorClass}>{formErrors.backgroundUrl[0]}</p>
           )}
           {formData.backgroundUrl.trim() ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -260,7 +264,7 @@ export function HeroManager() {
         </div>
 
         <div>
-          <label htmlFor="primaryCtaLabel" className="block font-medium mb-1">
+          <label htmlFor="primaryCtaLabel" className={adminLabelClass}>
             CTA Utama Label
           </label>
           <input
@@ -270,17 +274,15 @@ export function HeroManager() {
             onChange={(e) =>
               setFormData({ ...formData, primaryCtaLabel: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
           />
           {formErrors.primaryCtaLabel && (
-            <p className="text-red-600 text-sm mt-1">
-              {formErrors.primaryCtaLabel[0]}
-            </p>
+            <p className={adminErrorClass}>{formErrors.primaryCtaLabel[0]}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="primaryCtaUrl" className="block font-medium mb-1">
+          <label htmlFor="primaryCtaUrl" className={adminLabelClass}>
             CTA Utama URL
           </label>
           <input
@@ -290,20 +292,18 @@ export function HeroManager() {
             onChange={(e) =>
               setFormData({ ...formData, primaryCtaUrl: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className={adminHelpClass}>
             Diawali https:// atau ID anchor (contoh: #wishlist).
           </p>
           {formErrors.primaryCtaUrl && (
-            <p className="text-red-600 text-sm mt-1">
-              {formErrors.primaryCtaUrl[0]}
-            </p>
+            <p className={adminErrorClass}>{formErrors.primaryCtaUrl[0]}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="secondaryCtaLabel" className="block font-medium mb-1">
+          <label htmlFor="secondaryCtaLabel" className={adminLabelClass}>
             CTA Sekunder Label
           </label>
           <input
@@ -313,17 +313,15 @@ export function HeroManager() {
             onChange={(e) =>
               setFormData({ ...formData, secondaryCtaLabel: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
           />
           {formErrors.secondaryCtaLabel && (
-            <p className="text-red-600 text-sm mt-1">
-              {formErrors.secondaryCtaLabel[0]}
-            </p>
+            <p className={adminErrorClass}>{formErrors.secondaryCtaLabel[0]}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="secondaryCtaUrl" className="block font-medium mb-1">
+          <label htmlFor="secondaryCtaUrl" className={adminLabelClass}>
             CTA Sekunder URL
           </label>
           <input
@@ -333,15 +331,13 @@ export function HeroManager() {
             onChange={(e) =>
               setFormData({ ...formData, secondaryCtaUrl: e.target.value })
             }
-            className="w-full border px-3 py-2 rounded"
+            className={adminInputClass}
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className={adminHelpClass}>
             Diawali https:// atau ID anchor (contoh: #unduh).
           </p>
           {formErrors.secondaryCtaUrl && (
-            <p className="text-red-600 text-sm mt-1">
-              {formErrors.secondaryCtaUrl[0]}
-            </p>
+            <p className={adminErrorClass}>{formErrors.secondaryCtaUrl[0]}</p>
           )}
         </div>
 
@@ -350,11 +346,17 @@ export function HeroManager() {
             id="isPublished"
             type="checkbox"
             checked={formData.isPublished}
+            className={adminCheckboxClass}
             onChange={(e) =>
               setFormData({ ...formData, isPublished: e.target.checked })
             }
           />
-          <label htmlFor="isPublished">Terbit</label>
+          <label
+            htmlFor="isPublished"
+            className="cursor-pointer text-sm font-medium text-sand"
+          >
+            Terbit
+          </label>
         </div>
 
         <button

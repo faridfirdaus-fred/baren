@@ -4,6 +4,11 @@ import { useEffect, useState } from "react";
 
 import { AssetUploader } from "./asset-uploader";
 import { adminButtonClass } from "./button-styles";
+import {
+  adminInputClass,
+  adminTextareaClass,
+  adminLabelClass,
+} from "./form-styles";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
 import {
@@ -177,14 +182,14 @@ export function FeaturesManager() {
 
       <form
         onSubmit={handleSubmit}
-        className="mb-8 border border-line bg-ink-800 p-4"
+        className="mb-8 border border-line bg-ink-800 p-6"
       >
-        <h2 className="mb-4 font-bold text-sand">
+        <h2 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
           {editingId ? "Edit Fitur" : "Tambah Fitur"}
         </h2>
 
         <div className="mb-4">
-          <label htmlFor="feature-title" className="mb-1 block font-medium">
+          <label htmlFor="feature-title" className={adminLabelClass}>
             Judul *
           </label>
           <input
@@ -196,7 +201,7 @@ export function FeaturesManager() {
             }
             disabled={submitting}
             required
-            className="min-h-11 w-full border border-line bg-ink px-3 py-2 text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            className={adminInputClass}
           />
           {formErrors.title && (
             <p className="mt-1 text-sm text-ember">{formErrors.title[0]}</p>
@@ -204,10 +209,7 @@ export function FeaturesManager() {
         </div>
 
         <div className="mb-4">
-          <label
-            htmlFor="feature-description"
-            className="mb-1 block font-medium"
-          >
+          <label htmlFor="feature-description" className={adminLabelClass}>
             Deskripsi
           </label>
           <textarea
@@ -221,7 +223,7 @@ export function FeaturesManager() {
             }
             disabled={submitting}
             rows={3}
-            className="w-full border border-line bg-ink px-3 py-2 text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            className={adminTextareaClass}
           />
           {formErrors.description && (
             <p className="mt-1 text-sm text-ember">
@@ -231,7 +233,7 @@ export function FeaturesManager() {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="feature-icon-url" className="mb-1 block font-medium">
+          <label htmlFor="feature-icon-url" className={adminLabelClass}>
             URL Ikon
           </label>
           <input
@@ -243,7 +245,7 @@ export function FeaturesManager() {
             }
             disabled={submitting}
             placeholder="https://..."
-            className="min-h-11 w-full border border-line bg-ink px-3 py-2 text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            className={adminInputClass}
           />
           <p className="mt-1 text-xs text-sand-600">
             Diisi otomatis saat mengunggah ikon di bawah, atau masukkan tautan
@@ -273,10 +275,7 @@ export function FeaturesManager() {
         </div>
 
         <div className="mb-4">
-          <label
-            htmlFor="feature-sort-order"
-            className="mb-1 block font-medium"
-          >
+          <label htmlFor="feature-sort-order" className={adminLabelClass}>
             Urutan
           </label>
           <input
@@ -291,7 +290,7 @@ export function FeaturesManager() {
               }))
             }
             disabled={submitting}
-            className="min-h-11 w-full max-w-40 border border-line bg-ink px-3 py-2 text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            className={`${adminInputClass} max-w-40`}
           />
           {formErrors.sortOrder && (
             <p className="mt-1 text-sm text-ember">{formErrors.sortOrder[0]}</p>

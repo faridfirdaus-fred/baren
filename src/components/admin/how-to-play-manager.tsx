@@ -3,6 +3,13 @@
 import { useEffect, useState } from "react";
 import { AssetUploader } from "./asset-uploader";
 import { adminButtonClass } from "./button-styles";
+import {
+  adminInputClass,
+  adminTextareaClass,
+  adminLabelClass,
+  adminErrorClass,
+  adminHelpClass,
+} from "./form-styles";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
@@ -229,15 +236,17 @@ export function HowToPlayManager() {
   };
 
   if (loading) return <p>Memuat how-to-play...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
+  if (error) return <p className="text-ember">{error}</p>;
 
   return (
     <div>
-      <div className="mb-8 p-4 border rounded">
-        <h3 className="font-bold mb-4">Video Demo</h3>
+      <div className="mb-8 border border-line bg-ink-800 p-6">
+        <h3 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
+          Video Demo
+        </h3>
         <form onSubmit={handleVideoSubmit} className="space-y-4">
           <div>
-            <label htmlFor="videoUrl" className="block font-medium mb-1">
+            <label htmlFor="videoUrl" className={adminLabelClass}>
               URL Video Demo
             </label>
             <input
@@ -245,10 +254,10 @@ export function HowToPlayManager() {
               type="url"
               value={videoUrl}
               onChange={(e) => setVideoUrl(e.target.value)}
-              className="w-full border px-3 py-2 rounded"
+              className={adminInputClass}
               placeholder="https://... (MP4)"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className={adminHelpClass}>
               Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan
               tautan MP4 langsung.
             </p>
@@ -284,13 +293,13 @@ export function HowToPlayManager() {
         </form>
       </div>
 
-      <div className="mb-8 p-4 border rounded">
-        <h3 className="font-bold mb-4">
+      <div className="mb-8 border border-line bg-ink-800 p-6">
+        <h3 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
           {editingStepId ? "Edit Langkah" : "Tambah Langkah"}
         </h3>
         <form onSubmit={handleStepSubmit} className="space-y-4">
           <div>
-            <label htmlFor="step" className="block font-medium mb-1">
+            <label htmlFor="step" className={adminLabelClass}>
               Nomor Langkah *
             </label>
             <input
@@ -300,16 +309,16 @@ export function HowToPlayManager() {
               onChange={(e) =>
                 setStepForm({ ...stepForm, step: Number(e.target.value) })
               }
-              className="border px-3 py-2 rounded"
+              className={adminInputClass}
               required
             />
             {formErrors.step && (
-              <p className="text-red-600 text-sm mt-1">{formErrors.step[0]}</p>
+              <p className={adminErrorClass}>{formErrors.step[0]}</p>
             )}
           </div>
 
           <div>
-            <label htmlFor="title" className="block font-medium mb-1">
+            <label htmlFor="title" className={adminLabelClass}>
               Judul *
             </label>
             <input
@@ -319,16 +328,16 @@ export function HowToPlayManager() {
               onChange={(e) =>
                 setStepForm({ ...stepForm, title: e.target.value })
               }
-              className="w-full border px-3 py-2 rounded"
+              className={adminInputClass}
               required
             />
             {formErrors.title && (
-              <p className="text-red-600 text-sm mt-1">{formErrors.title[0]}</p>
+              <p className={adminErrorClass}>{formErrors.title[0]}</p>
             )}
           </div>
 
           <div>
-            <label htmlFor="description" className="block font-medium mb-1">
+            <label htmlFor="description" className={adminLabelClass}>
               Deskripsi
             </label>
             <textarea
@@ -337,13 +346,13 @@ export function HowToPlayManager() {
               onChange={(e) =>
                 setStepForm({ ...stepForm, description: e.target.value })
               }
-              className="w-full border px-3 py-2 rounded"
+              className={adminTextareaClass}
               rows={3}
             />
           </div>
 
           <div>
-            <label htmlFor="mediaUrl" className="block font-medium mb-1">
+            <label htmlFor="mediaUrl" className={adminLabelClass}>
               URL Media
             </label>
             <input
@@ -353,10 +362,10 @@ export function HowToPlayManager() {
               onChange={(e) =>
                 setStepForm({ ...stepForm, mediaUrl: e.target.value })
               }
-              className="w-full border px-3 py-2 rounded"
+              className={adminInputClass}
               placeholder="https://... (gambar/video)"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className={adminHelpClass}>
               Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan
               tautan langsung.
             </p>
@@ -381,7 +390,7 @@ export function HowToPlayManager() {
           </div>
 
           <div>
-            <label htmlFor="sortOrder" className="block font-medium mb-1">
+            <label htmlFor="sortOrder" className={adminLabelClass}>
               Urutan
             </label>
             <input
@@ -391,7 +400,7 @@ export function HowToPlayManager() {
               onChange={(e) =>
                 setStepForm({ ...stepForm, sortOrder: Number(e.target.value) })
               }
-              className="border px-3 py-2 rounded"
+              className={adminInputClass}
             />
           </div>
 
@@ -416,21 +425,21 @@ export function HowToPlayManager() {
         </form>
       </div>
 
-      <h3 className="font-bold mb-4">Daftar Langkah</h3>
+      <h3 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
+        Daftar Langkah
+      </h3>
       {steps.length === 0 ? (
-        <p className="text-gray-500">Belum ada langkah.</p>
+        <p className="text-sand-600">Belum ada langkah.</p>
       ) : (
         <div className="space-y-4">
           {steps.map((item) => (
-            <div key={item.id} className="p-4 border rounded">
+            <div key={item.id} className="border border-line bg-ink-800 p-4">
               <h4 className="font-bold">
                 Langkah {item.step}: {item.title}
               </h4>
-              <p className="text-sm text-gray-600 mt-2">{item.description}</p>
+              <p className="text-sm text-sand-600 mt-2">{item.description}</p>
               {item.mediaUrl && (
-                <p className="text-xs text-gray-500 mt-1">
-                  Media: {item.mediaUrl}
-                </p>
+                <p className={adminHelpClass}>Media: {item.mediaUrl}</p>
               )}
               <div className="flex gap-2 mt-4">
                 <button
