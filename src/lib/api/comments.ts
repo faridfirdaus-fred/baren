@@ -78,6 +78,39 @@ export async function listComments(): Promise<CommentListItem[]> {
   }
 }
 
+export type AdminCommentsPage = {
+  comments: CommentListItem[];
+  total: number;
+};
+
+/**
+ * E16-3: daftar komentar admin tanpa batas agar total dan daftar konsisten.
+ * Sengaja tidak menelan error: route handler memetakan kegagalan database ke
+ * amplop error standar, bukan daftar kosong.
+ */
+export async function listAdminComments(): Promise<AdminCommentsPage> {
+  const { db, comments, users } = await getDatabase();
+  const rows = await db
+    .select({
+      id: comments.id,
+      body: comments.body,
+      userName: users.name,
+      userPhotoUrl: users.image,
+      createdAt: comments.createdAt,
+    })
+    .from(comments)
+    .leftJoin(users, eq(comments.userId, users.id))
+    .orderBy(desc(comments.createdAt), desc(comments.id));
+
+  const items = rows.map((row) => ({
+    ...row,
+    userName: row.userName ?? "Anonim",
+    createdAt: row.createdAt.toISOString(),
+  }));
+
+  return { comments: items, total: items.length };
+}
+
 /**
  * Create comment (authenticated user only)
  */

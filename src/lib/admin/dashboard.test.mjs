@@ -21,6 +21,7 @@ describe("readDashboardSummary", () => {
     assert.equal(result.news, 5);
     assert.equal(result.faq, 8);
     assert.equal(result.wishlist, 42);
+    assert.equal(result.comments, 0);
   });
 
   it("should select the largest timestamp from content updates", () => {
@@ -88,7 +89,7 @@ describe("readDashboardSummary", () => {
       news: 7,
       faq: 2,
       wishlist: 15,
-      comments: 0,
+      comments: 4,
       contentUpdates: [date1, null, date2, null, null],
     };
 
@@ -99,6 +100,7 @@ describe("readDashboardSummary", () => {
     assert.equal(result.news, 7);
     assert.equal(result.faq, 2);
     assert.equal(result.wishlist, 15);
+    assert.equal(result.comments, 4);
     assert.equal(result.latestContentUpdatedAt?.getTime(), date2.getTime());
   });
 });

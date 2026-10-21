@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
+import { formatDateTimeId } from "@/lib/admin/datetime";
 import {
   parseAdminComments,
   type AdminComment,
@@ -12,6 +13,7 @@ import { apiErrorMessage } from "@/lib/api/client-response";
 
 export function CommentsManager() {
   const [comments, setComments] = useState<AdminComment[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{
@@ -27,13 +29,16 @@ export function CommentsManager() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/comments", { cache: "no-store" });
+      const res = await fetch("/api/comments?scope=admin", {
+        cache: "no-store",
+      });
       const parsed = parseAdminComments(await res.json());
       if (!parsed.ok) {
         setError(parsed.message);
         return;
       }
       setComments(parsed.data);
+      setTotal(parsed.total);
     } catch (err) {
       setError("Gagal memuat komentar");
       console.error(err);
@@ -72,16 +77,38 @@ export function CommentsManager() {
   };
 
   if (loading) return <p>Memuat komentar...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
+  if (error)
+    return (
+      <p
+        role="alert"
+        className="border border-ember/40 bg-ember/10 p-4 text-sm text-ember"
+      >
+        {error}
+      </p>
+    );
 
   return (
     <div>
+      <p
+        className="mb-4 text-sm text-sand-600"
+        data-testid="admin-comments-total"
+      >
+        Total {total} komentar.
+        {comments.length < total
+          ? ` Menampilkan ${comments.length} komentar.`
+          : null}
+      </p>
+
       {comments.length === 0 ? (
-        <p className="text-gray-500">Belum ada komentar.</p>
+        <p className="text-sand-600">Belum ada komentar.</p>
       ) : (
-        <div className="space-y-4">
+        <ul className="space-y-4">
           {comments.map((comment) => (
-            <div key={comment.id} className="flex gap-3 p-4 border rounded">
+            <li
+              key={comment.id}
+              id={`komentar-${comment.id}`}
+              className="flex scroll-mt-24 gap-3 border border-line bg-ink-800 p-4"
+            >
               {comment.userPhotoUrl ? (
                 <Image
                   src={comment.userPhotoUrl}
@@ -94,17 +121,20 @@ export function CommentsManager() {
               ) : (
                 <div
                   aria-hidden="true"
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-bold text-gray-700"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sand/10 text-sm font-bold text-sand"
                   data-testid="comment-avatar-fallback"
                 >
                   {comment.userName.charAt(0).toUpperCase()}
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-gray-700 mb-2">{comment.body}</p>
-                <p className="text-xs text-gray-500 mb-2">
+                <p className="mb-2 text-sm text-sand">{comment.body}</p>
+                <p className="mb-2 text-xs text-sand-600">
                   Oleh: {comment.userName} |{" "}
-                  {new Date(comment.createdAt).toLocaleString("id-ID")}
+                  <time dateTime={comment.createdAt}>
+                    {formatDateTimeId(comment.createdAt) ??
+                      "Waktu tidak tersedia"}
+                  </time>
                 </p>
                 <button
                   type="button"
@@ -114,14 +144,14 @@ export function CommentsManager() {
                       preview: comment.body.slice(0, 50),
                     })
                   }
-                  className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+                  className="min-h-11 border border-ember/60 px-3 py-2 text-sm font-semibold text-ember transition-colors hover:bg-ember hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
                 >
                   Hapus
                 </button>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
       <DeleteConfirmDialog
