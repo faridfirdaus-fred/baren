@@ -49,7 +49,8 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 | **E14**   | **Konten Landing & Download Steam**                    | P0        | 16       | Done     | 100%     | FR-PUB-01, FR-PUB-05..14, FR-PUB-25/26, FR-ADM-22..25, FR-ADM-32 |
 | **E15**   | **Perbaikan Regresi Admin Berita & Komentar**          | P0        | 9        | Done     | 100%     | FR-ADM-18/19/31, NFR-MNT-03                                      |
 | **E16**   | **Transparansi Metrik & Drill-down Komentar**          | P0        | 13       | Done     | 100%     | FR-ADM-04/07/12/31, NFR-ACC-01, NFR-SEC-03, NFR-MNT-03           |
-| **Total** |                                                        |           | **381**  | **Done** | **100%** |                                                                  |
+| **E17**   | **Panduan Skenario QA CMS Admin**                      | P0        | 3        | Done     | 100%     | FR-ADM-01..32, NFR-MNT-01/03                                     |
+| **Total** |                                                        |           | **384**  | **Done** | **100%** |                                                                  |
 
 > **Progress dihitung:** jumlah SP task `Done` ÷ total SP epik × 100%.
 
@@ -365,6 +366,20 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 
 ---
 
+## E17 — Panduan Skenario QA CMS Admin (Issue #4)
+
+**Tujuan:** Menyediakan panduan QA manual aktif untuk seluruh formulir CMS agar mitra dapat menguji perubahan data dari Panel Admin sampai dampaknya di Situs Publik.
+
+**Sumber acuan:** Issue GitHub #4 dan [`ADMIN_CMS_TESTING_GUIDE.md`](ADMIN_CMS_TESTING_GUIDE.md).
+
+| ID    | Task                         | Detail                                                                                                                                                                | FR/Terkait                                           | Prio | SP  | Dep   | Status | Catatan                                                                                          |
+| ----- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ---- | --- | ----- | ------ | ------------------------------------------------------------------------------------------------ |
+| E17-1 | Panduan skenario seluruh CMS | Petakan 12 modul, Dasbor, dan formulir akun; skenario happy path/validasi/CRUD/upload/publish/urut/hapus; precondition, data uji, bukti, cleanup, serta dampak publik | FR-ADM-01..32, NFR-SEC-02/03/05, NFR-MNT-01/03, C-01 | P0   | 3   | E16-6 | Done   | 2026-10-21: panduan aktif Issue #4 selesai; README dan breakdown ditautkan; format diverifikasi. |
+
+**Kriteria Selesai E17:** Panduan aktif mencakup seluruh modul CMS aktual dan klaimnya cocok dengan UI; tautan dari README dan dokumen kerja tersedia; data uji serta cleanup aman; format Markdown diverifikasi. **Panduan aktif:** [`ADMIN_CMS_TESTING_GUIDE.md`](ADMIN_CMS_TESTING_GUIDE.md).
+
+---
+
 ## 2. Matriks Ketertelusuran (Requirement → Task)
 
 | Requirement                                              | Task Utama                         |
@@ -415,7 +430,7 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 | FR-ADM-28                                                | E11-7, E11-9                       |
 | FR-ADM-29                                                | E11-8, E11-9                       |
 | FR-ADM-30                                                | E11-9, E8-1                        |
-| FR-ADM-32                                                | E14-1, E14-2                       |
+| FR-ADM-32                                                | E14-1, E14-2, E17-1                |
 | EI-01                                                    | E5-5                               |
 | EI-02/03                                                 | E3-1, E0-4                         |
 | EI-04/05/06                                              | E4-1/2/3                           |
@@ -444,9 +459,9 @@ Dokumen ini menjabarkan pekerjaan teknis dari **docs/PRD.md** dan **docs/SRS.md*
 | NFR-SEC-05                                               | E4-1/2/3                           |
 | NFR-SEC-06                                               | E0-5, E11-1                        |
 | NFR-SEC-07                                               | E11-10                             |
-| NFR-MNT-01                                               | E10-7                              |
+| NFR-MNT-01                                               | E10-7, E17-1                       |
 | NFR-MNT-02                                               | E1-5                               |
-| NFR-MNT-03                                               | E0-1, E0-7, E16-6                  |
+| NFR-MNT-03                                               | E0-1, E0-7, E16-6, E17-1           |
 | NFR-DEP-01                                               | E0-3, E10-6                        |
 
 ---
@@ -476,6 +491,7 @@ E12 (Design System) berjalan paralel, mulai setelah E0-2 ───────�
 
 | Tanggal    | Task ID                    | Ringkasan                                                                                                                                                                                                                                                                                                                                                           | Referensi (commit/PR)                                                                                                                           |
 | ---------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-10-21 | E17-1                      | Panduan QA aktif Issue #4: skenario manual untuk 12 modul CMS, Dasbor, akun, validasi, unggah R2, publikasi, pengurutan, hapus, Wishlist CSV, bukti, dan cleanup; README ditautkan dan inventaris CMS diperbarui.                                                                                                                                                   | `docs/ADMIN_CMS_TESTING_GUIDE.md`, `README.md`, Issue #4                                                                                        |
 | 2026-10-21 | E16-1..6                   | Transparansi metrik #3: enam kartu dasbor menjadi tautan dengan deskripsi sumber & waktu WIB; widget komentar terbaru; `GET /api/comments?scope=admin` mengembalikan `{ comments, total }` dan menampilkan total di `/admin/comments`; halaman `/admin/features` CRUD + upload ikon; guard page-level untuk lima halaman; 242 unit test + Playwright preview lulus. | `src/app/admin/page.tsx`, `src/app/admin/features/`, `src/app/api/comments/route.ts`, `src/components/admin/`, `scripts/test-admin-content.mjs` |
 | 2026-10-20 | E15-1..4                   | Perbaikan regresi #2: endpoint berita admin draf+terbit; NewsManager memakai kontrak array, slug auto/editable, mutasi ID; CommentsManager memakai field datar dan avatar inisial; 224 unit test serta Playwright preview lulus tanpa `pageerror`.                                                                                                                  | `src/app/api/news/route.ts`, `src/components/admin/`, `scripts/test-admin-content.mjs`                                                          |
 | 2026-10-20 | Audit CTA & Nav            | Eliminasi seluruh dead link `href="#"`, self-looping anchor `#berita`, buat halaman `/berita`, `/kebijakan-privasi`, `/ketentuan-penggunaan`, sitemap `/berita`, perbaiki validasi Zod hero/landing-cards (tolak `#` murni, izinkan anchor internal), hapus duplikasi ID DOM `#kontak`, dan bersihkan komponen legacy tak terpakai.                                 | `src/app/`, `src/components/site/`, `src/lib/validation/`                                                                                       |
