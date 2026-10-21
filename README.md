@@ -55,20 +55,20 @@ cp .dev.vars.example .dev.vars
 
 Edit `.dev.vars` with your actual values:
 
-| Variable               | Purpose                                            | How to get it                                                       |
-| ---------------------- | -------------------------------------------------- | ------------------------------------------------------------------- |
-| `NEON_DATABASE_URL`    | Neon Postgres connection string (pooled)           | Neon dashboard → Connection Details → Pooled connection             |
-| `R2_PUBLIC_URL`        | Public base URL for R2-hosted assets               | `https://pub-<hash>.r2.dev` (see R2 setup below)                    |
-| `R2_ACCOUNT_ID`        | Cloudflare account ID                              | Cloudflare dashboard → R2 → right sidebar                           |
-| `R2_BUCKET_NAME`       | R2 bucket name for assets                          | `baren-assets` (must match bucket created below)                    |
-| `R2_ACCESS_KEY_ID`     | R2 API token ID for presigned URLs                 | Cloudflare dashboard → R2 → Manage R2 API Tokens → Create API Token |
-| `R2_SECRET_ACCESS_KEY` | R2 API token secret                                | Shown once when creating the token                                  |
-| `AUTH_SECRET`          | Auth.js session secret (min 32 chars)              | Generate with `openssl rand -base64 32`                             |
-| `AUTH_GOOGLE_ID`       | Google OAuth client ID (optional for waiting list) | Google Cloud Console → APIs & Services → Credentials                |
-| `AUTH_GOOGLE_SECRET`   | Google OAuth client secret                         | Same as above                                                       |
-| `ADMIN_EMAIL`          | Initial admin email for seeding                    | Your email (used to create first admin user)                        |
-| `ADMIN_PASSWORD`       | Initial admin password (min 8 chars)               | Choose a strong password                                            |
-| `ADMIN_NAME`           | Initial admin display name                         | Your name                                                           |
+| Variable               | Purpose                                        | How to get it                                                       |
+| ---------------------- | ---------------------------------------------- | ------------------------------------------------------------------- |
+| `NEON_DATABASE_URL`    | Neon Postgres connection string (pooled)       | Neon dashboard → Connection Details → Pooled connection             |
+| `R2_PUBLIC_URL`        | Public base URL for R2-hosted assets           | `https://pub-<hash>.r2.dev` (see R2 setup below)                    |
+| `R2_ACCOUNT_ID`        | Cloudflare account ID                          | Cloudflare dashboard → R2 → right sidebar                           |
+| `R2_BUCKET_NAME`       | R2 bucket name for assets                      | `baren-assets` (must match bucket created below)                    |
+| `R2_ACCESS_KEY_ID`     | R2 API token ID for presigned URLs             | Cloudflare dashboard → R2 → Manage R2 API Tokens → Create API Token |
+| `R2_SECRET_ACCESS_KEY` | R2 API token secret                            | Shown once when creating the token                                  |
+| `AUTH_SECRET`          | Auth.js session secret (min 32 chars)          | Generate with `openssl rand -base64 32`                             |
+| `AUTH_GOOGLE_ID`       | Google OAuth client ID (optional for Wishlist) | Google Cloud Console → APIs & Services → Credentials                |
+| `AUTH_GOOGLE_SECRET`   | Google OAuth client secret                     | Same as above                                                       |
+| `ADMIN_EMAIL`          | Initial admin email for seeding                | Your email (used to create first admin user)                        |
+| `ADMIN_PASSWORD`       | Initial admin password (min 8 chars)           | Choose a strong password                                            |
+| `ADMIN_NAME`           | Initial admin display name                     | Your name                                                           |
 
 **⚠️ Never commit `.dev.vars` or paste real secrets in public places.**
 
@@ -122,21 +122,25 @@ pnpm dev
 
 ## Admin panel usage
 
-After logging in to `/admin`, you can manage all site content:
+After logging in to `/admin`, you can manage the following CMS modules:
 
-| Section           | What you can do                                                         |
-| ----------------- | ----------------------------------------------------------------------- |
-| **Dashboard**     | View content counts and last update times                               |
-| **Hero**          | Edit hero title, subtitle, CTA button, background video/image           |
-| **Landing Cards** | Add/edit/reorder flexible content cards (about, events, features, etc.) |
-| **News**          | Publish/draft news articles with images                                 |
-| **FAQ**           | Add/edit/reorder frequently asked questions                             |
-| **Gallery**       | Upload game screenshots, artwork, banners, videos                       |
-| **Social Links**  | Add/edit social media links (Discord, Twitter, Instagram, etc.)         |
-| **Branding**      | Upload logo, favicon; edit game name and tagline                        |
-| **Wishlist**      | View and export email addresses of users who joined the waiting list    |
+| Section             | What you can do                                                                                                                                              |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Dashboard**       | View six content metrics, last update time, and recent-comment drill-down                                                                                    |
+| **Landing Content** | Edit section copy and contact email for Features, How to Play, Gallery, News, FAQ, Comments, and Contact                                                     |
+| **Hero**            | Edit hero title, subtitle, CTA, background video/image, and publication status                                                                               |
+| **Landing Cards**   | Add, edit, publish, delete, and reorder flexible content cards                                                                                               |
+| **News**            | Create, edit, draft/publish, and delete news with cover images; three newest published items appear on landing and details are available at `/berita/[slug]` |
+| **How to Play**     | Manage demo video and numbered gameplay steps with media                                                                                                     |
+| **Features**        | Manage game features, icons, and numeric display order                                                                                                       |
+| **Branding**        | Upload logo/favicon; edit game name and tagline                                                                                                              |
+| **FAQ**             | Create, edit, delete, and set numeric display order                                                                                                          |
+| **Gallery**         | Upload and manage screenshots, artwork, banners, and videos                                                                                                  |
+| **Social Links**    | Manage social media links; contact email and copy are managed in **Landing Content**                                                                         |
+| **Comments**        | Review totals and remove public comments with confirmation                                                                                                   |
+| **Wishlist**        | View, search, paginate, and export Wishlist registrants as CSV                                                                                               |
 
-All content changes are **immediately visible** on the public site after saving (cache duration ≤60 seconds).
+The public Download section is a static Steam/Wishlist card, not an admin CRUD module. Content changes are visible on the public site after saving (cache duration ≤60 seconds). Follow [CMS testing scenarios](docs/ADMIN_CMS_TESTING_GUIDE.md) for manual QA steps, test data, evidence, and cleanup.
 
 ## Scripts
 
@@ -224,14 +228,15 @@ public/              # Static art, brand marks, icons
 
 ## Documentation
 
-| File                                        | Contents                            |
-| ------------------------------------------- | ----------------------------------- |
-| `docs/PRD.md`                               | Product requirements                |
-| `docs/SRS.md`                               | Software requirements specification |
-| `docs/DESIGN_SPEC_VALORANT_REF.md`          | Visual design specification         |
-| `docs/BRIEF_LANDING_PAGE.md`                | Landing page brief                  |
-| `docs/TASK_BREAKDOWN.md`                    | Work breakdown                      |
-| `docs/LAPORAN_SCRAPING_DAN_IMPLEMENTASI.md` | Scraping and implementation report  |
+| File                                        | Contents                              |
+| ------------------------------------------- | ------------------------------------- |
+| `docs/PRD.md`                               | Product requirements                  |
+| `docs/SRS.md`                               | Software requirements specification   |
+| `docs/DESIGN_SPEC_VALORANT_REF.md`          | Visual design specification           |
+| `docs/BRIEF_LANDING_PAGE.md`                | Landing page brief                    |
+| `docs/TASK_BREAKDOWN.md`                    | Work breakdown                        |
+| `docs/LAPORAN_SCRAPING_DAN_IMPLEMENTASI.md` | Scraping and implementation report    |
+| `docs/ADMIN_CMS_TESTING_GUIDE.md`           | Manual QA scenarios for all CMS forms |
 
 ## Team
 
