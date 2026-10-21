@@ -17,17 +17,26 @@ export function Toast({ message, type, onClose, duration = 3000 }: ToastProps) {
 
   return (
     <div
-      className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded shadow-lg max-w-md ${
-        type === "success" ? "bg-green-600 text-white" : "bg-red-600 text-white"
+      className={`fixed bottom-4 right-4 z-50 max-w-md border bg-ink-800 px-4 py-3 text-sand shadow-xl ${
+        type === "success" ? "border-emerald-500/50" : "border-ember/60"
       }`}
       role="alert"
     >
       <div className="flex items-center justify-between gap-4">
-        <p>{message}</p>
+        <p className="text-sm">
+          <span
+            className={`mr-2 font-semibold uppercase tracking-wider ${
+              type === "success" ? "text-emerald-400" : "text-ember"
+            }`}
+          >
+            {type === "success" ? "Berhasil" : "Gagal"}
+          </span>
+          {message}
+        </p>
         <button
           type="button"
           onClick={onClose}
-          className="text-white hover:opacity-80"
+          className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center border border-line text-sand-600 transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
           aria-label="Tutup"
         >
           ✕

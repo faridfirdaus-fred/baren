@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { adminButtonClass } from "./button-styles";
+
 interface FaqItem {
   id: number;
   question: string;
@@ -214,8 +216,12 @@ export function FaqManager() {
           )}
         </div>
 
-        <div>
-          <button type="submit" disabled={submitting}>
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="submit"
+            disabled={submitting}
+            className={adminButtonClass("primary", "md")}
+          >
             {submitting
               ? "Menyimpan..."
               : editingId
@@ -227,7 +233,7 @@ export function FaqManager() {
               type="button"
               onClick={handleCancelEdit}
               disabled={submitting}
-              style={{ marginLeft: "0.5rem" }}
+              className={adminButtonClass("secondary", "md")}
             >
               Batal
             </button>
@@ -263,11 +269,18 @@ export function FaqManager() {
                 <div style={{ marginBottom: "1rem" }}>
                   <strong>Jawaban:</strong> {item.answer}
                 </div>
-                <div>
-                  <button onClick={() => handleEdit(item)}>Edit</button>
+                <div className="flex flex-wrap gap-2">
                   <button
+                    type="button"
+                    onClick={() => handleEdit(item)}
+                    className={adminButtonClass("secondary", "sm")}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => handleDelete(item.id)}
-                    style={{ marginLeft: "0.5rem" }}
+                    className={adminButtonClass("danger", "sm")}
                   >
                     Hapus
                   </button>

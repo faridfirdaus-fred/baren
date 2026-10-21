@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { AssetUploader } from "./asset-uploader";
+import { adminButtonClass } from "./button-styles";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
 import {
@@ -301,7 +302,7 @@ export function FeaturesManager() {
           <button
             type="submit"
             disabled={submitting}
-            className="min-h-11 bg-ember px-4 py-2 font-semibold text-white transition-colors hover:bg-ember-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember disabled:opacity-50"
+            className={adminButtonClass("primary", "md")}
           >
             {submitting
               ? "Menyimpan..."
@@ -314,7 +315,7 @@ export function FeaturesManager() {
               type="button"
               onClick={resetForm}
               disabled={submitting}
-              className="min-h-11 border border-line px-4 py-2 font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+              className={adminButtonClass("secondary", "md")}
             >
               Batal
             </button>
@@ -365,7 +366,7 @@ export function FeaturesManager() {
                     type="button"
                     onClick={() => handleEdit(item)}
                     aria-label={`Edit fitur ${item.title}`}
-                    className="min-h-11 border border-line px-3 py-2 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                    className={adminButtonClass("secondary", "sm")}
                   >
                     Edit
                   </button>
@@ -375,7 +376,7 @@ export function FeaturesManager() {
                       setDeleteTarget({ id: item.id, title: item.title })
                     }
                     aria-label={`Hapus fitur ${item.title}`}
-                    className="min-h-11 border border-ember/60 px-3 py-2 text-sm font-semibold text-ember transition-colors hover:bg-ember hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                    className={adminButtonClass("danger", "sm")}
                   >
                     Hapus
                   </button>

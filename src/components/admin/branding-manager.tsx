@@ -7,6 +7,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 import { AssetUploader } from "@/components/admin/asset-uploader";
+import { adminButtonClass } from "@/components/admin/button-styles";
 import {
   fetchBranding,
   saveBranding,
@@ -215,7 +216,7 @@ export function AdminBrandingManager() {
           <button
             type="button"
             onClick={() => void loadData()}
-            className="mt-3 border border-ember/40 bg-ink px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-sand hover:bg-ink-700"
+            className={adminButtonClass("secondary", "sm", "mt-3")}
           >
             Coba Lagi
           </button>
@@ -337,7 +338,7 @@ export function AdminBrandingManager() {
                       shouldValidate: true,
                     })
                   }
-                  className="self-start border border-line px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-sand hover:bg-ink-700"
+                  className={adminButtonClass("secondary", "sm", "self-start")}
                 >
                   Kembalikan ke Default
                 </button>
@@ -431,7 +432,7 @@ export function AdminBrandingManager() {
                       shouldValidate: true,
                     })
                   }
-                  className="self-start border border-line px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-sand hover:bg-ink-700"
+                  className={adminButtonClass("secondary", "sm", "self-start")}
                 >
                   Kembalikan ke Default
                 </button>
@@ -512,7 +513,7 @@ export function AdminBrandingManager() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-ember-700 px-6 py-3 text-sm font-semibold uppercase tracking-wider text-sand hover:bg-ember-600 disabled:opacity-50"
+              className={adminButtonClass("primary", "md")}
             >
               {isSubmitting ? "Menyimpan Branding…" : "Simpan Branding"}
             </button>

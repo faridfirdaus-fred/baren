@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { adminButtonClass } from "./button-styles";
 import { Toast } from "./toast";
 
 interface LandingSettingsState {
@@ -195,7 +196,7 @@ export function LandingContentManager() {
         <button
           type="button"
           onClick={loadSettings}
-          className="mt-4 rounded bg-ink-700 px-4 py-2 text-sm text-sand hover:bg-ink-600"
+          className={adminButtonClass("secondary", "md", "mt-4")}
         >
           Coba Lagi
         </button>
@@ -925,7 +926,7 @@ export function LandingContentManager() {
           <button
             type="submit"
             disabled={submitting}
-            className="rounded bg-ember px-6 py-2.5 font-bold uppercase tracking-wide text-ink transition-colors hover:bg-ember-400 disabled:opacity-50"
+            className={adminButtonClass("primary", "md")}
           >
             {submitting ? "Menyimpan..." : "Simpan Semua Konten Landing"}
           </button>

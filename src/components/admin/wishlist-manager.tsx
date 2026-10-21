@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { adminButtonClass } from "@/components/admin/button-styles";
 import type { WishlistPage } from "@/lib/api/wishlist";
 import {
   buildExportUrl,
@@ -125,7 +126,7 @@ export function AdminWishlistManager() {
           <a
             href={exportUrl}
             download
-            className="inline-flex min-h-11 items-center justify-center rounded-none border border-ember bg-ember/10 px-4 py-2 text-sm font-semibold uppercase tracking-wider text-ember transition-colors hover:bg-ember hover:text-ink-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            className={adminButtonClass("primary", "md")}
           >
             {search
               ? `Ekspor CSV (${total} Hasil Filter)`
@@ -160,7 +161,7 @@ export function AdminWishlistManager() {
             <button
               type="submit"
               disabled={loading}
-              className="min-h-11 border border-ink-600 bg-ink-700 px-5 py-2 text-sm font-semibold uppercase tracking-wider text-sand transition-colors hover:bg-ink-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember disabled:opacity-60"
+              className={adminButtonClass("primary", "md")}
             >
               Cari
             </button>
@@ -169,7 +170,7 @@ export function AdminWishlistManager() {
                 type="button"
                 onClick={handleResetSearch}
                 disabled={loading}
-                className="min-h-11 border border-transparent px-4 py-2 text-sm font-semibold text-sand/60 transition-colors hover:text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                className={adminButtonClass("ghost", "md")}
               >
                 Reset
               </button>
@@ -193,7 +194,7 @@ export function AdminWishlistManager() {
             <button
               type="button"
               onClick={reload}
-              className="border border-red-500/50 px-3 py-1 text-xs uppercase tracking-wider text-red-100 transition-colors hover:bg-red-500/20"
+              className={adminButtonClass("secondary", "sm")}
             >
               Coba lagi
             </button>
@@ -275,7 +276,7 @@ export function AdminWishlistManager() {
                 type="button"
                 onClick={() => goToPage(Math.max(1, page - 1))}
                 disabled={page <= 1 || loading}
-                className="min-h-9 border border-ink-600 bg-ink-800 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-sand transition-colors hover:bg-ink-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember disabled:opacity-40"
+                className={adminButtonClass("secondary", "sm")}
               >
                 Sebelumnya
               </button>
@@ -283,7 +284,7 @@ export function AdminWishlistManager() {
                 type="button"
                 onClick={() => goToPage(Math.min(totalPages, page + 1))}
                 disabled={page >= totalPages || loading}
-                className="min-h-9 border border-ink-600 bg-ink-800 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-sand transition-colors hover:bg-ink-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember disabled:opacity-40"
+                className={adminButtonClass("secondary", "sm")}
               >
                 Berikutnya
               </button>

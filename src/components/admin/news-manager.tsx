@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AssetUploader } from "./asset-uploader";
+import { adminButtonClass } from "./button-styles";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
@@ -342,7 +343,7 @@ export function NewsManager() {
           <button
             type="submit"
             disabled={submitting}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+            className={adminButtonClass("primary", "md")}
           >
             {submitting ? "Menyimpan..." : "Simpan"}
           </button>
@@ -350,7 +351,7 @@ export function NewsManager() {
             <button
               type="button"
               onClick={handleCancelEdit}
-              className="px-4 py-2 border rounded hover:bg-gray-100"
+              className={adminButtonClass("secondary", "md")}
             >
               Batal
             </button>
@@ -374,7 +375,7 @@ export function NewsManager() {
                 <button
                   type="button"
                   onClick={() => handleEdit(item)}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  className={adminButtonClass("secondary", "sm")}
                 >
                   Edit
                 </button>
@@ -386,7 +387,7 @@ export function NewsManager() {
                       title: item.title,
                     })
                   }
-                  className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+                  className={adminButtonClass("danger", "sm")}
                 >
                   Hapus
                 </button>

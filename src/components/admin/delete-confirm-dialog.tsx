@@ -1,5 +1,7 @@
 "use client";
 
+import { adminButtonClass } from "./button-styles";
+
 interface DeleteConfirmDialogProps {
   open: boolean;
   title: string;
@@ -19,7 +21,7 @@ export function DeleteConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/80 p-4"
       onClick={onCancel}
       onKeyDown={(e) => {
         if (e.key === "Escape") onCancel();
@@ -29,25 +31,28 @@ export function DeleteConfirmDialog({
       aria-labelledby="dialog-title"
     >
       <div
-        className="bg-white p-6 rounded shadow-lg max-w-md w-full mx-4"
+        className="w-full max-w-md border border-line bg-ink-800 p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="dialog-title" className="text-lg font-bold mb-2">
+        <h2
+          id="dialog-title"
+          className="font-display text-xl uppercase tracking-wide text-sand"
+        >
           {title}
         </h2>
-        <p className="text-gray-700 mb-4">{message}</p>
-        <div className="flex gap-2 justify-end">
+        <p className="mb-6 mt-2 text-sm text-sand-600">{message}</p>
+        <div className="flex flex-wrap justify-end gap-2">
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 border rounded hover:bg-gray-100"
+            className={adminButtonClass("secondary", "md")}
           >
             Batal
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            className={adminButtonClass("danger", "md")}
           >
             Hapus
           </button>

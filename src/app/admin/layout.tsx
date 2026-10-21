@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { adminButtonClass } from "@/components/admin/button-styles";
 import { adminSignOutAction } from "./account-actions";
 
 /**
@@ -114,7 +115,7 @@ export default function AdminLayout({
           onClick={() => setNavOpen((v) => !v)}
           aria-expanded={navOpen}
           aria-controls="navigasi-admin-drawer"
-          className="flex min-h-11 min-w-11 items-center justify-center p-2 text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+          className={adminButtonClass("ghost", "icon")}
         >
           <span className="sr-only">
             {navOpen ? "Tutup menu navigasi admin" : "Buka menu navigasi admin"}
@@ -185,7 +186,7 @@ export default function AdminLayout({
               <button
                 type="button"
                 onClick={closeNav}
-                className="flex min-h-11 min-w-11 items-center justify-center p-2 text-sand hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                className={adminButtonClass("ghost", "icon")}
               >
                 <span className="sr-only">Tutup menu admin</span>
                 <svg
