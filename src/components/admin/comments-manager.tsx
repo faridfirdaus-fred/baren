@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { adminButtonClass } from "./button-styles";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
 import { formatDateTimeId } from "@/lib/admin/datetime";
@@ -144,7 +145,7 @@ export function CommentsManager() {
                       preview: comment.body.slice(0, 50),
                     })
                   }
-                  className="min-h-11 border border-ember/60 px-3 py-2 text-sm font-semibold text-ember transition-colors hover:bg-ember hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                  className={adminButtonClass("danger", "sm")}
                 >
                   Hapus
                 </button>

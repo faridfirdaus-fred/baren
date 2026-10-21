@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+import { adminButtonClass } from "@/components/admin/button-styles";
+
 interface SocialLink {
   id: number;
   platform: string;
@@ -152,7 +154,7 @@ export function LinksManager() {
           </div>
           <Link
             href="/admin/landing"
-            className="rounded bg-ink-700 px-4 py-2 text-sm font-semibold text-sand transition-colors hover:bg-ink-600 hover:text-ember"
+            className={adminButtonClass("secondary", "md")}
           >
             Buka Konten Landing &rarr;
           </Link>
@@ -270,7 +272,7 @@ export function LinksManager() {
             <button
               type="submit"
               disabled={socialSubmitting}
-              className="rounded bg-ember px-4 py-2 font-bold text-ink hover:bg-ember-400 disabled:opacity-50"
+              className={adminButtonClass("primary", "md")}
             >
               {socialSubmitting
                 ? "Menyimpan..."
@@ -283,7 +285,7 @@ export function LinksManager() {
                 type="button"
                 onClick={handleSocialCancel}
                 disabled={socialSubmitting}
-                className="rounded border border-line bg-ink-700 px-4 py-2 text-sand hover:bg-ink-600"
+                className={adminButtonClass("secondary", "md")}
               >
                 Batal
               </button>
@@ -337,14 +339,14 @@ export function LinksManager() {
                         <button
                           type="button"
                           onClick={() => handleSocialEdit(link)}
-                          className="text-ember hover:underline"
+                          className={adminButtonClass("secondary", "sm")}
                         >
                           Edit
                         </button>
                         <button
                           type="button"
                           onClick={() => handleSocialDelete(link.id)}
-                          className="text-red-400 hover:underline"
+                          className={adminButtonClass("danger", "sm")}
                         >
                           Hapus
                         </button>

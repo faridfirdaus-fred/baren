@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AssetUploader } from "./asset-uploader";
+import { adminButtonClass } from "./button-styles";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
@@ -472,7 +473,7 @@ export function LandingCardsManager() {
           <button
             type="submit"
             disabled={submitting}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+            className={adminButtonClass("primary", "md")}
           >
             {submitting ? "Menyimpan..." : "Simpan"}
           </button>
@@ -480,7 +481,7 @@ export function LandingCardsManager() {
             <button
               type="button"
               onClick={handleCancelEdit}
-              className="px-4 py-2 border rounded hover:bg-gray-100"
+              className={adminButtonClass("secondary", "md")}
             >
               Batal
             </button>
@@ -509,7 +510,7 @@ export function LandingCardsManager() {
                     type="button"
                     onClick={() => handleMoveUp(item.id)}
                     disabled={idx === 0}
-                    className="px-2 py-1 border rounded text-sm disabled:opacity-30"
+                    className={adminButtonClass("secondary", "icon-sm")}
                     aria-label="Naik"
                   >
                     ↑
@@ -518,7 +519,7 @@ export function LandingCardsManager() {
                     type="button"
                     onClick={() => handleMoveDown(item.id)}
                     disabled={idx === items.length - 1}
-                    className="px-2 py-1 border rounded text-sm disabled:opacity-30"
+                    className={adminButtonClass("secondary", "icon-sm")}
                     aria-label="Turun"
                   >
                     ↓
@@ -529,7 +530,7 @@ export function LandingCardsManager() {
                 <button
                   type="button"
                   onClick={() => handleEdit(item)}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  className={adminButtonClass("secondary", "sm")}
                 >
                   Edit
                 </button>
@@ -538,7 +539,7 @@ export function LandingCardsManager() {
                   onClick={() =>
                     setDeleteTarget({ id: item.id, title: item.title })
                   }
-                  className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+                  className={adminButtonClass("danger", "sm")}
                 >
                   Hapus
                 </button>

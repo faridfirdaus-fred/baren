@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { auth, signOut } from "@/auth";
 import { AdminAccountForm } from "@/components/admin/account-form";
+import { adminButtonClass } from "@/components/admin/button-styles";
 import { RecentComments } from "@/components/admin/recent-comments";
 import { getDb } from "@/db";
 import {
@@ -305,7 +306,9 @@ export default async function AdminDashboardPage() {
           await signOut({ redirectTo: "/admin/login" });
         }}
       >
-        <button type="submit">Keluar</button>
+        <button type="submit" className={adminButtonClass("secondary", "md")}>
+          Keluar
+        </button>
       </form>
     </section>
   );

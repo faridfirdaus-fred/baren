@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useForm, type FieldPath } from "react-hook-form";
 
 import { AssetUploader } from "@/components/admin/asset-uploader";
+import { adminButtonClass } from "@/components/admin/button-styles";
 import {
   parseGalleryApiResult,
   type GalleryAsset,
@@ -283,8 +284,12 @@ export function AdminGalleryManager() {
             ) : null}
           </div>
           {errors.root ? <p role="alert">{errors.root.message}</p> : null}
-          <div className="flex gap-4">
-            <button type="submit" disabled={isSubmitting}>
+          <div className="flex flex-wrap gap-4">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={adminButtonClass("primary", "md")}
+            >
               {isSubmitting
                 ? "Menyimpan..."
                 : editingId === null
@@ -296,6 +301,7 @@ export function AdminGalleryManager() {
                 type="button"
                 onClick={cancelEdit}
                 disabled={isSubmitting}
+                className={adminButtonClass("secondary", "md")}
               >
                 Batal
               </button>
@@ -325,9 +331,13 @@ export function AdminGalleryManager() {
         {notice ? <p role="status">{notice}</p> : null}
         {items === null && loadError === null ? <p>Memuat galeri...</p> : null}
         {loadError ? (
-          <div role="alert">
+          <div role="alert" className="space-y-3">
             <p>{loadError}</p>
-            <button type="button" onClick={() => void loadGallery()}>
+            <button
+              type="button"
+              onClick={() => void loadGallery()}
+              className={adminButtonClass("secondary", "md")}
+            >
               Coba lagi
             </button>
           </div>
@@ -361,14 +371,19 @@ export function AdminGalleryManager() {
                   <p>
                     {kindLabels[item.kind]} · Urutan: {item.sortOrder}
                   </p>
-                  <div className="flex gap-4">
-                    <button type="button" onClick={() => edit(item)}>
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={() => edit(item)}
+                      className={adminButtonClass("secondary", "sm")}
+                    >
                       Edit
                     </button>
                     <button
                       type="button"
                       onClick={() => void remove(item)}
                       disabled={deletingId === item.id}
+                      className={adminButtonClass("danger", "sm")}
                     >
                       {deletingId === item.id ? "Menghapus..." : "Hapus"}
                     </button>

@@ -2,6 +2,7 @@
 
 import { useCallback, useId, useRef, useState } from "react";
 
+import { adminButtonClass } from "./button-styles";
 import {
   acceptedAttr,
   acceptedMimeTypes,
@@ -286,8 +287,10 @@ export function AssetUploader({
           setDragActive(false);
           addFiles(event.dataTransfer.files);
         }}
-        className={`flex w-full flex-col items-center justify-center gap-2 rounded border-2 border-dashed px-6 py-10 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember ${
-          dragActive ? "border-ember bg-ember/10" : "border-sand/25 bg-ink"
+        className={`flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-none border-2 border-dashed px-6 py-10 text-center transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember ${
+          dragActive
+            ? "border-ember bg-ember/10"
+            : "border-sand/25 bg-ink hover:border-ember/70 hover:bg-ink-700/40"
         }`}
       >
         <p
@@ -329,7 +332,7 @@ export function AssetUploader({
             <button
               type="button"
               onClick={clearFiles}
-              className="rounded border border-sand/25 px-3 py-1.5 text-sm text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+              className={adminButtonClass("secondary", "sm", "shrink-0")}
             >
               Bersihkan
             </button>
@@ -384,7 +387,7 @@ export function AssetUploader({
                       onClick={() => void uploadFile(file.id)}
                       disabled={disabled}
                       aria-label={`Unggah ${file.name}`}
-                      className="rounded bg-ember px-2.5 py-1.5 text-xs text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember disabled:opacity-50"
+                      className={adminButtonClass("primary", "sm")}
                     >
                       {file.status === "gagal" ? "Coba Lagi" : "Unggah"}
                     </button>
@@ -395,7 +398,7 @@ export function AssetUploader({
                       onClick={() => retrySave(file.id)}
                       disabled={disabled}
                       aria-label={`Coba simpan lagi ${file.name} tanpa mengunggah ulang`}
-                      className="rounded bg-ember px-2.5 py-1.5 text-xs text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember disabled:opacity-50"
+                      className={adminButtonClass("primary", "sm")}
                     >
                       Simpan Lagi
                     </button>
@@ -407,7 +410,7 @@ export function AssetUploader({
                       type="button"
                       onClick={() => cancelFile(file.id)}
                       aria-label={`Batalkan ${file.name}`}
-                      className="rounded border border-sand/25 px-2.5 py-1.5 text-xs text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                      className={adminButtonClass("secondary", "sm")}
                     >
                       Batal
                     </button>

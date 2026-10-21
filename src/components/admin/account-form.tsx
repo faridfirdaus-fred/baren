@@ -9,6 +9,7 @@ import {
   updateAdminPasswordAction,
   updateAdminProfileAction,
 } from "@/app/admin/account-actions";
+import { adminButtonClass } from "./button-styles";
 import {
   adminPasswordSchema,
   adminProfileSchema,
@@ -92,7 +93,11 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
               {profileMessage}
             </p>
           ) : null}
-          <button type="submit" disabled={profileForm.formState.isSubmitting}>
+          <button
+            type="submit"
+            disabled={profileForm.formState.isSubmitting}
+            className={adminButtonClass("primary", "md")}
+          >
             {profileForm.formState.isSubmitting
               ? "Menyimpan..."
               : "Simpan profil"}
@@ -150,7 +155,11 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
               {passwordMessage}
             </p>
           ) : null}
-          <button type="submit" disabled={passwordForm.formState.isSubmitting}>
+          <button
+            type="submit"
+            disabled={passwordForm.formState.isSubmitting}
+            className={adminButtonClass("primary", "md")}
+          >
             {passwordForm.formState.isSubmitting
               ? "Mengubah..."
               : "Ubah kata sandi"}

@@ -126,7 +126,7 @@ export function AdminLoginForm({
               showPassword ? "Sembunyikan sandi" : "Perlihatkan sandi"
             }
             aria-pressed={showPassword}
-            className="absolute right-2 flex h-7 w-7 items-center justify-center text-sand-600 transition-colors hover:text-sand focus-visible:outline-2 focus-visible:outline-ember"
+            className="absolute right-2 flex h-7 w-7 items-center justify-center text-sand-600 transition-colors hover:bg-ink-700 hover:text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
           >
             {showPassword ? (
               <EyeOff className="h-4 w-4" aria-hidden="true" />
@@ -146,7 +146,7 @@ export function AdminLoginForm({
         type="submit"
         disabled={isSubmitting}
         aria-busy={isSubmitting}
-        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-none bg-ember-700 px-6 py-3.5 text-sm font-semibold uppercase tracking-[0.1em] text-sand transition-all duration-150 hover:bg-ember-600 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-none bg-ember-700 px-6 py-3.5 text-sm font-semibold uppercase tracking-[0.1em] text-sand transition-all duration-150 hover:bg-ember-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
       >
         {isSubmitting ? (
           <>
