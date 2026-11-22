@@ -49,6 +49,7 @@ export function LatestNews({ items, title, ctaLabel }: Props) {
                     sizes="(min-width:768px) 33vw, 100vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                     alt={item.title}
+                    unoptimized
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center text-ink-400">

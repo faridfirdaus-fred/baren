@@ -55,6 +55,7 @@ export function GameFeatures({
                   fill
                   sizes="(min-width:768px) 33vw, 100vw"
                   className="object-cover"
+                  unoptimized
                 />
               </div>
               <div className="p-6">

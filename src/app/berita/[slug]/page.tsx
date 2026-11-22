@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -83,11 +84,12 @@ export default async function NewsDetailPage({ params }: PageProps) {
 
         {item.coverUrl && (
           <Image
-            src={item.coverUrl}
+            src={resolvePublicAssetUrl(item.coverUrl) || item.coverUrl}
             alt={item.title}
             width={1200}
             height={675}
             className="w-full aspect-video object-cover rounded-lg mb-6"
+            unoptimized
           />
         )}
 

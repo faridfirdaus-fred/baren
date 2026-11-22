@@ -15,9 +15,10 @@ if (typeof process !== "undefined" && process.versions?.node) {
 
 const nextConfig: NextConfig = {
   images: {
-    // E4-4: izinkan host publik R2 untuk next/image. Host presigned S3
-    // (<account>.r2.cloudflarestorage.com) TIDAK untuk ditampilkan;
-    // loader R2 menolak signed URL agar tidak kedaluwarsa.
+    // Di lingkungan Cloudflare Workers (OpenNext), image optimization server
+    // (/_next/image) tidak tersedia secara native. unoptimized: true memastikan
+    // gambar dilayani langsung via URL aslinya atau proxy /api/assets/ tanpa 404.
+    unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "**.r2.dev" },
       { protocol: "https", hostname: "**.r2.cloudflarestorage.com" },

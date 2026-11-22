@@ -51,6 +51,7 @@ export function HowToPlay({ content, title }: Props) {
                     sizes="(min-width:1024px) 33vw, (min-width:768px) 50vw, 100vw"
                     className="object-cover"
                     alt={step.title}
+                    unoptimized
                   />
                 </div>
               )}

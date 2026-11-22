@@ -53,6 +53,7 @@ export function R2Image({
       onError={() => setFailed(true)}
       className={className}
       sizes={sizes ?? "(max-width: 768px) 100vw, 50vw"}
+      unoptimized
     />
   );
 }

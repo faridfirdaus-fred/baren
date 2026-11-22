@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { getAllPublishedNews } from "@/lib/news-content";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -48,11 +49,14 @@ export default async function NewsIndexPage() {
                 <div className="relative aspect-video overflow-hidden bg-ink-700">
                   {item.coverUrl ? (
                     <Image
-                      src={item.coverUrl}
+                      src={
+                        resolvePublicAssetUrl(item.coverUrl) || item.coverUrl
+                      }
                       fill
                       sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       alt={item.title}
+                      unoptimized
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center text-ink-400">

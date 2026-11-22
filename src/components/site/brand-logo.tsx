@@ -42,6 +42,7 @@ export function BrandLogo({
         height={size}
         className={className}
         style={{ width: size, height: size }}
+        unoptimized
       />
     );
   }
