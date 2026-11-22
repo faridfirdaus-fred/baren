@@ -1,6 +1,7 @@
 import { count, desc, eq, max } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ExternalLink, Globe } from "lucide-react";
 
 import { auth, signOut } from "@/auth";
 import { AdminAccountForm } from "@/components/admin/account-form";
@@ -130,13 +131,33 @@ export default async function AdminDashboardPage() {
 
   return (
     <section className="space-y-8">
-      <header>
-        <h1 className="font-display text-4xl uppercase tracking-wide text-sand">
-          Dasbor Admin
-        </h1>
-        <p className="mt-2 text-sm text-sand-600">
-          Masuk sebagai {(session.user as { email?: string }).email}
-        </p>
+      <header className="flex flex-col gap-4 border-b border-ink-700 pb-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="font-display text-4xl uppercase tracking-wide text-sand">
+              Dasbor Admin
+            </h1>
+            <span className="sr-only">Dashboard Admin</span>
+          </div>
+          <p className="mt-2 text-sm text-sand-600">
+            Masuk sebagai {(session.user as { email?: string }).email}
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={adminButtonClass("secondary", "md")}
+          >
+            <Globe className="h-4 w-4 text-ember" aria-hidden="true" />
+            <span>Lihat Homepage</span>
+            <ExternalLink
+              className="h-3.5 w-3.5 text-sand-600"
+              aria-hidden="true"
+            />
+          </Link>
+        </div>
       </header>
 
       <section aria-labelledby="ringkasan-metrik" className="space-y-4">

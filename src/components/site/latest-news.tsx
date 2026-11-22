@@ -5,6 +5,7 @@ import { IconArrowUpRight } from "@/components/site/icon";
 import { SectionShell } from "@/components/site/section-shell";
 import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
 import type { NewsItem } from "@/lib/news-content";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 type Props = {
   items: NewsItem[];
@@ -43,7 +44,7 @@ export function LatestNews({ items, title, ctaLabel }: Props) {
               <div className="relative aspect-video overflow-hidden bg-ink-700">
                 {item.coverUrl ? (
                   <Image
-                    src={item.coverUrl}
+                    src={resolvePublicAssetUrl(item.coverUrl) || item.coverUrl}
                     fill
                     sizes="(min-width:768px) 33vw, 100vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"

@@ -17,6 +17,7 @@ import {
   type SettingsStore,
 } from "@/lib/api/settings";
 import { settingsUpdateSchema } from "@/lib/validation/settings";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -72,9 +73,11 @@ export async function PUT(request: Request): Promise<Response> {
     return internalError();
   }
   try {
+    const updated = await writeSettings(store, parsed.data);
+    revalidateSite();
     return fromResult({
       ok: true,
-      data: await writeSettings(store, parsed.data),
+      data: updated,
     });
   } catch (error) {
     console.error("PUT /api/settings gagal:", error);

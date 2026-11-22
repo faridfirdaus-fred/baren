@@ -14,6 +14,7 @@ import {
   landingCardUpdateSchema,
   type LandingCardUpdate,
 } from "@/lib/validation/landing-cards";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -99,6 +100,7 @@ export async function PUT(
   try {
     const row = await byId(getDb()).update(id.data, parsed.data);
     if (!row) return notFound("Kartu");
+    revalidateSite();
     return fromResult({ ok: true, data: row });
   } catch (error) {
     console.error("PUT /api/landing-cards/[id] gagal:", error);
@@ -119,6 +121,7 @@ export async function DELETE(
   try {
     const row = await byId(getDb()).remove(id.data);
     if (!row) return notFound("Kartu");
+    revalidateSite();
     return fromResult({ ok: true, data: row });
   } catch (error) {
     console.error("DELETE /api/landing-cards/[id] gagal:", error);

@@ -229,8 +229,13 @@ export function AssetUploader({
       );
       setFiles((prev) => [...prev, ...next]);
       if (valid.length > 0) onFilesValidated?.(valid);
+      for (const item of next) {
+        if (item.status === "siap") {
+          void uploadFile(item.id);
+        }
+      }
     },
-    [purpose, onFilesValidated, disabled],
+    [purpose, onFilesValidated, disabled, uploadFile],
   );
 
   const cancelFile = useCallback((id: string) => {
@@ -326,8 +331,8 @@ export function AssetUploader({
         <div className="mt-4">
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-sand/70">
-              {files.length} berkas dipilih. Tekan Unggah per berkas; file
-              dikirim langsung ke R2, bukan ke Worker.
+              {files.length} berkas diproses (langsung ke R2). Setelah selesai,
+              simpan formulir di bawah untuk menyimpan perubahan.
             </p>
             <button
               type="button"

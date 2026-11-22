@@ -11,6 +11,7 @@ import { parseJsonBody } from "@/lib/api/parse";
 import { parseIdParam } from "@/lib/api/params";
 import type { StepById, StepRow } from "@/lib/api/game";
 import { stepUpdateSchema, type StepUpdate } from "@/lib/validation/game";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -75,6 +76,7 @@ export async function PUT(
   try {
     const row = await byId(getDb()).update(id.data, parsed.data);
     if (!row) return notFound("Langkah");
+    revalidateSite();
     return fromResult({ ok: true, data: row });
   } catch (error) {
     console.error("PUT /api/how-to-play/steps/[id] gagal:", error);
@@ -97,6 +99,7 @@ export async function DELETE(
   try {
     const row = await byId(getDb()).remove(id.data);
     if (!row) return notFound("Langkah");
+    revalidateSite();
     return fromResult({ ok: true, data: row });
   } catch (error) {
     console.error("DELETE /api/how-to-play/steps/[id] gagal:", error);

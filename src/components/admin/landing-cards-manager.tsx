@@ -15,6 +15,7 @@ import {
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 interface LandingCard {
   id: number;
@@ -383,7 +384,9 @@ export function LandingCardsManager() {
           {formData.imageUrl.trim() ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={formData.imageUrl}
+              src={
+                resolvePublicAssetUrl(formData.imageUrl) || formData.imageUrl
+              }
               alt="Pratinjau gambar kartu"
               className="mt-2 max-h-48 w-full rounded border object-cover"
             />

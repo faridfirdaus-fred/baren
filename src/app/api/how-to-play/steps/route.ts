@@ -8,6 +8,7 @@ import { fromResult } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/parse";
 import type { StepCreator, StepRow } from "@/lib/api/game";
 import { stepCreateSchema } from "@/lib/validation/game";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -46,9 +47,11 @@ export async function POST(request: Request): Promise<Response> {
   const parsed = await parseJsonBody(request, stepCreateSchema);
   if (!parsed.ok) return fromResult(parsed);
   try {
+    const created = await creator().create(parsed.data);
+    revalidateSite();
     return fromResult({
       ok: true,
-      data: await creator().create(parsed.data),
+      data: created,
       status: 201,
     });
   } catch (error) {

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SectionShell } from "@/components/site/section-shell";
 import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
 import type { LandingCard } from "@/lib/landing-cards-content";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 type Props = {
   cards: LandingCard[];
@@ -22,7 +23,9 @@ export function LandingCards({ cards }: Props) {
                 {card.imageUrl && (
                   <div className="relative aspect-video overflow-hidden rounded-lg bg-ink-700">
                     <Image
-                      src={card.imageUrl}
+                      src={
+                        resolvePublicAssetUrl(card.imageUrl) || card.imageUrl
+                      }
                       fill
                       sizes="(min-width:1024px) 50vw, 100vw"
                       className="object-cover"

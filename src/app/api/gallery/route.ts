@@ -19,6 +19,7 @@ import {
   galleryKinds,
   type GalleryKind,
 } from "@/lib/validation/gallery";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -104,9 +105,11 @@ export async function POST(request: Request): Promise<Response> {
   const parsed = await parseJsonBody(request, galleryCreateSchema);
   if (!parsed.ok) return fromResult(parsed);
   try {
+    const created = await creator(getDb()).create(parsed.data);
+    revalidateSite();
     return fromResult({
       ok: true,
-      data: await creator(getDb()).create(parsed.data),
+      data: created,
       status: 201,
     });
   } catch (error) {

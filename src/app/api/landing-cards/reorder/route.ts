@@ -9,6 +9,7 @@ import { toDbResult } from "@/lib/api/db-errors";
 import { fromResult } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/parse";
 import { landingCardReorderSchema } from "@/lib/validation/landing-cards";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,7 @@ export async function PUT(request: Request): Promise<Response> {
         .set({ sortOrder: index, updatedAt: new Date() })
         .where(eq(landingCards.id, id));
     }
+    revalidateSite();
     return fromResult({ ok: true, data: { updated: parsed.data.ids.length } });
   } catch (error) {
     console.error("PUT /api/landing-cards/reorder gagal:", error);

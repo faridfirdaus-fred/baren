@@ -21,6 +21,7 @@ import {
   galleryUpdateSchema,
   type GalleryUpdate,
 } from "@/lib/validation/gallery";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +83,7 @@ export async function PUT(
   try {
     const row = await byId(getDb()).update(id.data, parsed.data);
     if (!row) return notFound("Aset galeri");
+    revalidateSite();
     return fromResult({ ok: true, data: row });
   } catch (error) {
     console.error("PUT /api/gallery/[id] gagal:", error);
@@ -119,6 +121,7 @@ export async function DELETE(
         error instanceof Error ? error.message : error,
       );
     }
+    revalidateSite();
     return fromResult({ ok: true, data: { ...row, r2Deleted } });
   } catch (error) {
     console.error("DELETE /api/gallery/[id] gagal:", error);

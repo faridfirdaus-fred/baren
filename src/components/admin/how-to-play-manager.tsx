@@ -13,6 +13,7 @@ import {
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 interface HowToPlayStep {
   id: number;
@@ -372,7 +373,9 @@ export function HowToPlayManager() {
             {stepForm.mediaUrl.trim() ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={stepForm.mediaUrl}
+                src={
+                  resolvePublicAssetUrl(stepForm.mediaUrl) || stepForm.mediaUrl
+                }
                 alt="Pratinjau media langkah"
                 className="mt-2 max-h-48 w-full rounded border object-cover"
               />

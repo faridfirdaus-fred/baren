@@ -17,6 +17,7 @@ import {
 } from "@/lib/admin-features-client";
 import type { UploadedAsset } from "@/lib/assets-client";
 import { parseApiEnvelope } from "@/lib/api/client-response";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 type FeatureFormData = {
   title: string;
@@ -257,7 +258,7 @@ export function FeaturesManager() {
           {formData.iconUrl.trim() ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={formData.iconUrl}
+              src={resolvePublicAssetUrl(formData.iconUrl) || formData.iconUrl}
               alt="Pratinjau ikon fitur"
               className="mt-2 h-16 w-16 rounded border border-line bg-ink object-contain p-1"
             />
@@ -338,7 +339,7 @@ export function FeaturesManager() {
               {item.iconUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={item.iconUrl}
+                  src={resolvePublicAssetUrl(item.iconUrl) || item.iconUrl}
                   alt=""
                   className="h-12 w-12 shrink-0 rounded bg-ink object-contain p-1"
                 />

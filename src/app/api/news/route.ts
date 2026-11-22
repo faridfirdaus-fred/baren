@@ -19,6 +19,7 @@ import {
   type NewsRow,
 } from "@/lib/api/news";
 import { newsCreateSchema } from "@/lib/validation/news";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -152,9 +153,11 @@ export async function POST(request: Request): Promise<Response> {
   const parsed = await parseJsonBody(request, newsCreateSchema);
   if (!parsed.ok) return fromResult(parsed);
   try {
+    const created = await creator(getDb()).create(parsed.data);
+    revalidateSite();
     return fromResult({
       ok: true,
-      data: await creator(getDb()).create(parsed.data),
+      data: created,
       status: 201,
     });
   } catch (error) {

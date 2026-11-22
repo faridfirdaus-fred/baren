@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{ slug: string }>;

@@ -10,6 +10,7 @@ import { fromResult } from "@/lib/api/response";
 import { parseJsonBody } from "@/lib/api/parse";
 import type { VideoStore } from "@/lib/api/game";
 import { videoUpdateSchema } from "@/lib/validation/game";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -54,6 +55,7 @@ export async function PUT(request: Request): Promise<Response> {
   if (!parsed.ok) return fromResult(parsed);
   try {
     const videoUrl = await store(getDb()).save(parsed.data.videoUrl);
+    revalidateSite();
     return fromResult({ ok: true, data: { videoUrl } });
   } catch (error) {
     console.error("PUT /api/how-to-play/video gagal:", error);

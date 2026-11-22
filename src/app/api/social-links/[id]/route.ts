@@ -11,6 +11,7 @@ import { parseJsonBody } from "@/lib/api/parse";
 import { parseIdParam } from "@/lib/api/params";
 import type { SocialById, SocialRow } from "@/lib/api/links";
 import { socialUpdateSchema, type SocialUpdate } from "@/lib/validation/links";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -66,6 +67,7 @@ export async function PUT(
   try {
     const row = await byId(getDb()).update(id.data, parsed.data);
     if (!row) return notFound("Tautan");
+    revalidateSite();
     return fromResult({ ok: true, data: row });
   } catch (error) {
     console.error("PUT /api/social-links/[id] gagal:", error);
@@ -86,6 +88,7 @@ export async function DELETE(
   try {
     const row = await byId(getDb()).remove(id.data);
     if (!row) return notFound("Tautan");
+    revalidateSite();
     return fromResult({ ok: true, data: row });
   } catch (error) {
     console.error("DELETE /api/social-links/[id] gagal:", error);

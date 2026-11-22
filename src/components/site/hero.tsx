@@ -6,6 +6,7 @@ import { HeroCarousel } from "@/components/site/hero-carousel";
 import { joinWishlistAction } from "@/components/site/actions";
 import { getHeroContent } from "@/lib/hero-content";
 import { getHeroBanners } from "@/lib/hero-banners";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 // E6-1 & E14-1: hero dinamis dari tabel `hero` (video/poster/judul/CTA).
 // Tanpa fallback runtime: jika baris hero tidak terbit atau tidak siap render,
@@ -44,10 +45,13 @@ export async function Hero() {
         loop
         playsInline
         preload="auto"
-        poster={content.poster}
+        poster={resolvePublicAssetUrl(content.poster) || content.poster}
         aria-hidden="true"
       >
-        <source src={content.videoSrc} type="video/mp4" />
+        <source
+          src={resolvePublicAssetUrl(content.videoSrc) || content.videoSrc}
+          type="video/mp4"
+        />
       </video>
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/85 via-ink/60 to-ink/95" />
       <div className="container-baren flex flex-col items-center py-12 text-center lg:py-16">

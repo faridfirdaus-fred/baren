@@ -37,6 +37,7 @@ export const nav: NavItem[] = [
   { label: "ARTIKEL", href: "#berita" },
   { label: "FAQ", href: "#faq" },
   { label: "GALERI", href: "#galeri" },
+  { label: "KOMENTAR", href: "#komentar" },
 ];
 
 export const event: EventContent = {

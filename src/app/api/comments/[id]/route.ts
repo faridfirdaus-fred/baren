@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { requireAdminResponse } from "@/lib/api/guard";
 import { deleteComment } from "@/lib/api/comments";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,7 @@ export async function DELETE(
     if (!deleted) {
       return NextResponse.json({ error: "Comment not found" }, { status: 404 });
     }
+    revalidateSite();
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(`DELETE /api/comments/${id} error:`, error);

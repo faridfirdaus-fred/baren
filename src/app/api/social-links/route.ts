@@ -12,6 +12,7 @@ import {
   type SocialRow,
 } from "@/lib/api/links";
 import { socialCreateSchema } from "@/lib/validation/links";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -55,9 +56,11 @@ export async function POST(request: Request): Promise<Response> {
         return toRow(created);
       },
     };
+    const created = await creator.create(parsed.data);
+    revalidateSite();
     return fromResult({
       ok: true,
-      data: await creator.create(parsed.data),
+      data: created,
       status: 201,
     });
   } catch (error) {

@@ -11,6 +11,7 @@ import { siteSettings } from "@/db/schema";
 import { toBranding } from "@/lib/api/settings";
 import { isEmail } from "@/lib/validation/email";
 import { site } from "@/content/baren";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 export type SiteBranding = {
   brandName: string;
@@ -24,7 +25,7 @@ const FALLBACK_BRANDING: SiteBranding = {
   brandName: site.name,
   tagline: site.tagline,
   logoSrc: "/brand/baren-mark.svg",
-  faviconUrl: "/favicon.ico",
+  faviconUrl: "/icon.svg",
   contactEmail: site.email,
 };
 
@@ -56,11 +57,13 @@ export async function getSiteBranding(): Promise<SiteBranding> {
       brandName: namaGame ? namaGame : FALLBACK_BRANDING.brandName,
       tagline: tagline ? tagline : FALLBACK_BRANDING.tagline,
       logoSrc: isHttpsUrl(branding.logoUrl)
-        ? branding.logoUrl
+        ? resolvePublicAssetUrl(branding.logoUrl) || branding.logoUrl
         : FALLBACK_BRANDING.logoSrc,
       faviconUrl: isHttpsUrl(branding.faviconUrl)
-        ? branding.faviconUrl
-        : FALLBACK_BRANDING.faviconUrl,
+        ? resolvePublicAssetUrl(branding.faviconUrl) || branding.faviconUrl
+        : isHttpsUrl(branding.logoUrl)
+          ? resolvePublicAssetUrl(branding.logoUrl) || branding.logoUrl
+          : FALLBACK_BRANDING.faviconUrl,
       contactEmail: isEmail(branding.emailKontak)
         ? branding.emailKontak
         : FALLBACK_BRANDING.contactEmail,

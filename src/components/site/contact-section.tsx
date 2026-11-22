@@ -64,7 +64,8 @@ export function ContactSection({
   socialEmptyMessage,
   socials,
 }: ContactSectionProps) {
-  if (!title) return null;
+  const resolvedTitle = title?.trim() || "TETAP TERHUBUNG";
+  const resolvedEyebrow = eyebrow?.trim() || "HUBUNGI KAMI";
 
   const validEmail = isEmail(contactEmail) ? contactEmail!.trim() : null;
   const list = socials ?? [];
@@ -74,8 +75,10 @@ export function ContactSection({
       <SectionShell id="kontak" tone="light" className="border-t border-ink/10">
         <div className="grid gap-10 lg:grid-cols-2">
           <div className="min-w-0">
-            {eyebrow && <p className="eyebrow text-ember-700">{eyebrow}</p>}
-            <h2 className="display-lg mt-4 text-ink">{title}</h2>
+            {resolvedEyebrow && (
+              <p className="eyebrow text-ember-700">{resolvedEyebrow}</p>
+            )}
+            <h2 className="display-lg mt-4 text-ink">{resolvedTitle}</h2>
             {description && (
               <p className="mt-4 max-w-xl leading-7 text-ink/75">
                 {description}

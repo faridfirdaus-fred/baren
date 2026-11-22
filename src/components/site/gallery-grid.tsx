@@ -6,6 +6,7 @@ import { nextIndex, prevIndex } from "@/lib/carousel";
 import type { GalleryItem } from "@/lib/gallery-content";
 
 import { R2Image } from "./r2-image";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 import { IconChevronLeft, IconChevronRight, IconClose, IconPlay } from "./icon";
 
 const LABEL_JENIS: Record<GalleryItem["kind"], string> = {
@@ -113,7 +114,9 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                   {video ? (
                     <>
                       <video
-                        src={item.fileUrl}
+                        src={
+                          resolvePublicAssetUrl(item.fileUrl) || item.fileUrl
+                        }
                         preload="metadata"
                         muted
                         playsInline
@@ -191,7 +194,7 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
               {aktif.kind === "video" ? (
                 <video
                   key={aktif.id}
-                  src={aktif.fileUrl}
+                  src={resolvePublicAssetUrl(aktif.fileUrl) || aktif.fileUrl}
                   controls
                   preload="metadata"
                   aria-label={labelItem(aktif, terpilih ?? 0)}

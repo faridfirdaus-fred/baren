@@ -3,6 +3,7 @@ import Image from "next/image";
 import { SectionShell } from "@/components/site/section-shell";
 import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
 import type { FeatureItem } from "@/lib/features-content";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 export type GameFeaturesProps = {
   eyebrow?: string | null;
@@ -19,13 +20,16 @@ export function GameFeatures({
 }: GameFeaturesProps) {
   const resolvedTitle = title?.trim() || "FITUR UTAMA";
 
+  const resolvedEmptyMessage =
+    emptyMessage?.trim() ||
+    "Fitur permainan sedang disiapkan. Pantau terus pengumuman kami.";
+
   if (features.length === 0) {
-    if (!emptyMessage) return null;
     return (
       <SectionShell id="fitur" tone="light" className="border-t border-ink/10">
         {eyebrow && <p className="eyebrow text-ember-700">{eyebrow}</p>}
         <h2 className="display-xl mt-4 text-ink">{resolvedTitle}</h2>
-        <p className="mt-6 text-ink/60">{emptyMessage}</p>
+        <p className="mt-6 text-ink/60">{resolvedEmptyMessage}</p>
       </SectionShell>
     );
   }
@@ -43,7 +47,10 @@ export function GameFeatures({
             >
               <div className="relative aspect-square overflow-hidden bg-ink-700">
                 <Image
-                  src={feature.iconUrl || "/art/placeholder-feature.jpg"}
+                  src={
+                    resolvePublicAssetUrl(feature.iconUrl) ||
+                    "/art/placeholder-feature.jpg"
+                  }
                   alt={feature.title}
                   fill
                   sizes="(min-width:768px) 33vw, 100vw"

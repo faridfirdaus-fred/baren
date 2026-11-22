@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
+
 function isOptimizable(src: string): boolean {
   if (src.startsWith("/")) return true;
   try {
@@ -30,10 +32,11 @@ export function BrandLogo({
   size: number;
   className?: string;
 }) {
-  if (isOptimizable(src)) {
+  const resolvedSrc = resolvePublicAssetUrl(src) || src;
+  if (isOptimizable(resolvedSrc)) {
     return (
       <Image
-        src={src}
+        src={resolvedSrc}
         alt=""
         width={size}
         height={size}
@@ -45,7 +48,7 @@ export function BrandLogo({
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={src}
+      src={resolvedSrc}
       alt=""
       width={size}
       height={size}

@@ -10,6 +10,7 @@ import {
   listComments,
 } from "@/lib/api/comments";
 import { commentBodySchema } from "@/lib/validation/comments";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -80,6 +81,7 @@ export async function POST(request: Request) {
   // Create comment
   try {
     const comment = await createComment(session.user.id, parsed.data.body);
+    revalidateSite();
     return NextResponse.json({ comment }, { status: 201 });
   } catch (error) {
     console.error("POST /api/comments error:", error);

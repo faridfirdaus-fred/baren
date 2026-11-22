@@ -20,6 +20,7 @@ import {
 } from "@/lib/admin-gallery-client";
 import { galleryKinds, type GalleryKind } from "@/lib/validation/gallery";
 import type { UploadedAsset } from "@/lib/assets-client";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 type GalleryFormValues = {
   kind: GalleryKind;
@@ -403,7 +404,7 @@ export function AdminGalleryManager() {
                 <article>
                   {item.kind === "video" ? (
                     <video
-                      src={item.fileUrl}
+                      src={resolvePublicAssetUrl(item.fileUrl) || item.fileUrl}
                       preload="metadata"
                       muted
                       playsInline
@@ -413,7 +414,7 @@ export function AdminGalleryManager() {
                   ) : (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={item.fileUrl}
+                      src={resolvePublicAssetUrl(item.fileUrl) || item.fileUrl}
                       alt={item.title || `Gambar galeri ${item.id}`}
                       loading="lazy"
                     />

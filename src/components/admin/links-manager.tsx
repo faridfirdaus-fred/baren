@@ -21,6 +21,11 @@ interface ApiResponse<T = unknown> {
   ok: boolean;
   data?: T;
   message?: string;
+  error?: {
+    code?: string;
+    message?: string;
+    fields?: Record<string, string[]>;
+  };
   fields?: Record<string, string[]>;
 }
 
@@ -46,7 +51,9 @@ export function LinksManager() {
       const res = await fetch("/api/social-links");
       const json = (await res.json()) as ApiResponse<SocialLink[]>;
       if (!json.ok) {
-        setSocialError(json.message || "Gagal memuat tautan sosial");
+        setSocialError(
+          json.error?.message || json.message || "Gagal memuat tautan sosial",
+        );
         return;
       }
       setSocialLinks(json.data || []);
@@ -66,6 +73,7 @@ export function LinksManager() {
   const handleSocialSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSocialFormErrors({});
+    setSocialError(null);
     setSocialSubmitting(true);
 
     try {
@@ -83,10 +91,15 @@ export function LinksManager() {
       const json = (await res.json()) as ApiResponse;
 
       if (!json.ok) {
-        if (json.fields) {
-          setSocialFormErrors(json.fields);
+        const fields = json.error?.fields || json.fields;
+        if (fields && Object.keys(fields).length > 0) {
+          setSocialFormErrors(fields);
         } else {
-          setSocialError(json.message || "Gagal menyimpan tautan sosial");
+          setSocialError(
+            json.error?.message ||
+              json.message ||
+              "Gagal menyimpan tautan sosial",
+          );
         }
         return;
       }
@@ -94,6 +107,7 @@ export function LinksManager() {
       setSocialForm({ platform: "", url: "", sortOrder: 0 });
       setSocialEditingId(null);
       setSocialFormErrors({});
+      setSocialError(null);
       await loadSocialLinks();
     } catch (err) {
       setSocialError("Gagal menyimpan tautan sosial");
@@ -111,12 +125,14 @@ export function LinksManager() {
     });
     setSocialEditingId(item.id);
     setSocialFormErrors({});
+    setSocialError(null);
   };
 
   const handleSocialCancel = () => {
     setSocialForm({ platform: "", url: "", sortOrder: 0 });
     setSocialEditingId(null);
     setSocialFormErrors({});
+    setSocialError(null);
   };
 
   const handleSocialDelete = async (id: number) => {
@@ -132,7 +148,11 @@ export function LinksManager() {
       const json = (await res.json()) as ApiResponse;
 
       if (!json.ok) {
-        setSocialError(json.message || "Gagal menghapus tautan sosial");
+        setSocialError(
+          json.error?.message ||
+            json.message ||
+            "Gagal menghapus tautan sosial",
+        );
         return;
       }
 
@@ -199,12 +219,15 @@ export function LinksManager() {
                 type="text"
                 required
                 value={socialForm.platform}
-                onChange={(e) =>
+                onChange={(e) => {
                   setSocialForm((prev) => ({
                     ...prev,
                     platform: e.target.value,
-                  }))
-                }
+                  }));
+                  if (socialFormErrors.platform) {
+                    setSocialFormErrors((prev) => ({ ...prev, platform: [] }));
+                  }
+                }}
                 disabled={socialSubmitting}
                 placeholder="discord, instagram, youtube, tiktok"
                 className={adminInputClass}
@@ -250,9 +273,12 @@ export function LinksManager() {
               type="url"
               required
               value={socialForm.url}
-              onChange={(e) =>
-                setSocialForm((prev) => ({ ...prev, url: e.target.value }))
-              }
+              onChange={(e) => {
+                setSocialForm((prev) => ({ ...prev, url: e.target.value }));
+                if (socialFormErrors.url) {
+                  setSocialFormErrors((prev) => ({ ...prev, url: [] }));
+                }
+              }}
               disabled={socialSubmitting}
               placeholder="https://discord.gg/baren"
               className={adminInputClass}

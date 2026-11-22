@@ -16,6 +16,7 @@ import {
   type HeroStore,
 } from "@/lib/api/hero";
 import { heroUpdateSchema, type HeroUpdate } from "@/lib/validation/hero";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -113,9 +114,11 @@ export async function PUT(request: Request): Promise<Response> {
   if (!parsed.ok) return fromResult(parsed);
   try {
     const db = getDb();
+    const updated = await writeHero(heroStore(db), parsed.data);
+    revalidateSite();
     return fromResult({
       ok: true,
-      data: await writeHero(heroStore(db), parsed.data),
+      data: updated,
     });
   } catch (error) {
     console.error("PUT /api/hero gagal:", error);

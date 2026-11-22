@@ -18,6 +18,7 @@ import {
   type NewsRow,
 } from "@/lib/api/news";
 import { newsUpdateSchema, type NewsUpdate } from "@/lib/validation/news";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -138,6 +139,7 @@ export async function PUT(
   try {
     const row = await byId(getDb()).update(id.data, parsed.data);
     if (!row) return notFound("Berita");
+    revalidateSite();
     return fromResult({ ok: true, data: row });
   } catch (error) {
     console.error("PUT /api/news/[key] gagal:", error);
@@ -158,6 +160,7 @@ export async function DELETE(
   try {
     const row = await byId(getDb()).remove(id.data);
     if (!row) return notFound("Berita");
+    revalidateSite();
     return fromResult({ ok: true, data: row });
   } catch (error) {
     console.error("DELETE /api/news/[key] gagal:", error);

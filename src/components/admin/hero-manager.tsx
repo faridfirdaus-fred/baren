@@ -12,6 +12,7 @@ import {
 } from "./form-styles";
 import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 interface HeroData {
   title: string;
@@ -246,7 +247,10 @@ export function HeroManager() {
           {formData.backgroundUrl.trim() ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={formData.backgroundUrl}
+              src={
+                resolvePublicAssetUrl(formData.backgroundUrl) ||
+                formData.backgroundUrl
+              }
               alt="Pratinjau background hero"
               className="mt-2 max-h-48 w-full rounded border object-cover"
             />

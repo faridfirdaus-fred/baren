@@ -237,6 +237,7 @@ public/              # Static art, brand marks, icons
 | `docs/TASK_BREAKDOWN.md`                    | Work breakdown                        |
 | `docs/LAPORAN_SCRAPING_DAN_IMPLEMENTASI.md` | Scraping and implementation report    |
 | `docs/ADMIN_CMS_TESTING_GUIDE.md`           | Manual QA scenarios for all CMS forms |
+| `docs/ISSUES.md`                            | QA issues & bug tracking (#5 - #10)   |
 
 ## Team
 

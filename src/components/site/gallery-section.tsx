@@ -21,19 +21,18 @@ export function GallerySection({
   emptyMessage,
   items = [],
 }: GallerySectionProps) {
-  if (!title) return null;
+  const resolvedTitle = title?.trim() || "GALERI & AKSI";
+  const resolvedEyebrow = eyebrow?.trim() || "MEDIA RESMI";
   const kosong = items.length === 0;
-
-  if (kosong && !emptyTitle && !emptyMessage) {
-    return null;
-  }
 
   return (
     <ScrollRevealWrapper>
       <SectionShell id="galeri" tone="light" className="border-t border-ink/10">
         <div className="flex flex-col items-center text-center">
-          {eyebrow && <p className="eyebrow text-ember-700">{eyebrow}</p>}
-          <h2 className="display-xl mt-4 text-ink">{title}</h2>
+          {resolvedEyebrow && (
+            <p className="eyebrow text-ember-700">{resolvedEyebrow}</p>
+          )}
+          <h2 className="display-xl mt-4 text-ink">{resolvedTitle}</h2>
           {description && (
             <p className="mt-4 max-w-2xl text-lg leading-7 text-ink/75">
               {description}
@@ -44,14 +43,13 @@ export function GallerySection({
         <div className="mt-12">
           {kosong ? (
             <div className="border border-ink/15 bg-ink/5 p-12 text-center">
-              {emptyTitle && (
-                <p className="font-display text-2xl uppercase tracking-wide text-ink">
-                  {emptyTitle}
-                </p>
-              )}
-              {emptyMessage && (
-                <p className="mt-2 text-sm text-ink/70">{emptyMessage}</p>
-              )}
+              <p className="font-display text-2xl uppercase tracking-wide text-ink">
+                {emptyTitle?.trim() || "Segera Hadir"}
+              </p>
+              <p className="mt-2 text-sm text-ink/70">
+                {emptyMessage?.trim() ||
+                  "Media resmi BAREN sedang disiapkan. Kunjungi kembali saat pembaruan dibuka."}
+              </p>
             </div>
           ) : (
             <GalleryGrid items={items} />

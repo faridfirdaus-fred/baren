@@ -3,6 +3,7 @@ import Image from "next/image";
 import { SectionShell } from "@/components/site/section-shell";
 import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
 import type { HowToPlayContent } from "@/lib/how-to-play-content";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 type Props = {
   content: HowToPlayContent;
@@ -10,13 +11,13 @@ type Props = {
 };
 
 export function HowToPlay({ content, title }: Props) {
-  if (!title) return null;
+  const resolvedTitle = title?.trim() || "CARA BERMAIN";
 
   return (
     <ScrollRevealWrapper>
       <SectionShell id="cara-main" tone="dark">
         <h2 className="display-xl text-center text-[clamp(2rem,4vw,3.25rem)]">
-          {title}
+          {resolvedTitle}
         </h2>
 
         {content.videoUrl && (
@@ -27,7 +28,12 @@ export function HowToPlay({ content, title }: Props) {
                 controls
                 poster="/media/hero-poster.jpg"
               >
-                <source src={content.videoUrl} type="video/mp4" />
+                <source
+                  src={
+                    resolvePublicAssetUrl(content.videoUrl) || content.videoUrl
+                  }
+                  type="video/mp4"
+                />
                 Browser Anda tidak mendukung video.
               </video>
             </div>
@@ -40,7 +46,7 @@ export function HowToPlay({ content, title }: Props) {
               {step.mediaUrl && (
                 <div className="relative aspect-video overflow-hidden rounded-lg bg-ink-700">
                   <Image
-                    src={step.mediaUrl}
+                    src={resolvePublicAssetUrl(step.mediaUrl) || step.mediaUrl}
                     fill
                     sizes="(min-width:1024px) 33vw, (min-width:768px) 50vw, 100vw"
                     className="object-cover"

@@ -17,6 +17,7 @@ import {
   type BrandingFormValues,
 } from "@/lib/admin-branding-client";
 import type { UploadedAsset } from "@/lib/assets-client";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 const brandingFormSchema = z.object({
   namaGame: z
@@ -188,8 +189,10 @@ export function AdminBrandingManager() {
     );
   };
 
-  const activeLogoSrc = watchedLogoUrl?.trim() || DEFAULT_LOGO;
-  const activeFaviconSrc = watchedFaviconUrl?.trim() || DEFAULT_FAVICON;
+  const activeLogoSrc =
+    resolvePublicAssetUrl(watchedLogoUrl?.trim()) || DEFAULT_LOGO;
+  const activeFaviconSrc =
+    resolvePublicAssetUrl(watchedFaviconUrl?.trim()) || DEFAULT_FAVICON;
 
   return (
     <div className="grid max-w-4xl gap-8">

@@ -11,6 +11,7 @@ import { parseJsonBody } from "@/lib/api/parse";
 import { parseIdParam } from "@/lib/api/params";
 import type { FeatureById, FeatureRow } from "@/lib/api/game";
 import { featureUpdateSchema, type FeatureUpdate } from "@/lib/validation/game";
+import { revalidateSite } from "@/lib/api/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -72,6 +73,7 @@ export async function PUT(
   try {
     const row = await byId(getDb()).update(id.data, parsed.data);
     if (!row) return notFound("Fitur");
+    revalidateSite();
     return fromResult({ ok: true, data: row });
   } catch (error) {
     console.error("PUT /api/features/[id] gagal:", error);
@@ -92,6 +94,7 @@ export async function DELETE(
   try {
     const row = await byId(getDb()).remove(id.data);
     if (!row) return notFound("Fitur");
+    revalidateSite();
     return fromResult({ ok: true, data: row });
   } catch (error) {
     console.error("DELETE /api/features/[id] gagal:", error);

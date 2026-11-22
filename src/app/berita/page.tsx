@@ -4,6 +4,7 @@ import Image from "next/image";
 import { getAllPublishedNews } from "@/lib/news-content";
 
 export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Artikel & Berita | BAREN",

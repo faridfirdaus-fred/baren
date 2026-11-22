@@ -7,6 +7,8 @@
  * - Konsumen memakai `loading="lazy"` untuk gambar di bawah fold.
  */
 
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
+
 export const R2_IMAGE_FALLBACK_SRC = "/icon.svg";
 const MIN_WIDTH = 16;
 const MAX_WIDTH = 3840;
@@ -42,7 +44,8 @@ export function buildR2ImageUrl({
   width,
   quality,
 }: R2ImageLoaderParams): string {
-  const trimmed = src.trim();
+  const resolved = resolvePublicAssetUrl(src) ?? src;
+  const trimmed = resolved.trim();
   if (!trimmed) return R2_IMAGE_FALLBACK_SRC;
 
   let url: URL;
@@ -70,7 +73,11 @@ export function buildR2ImageUrl({
   const isRelative =
     !trimmed.startsWith("http://") && !trimmed.startsWith("https://");
   if (isRelative) {
-    if (!trimmed.startsWith("/assets/") && !trimmed.startsWith("assets/")) {
+    if (
+      !trimmed.startsWith("/assets/") &&
+      !trimmed.startsWith("assets/") &&
+      !trimmed.startsWith("/api/assets/")
+    ) {
       return R2_IMAGE_FALLBACK_SRC;
     }
     params.set("w", String(safeWidth));

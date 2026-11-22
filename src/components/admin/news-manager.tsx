@@ -21,6 +21,7 @@ import {
   type AdminNewsItem,
 } from "@/lib/admin-news-client";
 import { parseApiEnvelope } from "@/lib/api/client-response";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 export function NewsManager() {
   const [items, setItems] = useState<AdminNewsItem[]>([]);
@@ -311,7 +312,9 @@ export function NewsManager() {
           {formData.coverUrl.trim() ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={formData.coverUrl}
+              src={
+                resolvePublicAssetUrl(formData.coverUrl) || formData.coverUrl
+              }
               alt="Pratinjau sampul berita"
               className="mt-2 max-h-48 w-full rounded border object-cover"
             />
