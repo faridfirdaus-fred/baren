@@ -25,18 +25,20 @@ export interface EventContent extends TextSection {
 
 export const site = {
   name: "BAREN",
-  tagline: "Rebut benteng. Kuasai arena.",
+  tagline: "Lari, sembunyi, dan rebut benteng lawan bersama sahabatmu!",
   description:
-    "BAREN adalah game aksi tim 5v5 yang terinspirasi dari permainan tradisional benteng-bentengan.",
-  email: "halo@baren.game",
+    "Party game lokal 2 vs 2 terinspirasi permainan tradisional Baren atau Bebentengan.",
+  email: "halo@baren.example",
 };
 
 export const nav: NavItem[] = [
-  { label: "INFO GAME", href: "#fitur" },
+  { label: "BERANDA", href: "#top" },
+  { label: "TENTANG", href: "#tentang" },
+  { label: "FITUR", href: "#fitur" },
   { label: "CARA MAIN", href: "#cara-main" },
-  { label: "ARTIKEL", href: "#berita" },
-  { label: "FAQ", href: "#faq" },
   { label: "GALERI", href: "#galeri" },
+  { label: "BERITA", href: "#berita" },
+  { label: "FAQ", href: "#faq" },
   { label: "KOMENTAR", href: "#komentar" },
 ];
 

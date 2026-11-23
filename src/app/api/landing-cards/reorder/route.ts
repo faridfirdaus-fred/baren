@@ -34,3 +34,5 @@ export async function PUT(request: Request): Promise<Response> {
     return fromResult(toDbResult(error));
   }
 }
+
+export const POST = PUT;

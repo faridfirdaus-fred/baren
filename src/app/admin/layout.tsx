@@ -133,17 +133,17 @@ export default function AdminLayout({
                     href={link.href}
                     onClick={closeNav}
                     aria-current={isActive ? "page" : undefined}
-                    className={`group flex min-h-11 items-center gap-3 border-l-2 px-3.5 py-2.5 text-xs font-semibold uppercase tracking-[0.08em] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember ${
+                    className={`group flex min-h-11 items-center gap-3 px-3.5 py-2.5 text-xs font-bold uppercase tracking-[0.08em] rounded-xl transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b] ${
                       isActive
-                        ? "border-ember bg-ink-700/80 text-ember"
-                        : "border-transparent text-sand/80 hover:border-sand/30 hover:bg-ink-700/40 hover:text-sand"
+                        ? "bg-[#f59e0b] text-[#2f180a] shadow-md font-black"
+                        : "text-[#faf6ee]/80 hover:bg-white/10 hover:text-[#faf6ee]"
                     }`}
                   >
                     <Icon
                       className={`h-4 w-4 shrink-0 transition-colors ${
                         isActive
-                          ? "text-ember"
-                          : "text-sand-600 group-hover:text-sand"
+                          ? "text-[#2f180a]"
+                          : "text-[#8c7b6d] group-hover:text-[#faf6ee]"
                       }`}
                       aria-hidden="true"
                     />
@@ -192,31 +192,31 @@ export default function AdminLayout({
   );
 
   return (
-    <div className="flex min-h-dvh flex-col overflow-x-clip bg-ink text-sand md:flex-row">
+    <div className="flex min-h-dvh flex-col overflow-x-clip bg-[#faf6ee] text-[#2f180a] md:flex-row">
       <a
         href="#konten-admin"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-none focus:bg-sand focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-ink focus:outline-2 focus:outline-offset-2 focus:outline-ember"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-none focus:bg-[#2f180a] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:outline-2 focus:outline-offset-2 focus:outline-[#f59e0b]"
       >
         Lewati ke konten admin
       </a>
 
       {/* Topbar seluler */}
-      <header className="flex h-16 items-center justify-between gap-4 border-b border-ink-700 bg-ink-800 px-4 md:hidden">
+      <header className="flex h-16 items-center justify-between gap-4 border-b border-[#422310] bg-[#2f180a] px-4 md:hidden text-white">
         <button
           ref={toggleRef}
           type="button"
           onClick={() => setNavOpen((v) => !v)}
           aria-expanded={navOpen}
           aria-controls="navigasi-admin-drawer"
-          className={adminButtonClass("ghost", "icon")}
+          className="text-[#faf6ee] p-2 hover:bg-white/10 rounded-xl"
         >
           <span className="sr-only">
             {navOpen ? "Tutup menu navigasi admin" : "Buka menu navigasi admin"}
           </span>
           <Menu className="h-6 w-6" aria-hidden="true" />
         </button>
-        <span className="font-display text-lg uppercase tracking-wider text-sand">
-          Admin BAREN
+        <span className="font-black text-lg uppercase tracking-wider text-[#faf6ee]">
+          BAREN PANEL ADMIN
         </span>
         <Link
           href="/"
@@ -224,7 +224,7 @@ export default function AdminLayout({
           rel="noopener noreferrer"
           title="Buka Website Utama"
           aria-label="Buka Website Utama"
-          className="flex h-11 w-11 items-center justify-center text-sand-600 transition-colors hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+          className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-[#f59e0b] hover:bg-white/20"
         >
           <Globe className="h-5 w-5" aria-hidden="true" />
         </Link>
@@ -234,14 +234,17 @@ export default function AdminLayout({
       <aside
         id="navigasi-admin"
         aria-label="Navigasi admin"
-        className="hidden w-64 shrink-0 flex-col border-r border-ink-700 bg-ink-800 md:sticky md:top-0 md:flex md:h-dvh md:self-start"
+        className="hidden w-64 shrink-0 flex-col border-r border-[#422310] bg-[#2f180a] text-white md:sticky md:top-0 md:flex md:h-dvh md:self-start"
       >
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-ink-700 px-5">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#422310] px-5">
           <Link
             href="/admin"
-            className="font-display text-xl uppercase tracking-wider text-sand hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            className="flex items-center gap-2 font-black text-lg uppercase tracking-wider text-[#f59e0b] hover:text-white transition-colors"
           >
-            Admin BAREN
+            <span>● BAREN</span>
+            <span className="text-[10px] text-white/60 font-bold tracking-normal">
+              PANEL
+            </span>
           </Link>
           <Link
             href="/"
@@ -249,7 +252,7 @@ export default function AdminLayout({
             rel="noopener noreferrer"
             title="Lihat Website Utama (Buka di Tab Baru)"
             aria-label="Lihat Website Utama"
-            className="flex h-9 w-9 items-center justify-center border border-line bg-ink-700/50 text-sand-600 transition-colors hover:border-ember hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-[#f59e0b] hover:bg-white/20 transition-colors"
           >
             <ExternalLink className="h-4 w-4" aria-hidden="true" />
           </Link>

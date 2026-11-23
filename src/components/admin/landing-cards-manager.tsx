@@ -1,18 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AssetUploader } from "./asset-uploader";
-import { adminButtonClass } from "./button-styles";
+import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 import {
-  adminInputClass,
-  adminTextareaClass,
-  adminSelectClass,
-  adminCheckboxClass,
-  adminLabelClass,
-  adminErrorClass,
-} from "./form-styles";
+  GripVertical,
+  Pencil,
+  Trash2,
+  Plus,
+  ExternalLink,
+  Check,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
+import { AssetUploader } from "./asset-uploader";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
-import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
 import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
@@ -57,15 +58,15 @@ export function LandingCardsManager() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<LandingCardFormData>({
-    slot: "general",
+    slot: "Tentang",
     eyebrow: "",
     title: "",
     subtitle: "",
     body: "",
     imageUrl: "",
-    ctaLabel: "",
-    ctaUrl: "",
-    tone: "dark",
+    ctaLabel: "Gabung Wishlist",
+    ctaUrl: "#wishlist",
+    tone: "light",
     sortOrder: 0,
     isPublished: true,
   });
@@ -81,7 +82,29 @@ export function LandingCardsManager() {
     type: "success" | "error";
   } | null>(null);
 
-  const loadCards = async () => {
+  // Drag and drop state
+  const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
+
+  const selectCardForEdit = useCallback((item: LandingCard) => {
+    setFormData({
+      slot: item.slot || "Tentang",
+      eyebrow: item.eyebrow || "",
+      title: item.title,
+      subtitle: item.subtitle || "",
+      body: item.body || "",
+      imageUrl: item.imageUrl || "",
+      ctaLabel: item.ctaLabel || "",
+      ctaUrl: item.ctaUrl || "",
+      tone: item.tone,
+      sortOrder: item.sortOrder,
+      isPublished: item.isPublished === 1,
+    });
+    setEditingId(item.id);
+    setFormErrors({});
+  }, []);
+
+  const loadCards = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -91,25 +114,48 @@ export function LandingCardsManager() {
         setError(json.message || "Gagal memuat kartu");
         return;
       }
-      setItems((json.data || []).sort((a, b) => a.sortOrder - b.sortOrder));
+      const loaded = (json.data || []).sort(
+        (a, b) => a.sortOrder - b.sortOrder,
+      );
+      setItems(loaded);
+      if (loaded.length > 0 && editingId === null) {
+        selectCardForEdit(loaded[0]);
+      }
     } catch (err) {
       setError("Gagal memuat kartu");
       console.error(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [editingId, selectCardForEdit]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadCards();
-  }, []);
+  }, [loadCards]);
+
+  const startCreateNew = () => {
+    setFormData({
+      slot: "Karakter",
+      eyebrow: "",
+      title: "",
+      subtitle: "",
+      body: "",
+      imageUrl: "",
+      ctaLabel: "Gabung Wishlist",
+      ctaUrl: "#wishlist",
+      tone: "light",
+      sortOrder: items.length,
+      isPublished: true,
+    });
+    setEditingId(null);
+    setFormErrors({});
+  };
 
   const handleImageUploaded = (asset: UploadedAsset) => {
     setFormData((prev) => ({ ...prev, imageUrl: asset.publicUrl }));
     setToast({
-      message:
-        "Gambar berhasil diunggah ke R2. Klik 'Simpan' untuk menerapkan perubahan.",
+      message: "Gambar berhasil diunggah ke R2.",
       type: "success",
     });
   };
@@ -147,23 +193,9 @@ export function LandingCardsManager() {
       }
 
       setToast({
-        message: editingId ? "Kartu diperbarui" : "Kartu ditambahkan",
+        message: "Perubahan disimpan",
         type: "success",
       });
-      setFormData({
-        slot: "general",
-        eyebrow: "",
-        title: "",
-        subtitle: "",
-        body: "",
-        imageUrl: "",
-        ctaLabel: "",
-        ctaUrl: "",
-        tone: "dark",
-        sortOrder: 0,
-        isPublished: true,
-      });
-      setEditingId(null);
       await loadCards();
     } catch (err) {
       setToast({ message: "Gagal menyimpan kartu", type: "error" });
@@ -171,42 +203,6 @@ export function LandingCardsManager() {
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const handleEdit = (item: LandingCard) => {
-    setFormData({
-      slot: item.slot,
-      eyebrow: item.eyebrow || "",
-      title: item.title,
-      subtitle: item.subtitle || "",
-      body: item.body || "",
-      imageUrl: item.imageUrl || "",
-      ctaLabel: item.ctaLabel || "",
-      ctaUrl: item.ctaUrl || "",
-      tone: item.tone,
-      sortOrder: item.sortOrder,
-      isPublished: item.isPublished === 1,
-    });
-    setEditingId(item.id);
-    setFormErrors({});
-  };
-
-  const handleCancelEdit = () => {
-    setFormData({
-      slot: "general",
-      eyebrow: "",
-      title: "",
-      subtitle: "",
-      body: "",
-      imageUrl: "",
-      ctaLabel: "",
-      ctaUrl: "",
-      tone: "dark",
-      sortOrder: 0,
-      isPublished: true,
-    });
-    setEditingId(null);
-    setFormErrors({});
   };
 
   const handleDelete = async () => {
@@ -224,6 +220,9 @@ export function LandingCardsManager() {
         return;
       }
       setToast({ message: "Kartu dihapus", type: "success" });
+      if (editingId === deleteTarget.id) {
+        setEditingId(null);
+      }
       await loadCards();
     } catch (err) {
       setToast({ message: "Gagal menghapus kartu", type: "error" });
@@ -233,11 +232,13 @@ export function LandingCardsManager() {
     }
   };
 
+  // Reordering via Buttons
   const handleMoveUp = async (id: number) => {
     const idx = items.findIndex((c) => c.id === id);
     if (idx <= 0) return;
     const newOrder = [...items];
     [newOrder[idx - 1], newOrder[idx]] = [newOrder[idx], newOrder[idx - 1]];
+    setItems(newOrder);
     await reorder(newOrder.map((c) => c.id));
   };
 
@@ -246,13 +247,44 @@ export function LandingCardsManager() {
     if (idx < 0 || idx >= items.length - 1) return;
     const newOrder = [...items];
     [newOrder[idx], newOrder[idx + 1]] = [newOrder[idx + 1], newOrder[idx]];
+    setItems(newOrder);
     await reorder(newOrder.map((c) => c.id));
+  };
+
+  // Drag and Drop Handlers
+  const handleDragStart = (idx: number) => {
+    setDraggedIdx(idx);
+  };
+
+  const handleDragOver = (e: React.DragEvent, idx: number) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === idx) return;
+    setDragOverIdx(idx);
+  };
+
+  const handleDrop = async (e: React.DragEvent, dropIdx: number) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === dropIdx) {
+      setDraggedIdx(null);
+      setDragOverIdx(null);
+      return;
+    }
+
+    const newItems = [...items];
+    const [movedItem] = newItems.splice(draggedIdx, 1);
+    newItems.splice(dropIdx, 0, movedItem);
+
+    setItems(newItems);
+    setDraggedIdx(null);
+    setDragOverIdx(null);
+
+    await reorder(newItems.map((c) => c.id));
   };
 
   const reorder = async (ids: number[]) => {
     try {
       const res = await fetch("/api/landing-cards/reorder", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids }),
       });
@@ -264,319 +296,421 @@ export function LandingCardsManager() {
         });
         return;
       }
-      await loadCards();
+      setToast({ message: "Urutan berhasil diperbarui", type: "success" });
     } catch (err) {
       setToast({ message: "Gagal mengubah urutan", type: "error" });
       console.error(err);
     }
   };
 
-  if (loading) return <p>Memuat kartu...</p>;
-  if (error) return <p className="text-ember">{error}</p>;
+  if (loading) {
+    return (
+      <div className="p-8 text-center text-[#542d14] font-bold">
+        Memuat kartu landing...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 bg-red-50 text-[#c83820] font-bold rounded-2xl border border-red-200">
+        {error}
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <form
-        onSubmit={handleSubmit}
-        className="mb-8 space-y-4 border border-line bg-ink-800 p-6"
-      >
-        <h3 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
-          {editingId ? "Edit Kartu" : "Tambah Kartu"}
-        </h3>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <label htmlFor="title" className={adminLabelClass}>
-              Judul Kartu *
-            </label>
-            <input
-              id="title"
-              type="text"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-              className={adminInputClass}
-              required
-              placeholder="Contoh: Senjata Khusus"
-            />
-            {formErrors.title && (
-              <p className={adminErrorClass}>{formErrors.title[0]}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="slot" className={adminLabelClass}>
-              Slot / Posisi (opsional)
-            </label>
-            <input
-              id="slot"
-              type="text"
-              value={formData.slot}
-              onChange={(e) =>
-                setFormData({ ...formData, slot: e.target.value })
-              }
-              className={adminInputClass}
-              placeholder="Contoh: featured"
-            />
-            {formErrors.slot && (
-              <p className={adminErrorClass}>{formErrors.slot[0]}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <label htmlFor="eyebrow" className={adminLabelClass}>
-              Eyebrow (opsional)
-            </label>
-            <input
-              id="eyebrow"
-              type="text"
-              value={formData.eyebrow}
-              onChange={(e) =>
-                setFormData({ ...formData, eyebrow: e.target.value })
-              }
-              className={adminInputClass}
-              placeholder="Contoh: ARSENAL"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="subtitle" className={adminLabelClass}>
-              Subjudul (opsional)
-            </label>
-            <input
-              id="subtitle"
-              type="text"
-              value={formData.subtitle}
-              onChange={(e) =>
-                setFormData({ ...formData, subtitle: e.target.value })
-              }
-              className={adminInputClass}
-              placeholder="Koleksi persenjataan mutakhir"
-            />
-          </div>
-        </div>
-
+    <div className="w-full">
+      {/* Top Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <label htmlFor="body" className={adminLabelClass}>
-            Deskripsi / Isi
-          </label>
-          <textarea
-            id="body"
-            value={formData.body}
-            onChange={(e) => setFormData({ ...formData, body: e.target.value })}
-            className={adminTextareaClass}
-            rows={3}
-            placeholder="Deskripsi kartu yang ditampilkan pada seksi..."
-          />
+          <h1 className="text-3xl font-black text-[#2f180a] tracking-tight">
+            Kartu Landing
+          </h1>
+          <p className="text-sm font-medium text-[#542d14] mt-1">
+            Atur kartu konten yang tampil di beranda sesuai urutan
+          </p>
         </div>
-
-        <div>
-          <label htmlFor="imageUrl" className={adminLabelClass}>
-            Gambar Kartu
-          </label>
-          <input
-            id="imageUrl"
-            type="url"
-            value={formData.imageUrl}
-            onChange={(e) =>
-              setFormData({ ...formData, imageUrl: e.target.value })
-            }
-            className={adminInputClass}
-            placeholder="https://... (atau pilih berkas di bawah)"
-          />
-          {formData.imageUrl.trim() ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={
-                resolvePublicAssetUrl(formData.imageUrl) || formData.imageUrl
-              }
-              alt="Pratinjau gambar kartu"
-              className="mt-2 max-h-40 w-full rounded border object-cover"
-            />
-          ) : null}
-          <div className="mt-2">
-            <AssetUploader
-              purpose="landing-image"
-              onUploaded={handleImageUploaded}
-              disabled={submitting}
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <label htmlFor="ctaLabel" className={adminLabelClass}>
-              Label Tombol (CTA)
-            </label>
-            <input
-              id="ctaLabel"
-              type="text"
-              value={formData.ctaLabel}
-              onChange={(e) =>
-                setFormData({ ...formData, ctaLabel: e.target.value })
-              }
-              className={adminInputClass}
-              placeholder="Contoh: LIHAT DETAIL"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="ctaUrl" className={adminLabelClass}>
-              URL / Target Tombol (CTA)
-            </label>
-            <input
-              id="ctaUrl"
-              type="url"
-              value={formData.ctaUrl}
-              onChange={(e) =>
-                setFormData({ ...formData, ctaUrl: e.target.value })
-              }
-              className={adminInputClass}
-              placeholder="https://..."
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="tone" className={adminLabelClass}>
-              Tema Warna (Tone)
-            </label>
-            <select
-              id="tone"
-              value={formData.tone}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  tone: e.target.value as "dark" | "light" | "ember",
-                })
-              }
-              className={adminSelectClass}
-            >
-              <option value="dark">Dark</option>
-              <option value="light">Light</option>
-              <option value="ember">Ember</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="sortOrder" className={adminLabelClass}>
-              Urutan
-            </label>
-            <input
-              id="sortOrder"
-              type="number"
-              value={formData.sortOrder}
-              onChange={(e) =>
-                setFormData({ ...formData, sortOrder: Number(e.target.value) })
-              }
-              className={adminInputClass}
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <input
-            id="isPublished"
-            type="checkbox"
-            checked={formData.isPublished}
-            className={adminCheckboxClass}
-            onChange={(e) =>
-              setFormData({ ...formData, isPublished: e.target.checked })
-            }
-          />
-          <label
-            htmlFor="isPublished"
-            className="cursor-pointer text-sm font-medium text-sand"
+        <div className="flex items-center gap-3">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#2f180a]/20 bg-white text-xs font-bold uppercase tracking-wider text-[#2f180a] hover:bg-[#faf6ee] shadow-sm transition-all"
           >
-            Terbit
-          </label>
-        </div>
-
-        <div className="flex gap-2">
+            <ExternalLink className="w-4 h-4 text-[#8c7b6d]" />
+            <span>Lihat Situs</span>
+          </a>
           <button
-            type="submit"
-            disabled={submitting}
-            className={adminButtonClass("primary", "md")}
+            type="button"
+            onClick={startCreateNew}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#c83820] hover:bg-[#a72d18] text-white text-xs font-black uppercase tracking-wider shadow-md transition-all cursor-pointer"
           >
-            {submitting ? "Menyimpan..." : "Simpan"}
+            <Plus className="w-4 h-4" />
+            <span>+ Tambah Kartu</span>
           </button>
-          {editingId && (
-            <button
-              type="button"
-              onClick={handleCancelEdit}
-              className={adminButtonClass("secondary", "md")}
-            >
-              Batal
-            </button>
+        </div>
+      </div>
+
+      {/* Master-Detail 2-Column Split Workspace */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Kolom Kiri: Reorderable Card List */}
+        <div className="lg:col-span-7 flex flex-col gap-3.5">
+          <div className="text-xs font-bold uppercase tracking-wider text-[#8c7b6d] px-1 flex items-center justify-between">
+            <span>Daftar Kartu ({items.length})</span>
+            <span className="text-[11px] text-[#542d14]">
+              💡 Drag baris atau gunakan ↑ ↓ untuk mengurutkan
+            </span>
+          </div>
+
+          {items.length === 0 ? (
+            <div className="p-8 rounded-3xl bg-white border-2 border-dashed border-[#2f180a]/15 text-center text-[#8c7b6d]">
+              Belum ada kartu landing. Klik tombol{" "}
+              <strong>+ Tambah Kartu</strong>.
+            </div>
+          ) : (
+            items.map((item, idx) => {
+              const isSelected = editingId === item.id;
+              const isDragTarget = dragOverIdx === idx;
+
+              return (
+                <div
+                  key={item.id}
+                  draggable
+                  onDragStart={() => handleDragStart(idx)}
+                  onDragOver={(e) => handleDragOver(e, idx)}
+                  onDrop={(e) => handleDrop(e, idx)}
+                  className={`group relative flex items-center gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-white border-2 transition-all cursor-grab active:cursor-grabbing ${
+                    isSelected
+                      ? "border-[#c83820] ring-2 ring-[#c83820]/30 shadow-md"
+                      : "border-[#2f180a]/12 hover:border-[#2f180a]/30 shadow-sm"
+                  } ${isDragTarget ? "border-t-4 border-t-[#f59e0b] bg-[#fef3c7]/20" : ""}`}
+                >
+                  {/* Reorder Buttons & Handle */}
+                  <div className="flex flex-col items-center gap-1 text-[#8c7b6d] shrink-0">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void handleMoveUp(item.id);
+                      }}
+                      disabled={idx === 0}
+                      className="p-1 rounded hover:bg-[#faf6ee] text-[#2f180a] disabled:opacity-30 cursor-pointer"
+                      title="Pindah ke atas"
+                    >
+                      <ArrowUp className="w-3.5 h-3.5" />
+                    </button>
+                    <GripVertical className="w-4 h-4 text-[#8c7b6d]/60 group-hover:text-[#2f180a]" />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void handleMoveDown(item.id);
+                      }}
+                      disabled={idx === items.length - 1}
+                      className="p-1 rounded hover:bg-[#faf6ee] text-[#2f180a] disabled:opacity-30 cursor-pointer"
+                      title="Pindah ke bawah"
+                    >
+                      <ArrowDown className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  {/* Thumbnail */}
+                  <div
+                    onClick={() => selectCardForEdit(item)}
+                    className="relative w-20 h-14 sm:w-24 sm:h-16 rounded-xl overflow-hidden bg-[#2f180a] shrink-0 border border-[#2f180a]/15 cursor-pointer"
+                  >
+                    {item.imageUrl ? (
+                      <Image
+                        src={
+                          resolvePublicAssetUrl(item.imageUrl) || item.imageUrl
+                        }
+                        alt={item.title}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[10px] text-white/50 uppercase font-bold">
+                        No Img
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content & Badges */}
+                  <div
+                    onClick={() => selectCardForEdit(item)}
+                    className="min-w-0 flex-1 cursor-pointer"
+                  >
+                    <h3 className="text-sm sm:text-base font-black text-[#2f180a] truncate leading-tight">
+                      {item.title}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                      {item.isPublished === 1 ? (
+                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-[#10b981] text-white">
+                          TERBIT
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-stone-300 text-stone-700">
+                          DRAF
+                        </span>
+                      )}
+                      <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e]">
+                        {item.tone === "ember"
+                          ? "HANGAT"
+                          : item.tone === "light"
+                            ? "TERANG"
+                            : "GELAP"}
+                      </span>
+                      <span className="text-[11px] font-medium text-[#8c7b6d]">
+                        Slot: {item.slot || "Umum"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => selectCardForEdit(item)}
+                      className={`p-2 rounded-xl border border-[#2f180a]/15 transition-all ${
+                        isSelected
+                          ? "bg-[#c83820] text-white border-transparent"
+                          : "bg-white text-[#2f180a] hover:bg-[#faf6ee]"
+                      }`}
+                      title="Edit kartu"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setDeleteTarget({ id: item.id, title: item.title })
+                      }
+                      className="p-2 rounded-xl border border-[#2f180a]/15 bg-white text-[#c83820] hover:bg-red-50 transition-all"
+                      title="Hapus kartu"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
-      </form>
 
-      <h3 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
-        Daftar Kartu
-      </h3>
-      {items.length === 0 ? (
-        <p className="text-sand-600">Belum ada kartu.</p>
-      ) : (
-        <div className="space-y-4">
-          {items.map((item, idx) => (
-            <div key={item.id} className="border border-line bg-ink-800 p-4">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h4 className="font-bold">{item.title}</h4>
-                  <p className="text-sm text-sand-600">{item.subtitle}</p>
-                  <p className="text-xs text-sand-600 mt-2">
-                    Slot: {item.slot} | Tone: {item.tone} | Terbit:{" "}
-                    {item.isPublished ? "Ya" : "Tidak"}
-                  </p>
-                </div>
-                <div className="flex gap-2 ml-4">
-                  <button
-                    type="button"
-                    onClick={() => handleMoveUp(item.id)}
-                    disabled={idx === 0}
-                    className={adminButtonClass("secondary", "icon-sm")}
-                    aria-label="Naik"
-                  >
-                    ↑
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleMoveDown(item.id)}
-                    disabled={idx === items.length - 1}
-                    className={adminButtonClass("secondary", "icon-sm")}
-                    aria-label="Turun"
-                  >
-                    ↓
-                  </button>
-                </div>
-              </div>
-              <div className="flex gap-2 mt-4">
-                <button
-                  type="button"
-                  onClick={() => handleEdit(item)}
-                  className={adminButtonClass("secondary", "sm")}
-                >
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setDeleteTarget({ id: item.id, title: item.title })
-                  }
-                  className={adminButtonClass("danger", "sm")}
-                >
-                  Hapus
-                </button>
-              </div>
+        {/* Kolom Kanan: Inspector Formulir Edit Kartu */}
+        <div className="lg:col-span-5">
+          <div className="rounded-3xl bg-white border-2 border-[#2f180a]/15 p-6 sm:p-7 shadow-lg sticky top-24">
+            <div className="flex items-center justify-between pb-4 border-b border-[#2f180a]/10 mb-5">
+              <h2 className="text-xl font-black text-[#2f180a]">
+                {editingId ? "Edit Kartu" : "Tambah Kartu"}
+              </h2>
+              {formData.isPublished ? (
+                <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-[#10b981] text-white">
+                  TERBIT
+                </span>
+              ) : (
+                <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-stone-300 text-stone-700">
+                  DRAF
+                </span>
+              )}
             </div>
-          ))}
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div>
+                <label
+                  htmlFor="card-title"
+                  className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1.5"
+                >
+                  Judul Kartu *
+                </label>
+                <input
+                  id="card-title"
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                  required
+                  placeholder="Contoh: Rebut benteng bersama tim"
+                  className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3.5 py-2.5 text-sm text-[#2f180a] focus:border-[#c83820] focus:outline-none bg-[#faf6ee]/50 font-medium"
+                />
+                {formErrors.title && (
+                  <p className="text-xs font-bold text-[#c83820] mt-1">
+                    {formErrors.title[0]}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="card-desc"
+                  className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1.5"
+                >
+                  Deskripsi
+                </label>
+                <textarea
+                  id="card-desc"
+                  value={formData.body}
+                  onChange={(e) =>
+                    setFormData({ ...formData, body: e.target.value })
+                  }
+                  rows={3}
+                  placeholder="Deskripsi singkat aksi atau keunggulan kartu..."
+                  className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3.5 py-2.5 text-sm text-[#2f180a] focus:border-[#c83820] focus:outline-none bg-[#faf6ee]/50 font-medium resize-none"
+                />
+              </div>
+
+              {/* Upload Gambar Drag & Drop */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1.5">
+                  Gambar
+                </label>
+                <div className="rounded-2xl border-2 border-dashed border-[#2f180a]/20 p-3 bg-[#faf6ee]/40">
+                  {formData.imageUrl ? (
+                    <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-[#2f180a] mb-3">
+                      <Image
+                        src={
+                          resolvePublicAssetUrl(formData.imageUrl) ||
+                          formData.imageUrl
+                        }
+                        alt="Pratinjau"
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </div>
+                  ) : null}
+                  <AssetUploader
+                    purpose="landing-image"
+                    onUploaded={handleImageUploaded}
+                    disabled={submitting}
+                  />
+                </div>
+              </div>
+
+              {/* Teks Tombol & Tautan */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label
+                    htmlFor="cta-label"
+                    className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1"
+                  >
+                    Teks Tombol
+                  </label>
+                  <input
+                    id="cta-label"
+                    type="text"
+                    value={formData.ctaLabel}
+                    onChange={(e) =>
+                      setFormData({ ...formData, ctaLabel: e.target.value })
+                    }
+                    placeholder="Gabung Wishlist"
+                    className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3 py-2 text-xs text-[#2f180a] bg-[#faf6ee]/50 focus:border-[#c83820] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="cta-url"
+                    className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1"
+                  >
+                    Tautan Tombol
+                  </label>
+                  <input
+                    id="cta-url"
+                    type="text"
+                    value={formData.ctaUrl}
+                    onChange={(e) =>
+                      setFormData({ ...formData, ctaUrl: e.target.value })
+                    }
+                    placeholder="#wishlist"
+                    className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3 py-2 text-xs text-[#2f180a] bg-[#faf6ee]/50 focus:border-[#c83820] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Slot & Tone */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label
+                    htmlFor="card-slot"
+                    className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1"
+                  >
+                    Slot
+                  </label>
+                  <input
+                    id="card-slot"
+                    type="text"
+                    value={formData.slot}
+                    onChange={(e) =>
+                      setFormData({ ...formData, slot: e.target.value })
+                    }
+                    placeholder="Tentang / Karakter / Fitur"
+                    className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3 py-2 text-xs text-[#2f180a] bg-[#faf6ee]/50 focus:border-[#c83820] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="card-tone"
+                    className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1"
+                  >
+                    Tema (Tone)
+                  </label>
+                  <select
+                    id="card-tone"
+                    value={formData.tone}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        tone: e.target.value as "dark" | "light" | "ember",
+                      })
+                    }
+                    className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3 py-2 text-xs text-[#2f180a] bg-[#faf6ee]/50 focus:border-[#c83820] focus:outline-none"
+                  >
+                    <option value="light">Terang (Parchment)</option>
+                    <option value="dark">Gelap (Timber)</option>
+                    <option value="ember">Hangat (Terracotta)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Toggle Tampilkan di Beranda */}
+              <div className="flex items-center justify-between py-2 border-y border-[#2f180a]/10">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#2f180a]">
+                  Tampilkan di beranda
+                </span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.isPublished}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        isPublished: e.target.checked,
+                      })
+                    }
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#10b981]" />
+                </label>
+              </div>
+
+              {/* Form Action */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#c83820] hover:bg-[#a72d18] text-white font-black text-sm uppercase tracking-wider shadow-md transition-all cursor-pointer disabled:opacity-50"
+                >
+                  <Check className="w-4 h-4 stroke-[3]" />
+                  <span>{submitting ? "Menyimpan..." : "✓ Simpan"}</span>
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      )}
+      </div>
 
       <DeleteConfirmDialog
         open={!!deleteTarget}
@@ -586,12 +720,14 @@ export function LandingCardsManager() {
         onCancel={() => setDeleteTarget(null)}
       />
 
+      {/* Floating Bottom-Right Toast */}
       {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
+        <div className="fixed bottom-6 right-6 z-50 animate-bounce-once">
+          <div className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-[#10b981] text-white font-black text-sm shadow-2xl border-2 border-white">
+            <span>✓</span>
+            <span>{toast.message}</span>
+          </div>
+        </div>
       )}
     </div>
   );

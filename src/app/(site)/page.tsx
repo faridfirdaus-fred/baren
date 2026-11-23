@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
+import { AboutGame } from "@/components/site/about-game";
+import { BatikDivider } from "@/components/site/batik-divider";
 import { CommentsSection } from "@/components/site/comments-section";
-import { ContactSection } from "@/components/site/contact-section";
 import { DownloadSection } from "@/components/site/download-section";
 import { FaqAccordion } from "@/components/site/faq-accordion";
 import { GameFeatures } from "@/components/site/game-features";
@@ -17,25 +18,18 @@ import { getHowToPlayContent } from "@/lib/how-to-play-content";
 import { getLandingCards } from "@/lib/landing-cards-content";
 import {
   resolveCommentsCopy,
-  resolveContactCopy,
   resolveFaqCopy,
   resolveGameFeaturesCopy,
   resolveGalleryCopy,
   resolveHowToPlayCopy,
   resolveNewsCopy,
 } from "@/lib/landing-content";
-import { getSocialItems } from "@/lib/links-content";
 import { getLatestNews } from "@/lib/news-content";
 import { getLandingSettings } from "@/lib/settings-content";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-// E6-1: Hero dinamis dari DB. E7-3: FAQ dari DB (kosong = seksi hilang).
-// E6-3..6: Landing cards, news-3, how-to-play dari DB (kosong = seksi hilang).
-// E6-7/8: Galeri dari DB. E7-4..6: Download & Kontak dari DB.
-// E13-3: Comments section (authenticated Google users, instant publish).
-// E14-3: Seluruh copy pembungkus seksi dari site_settings via landing-content.
 export default async function SiteHomePage() {
   const [
     settings,
@@ -45,7 +39,6 @@ export default async function SiteHomePage() {
     howToPlay,
     features,
     galleryItems,
-    socialItems,
     comments,
     session,
   ] = await Promise.all([
@@ -56,7 +49,6 @@ export default async function SiteHomePage() {
     getHowToPlayContent(),
     getFeatures(),
     getGalleryItems(),
-    getSocialItems(),
     listComments(),
     auth().catch(() => null),
   ]);
@@ -75,28 +67,44 @@ export default async function SiteHomePage() {
   const faqCopy = resolveFaqCopy(settings);
   const howToPlayCopy = resolveHowToPlayCopy(settings);
   const commentsCopy = resolveCommentsCopy(settings);
-  const contactCopy = resolveContactCopy(settings);
 
   return (
-    <>
+    <div className="flex flex-col w-full bg-[#faf6ee] text-[#2f180a]">
+      {/* 1. Hero Section */}
       <Hero />
-      {news && (
-        <LatestNews
-          items={news}
-          title={newsCopy.title}
-          ctaLabel={newsCopy.ctaLabel}
-        />
-      )}
-      {cards && <LandingCards cards={cards} />}
+
+      {/* 2. Pembatas Batik */}
+      <BatikDivider />
+
+      {/* 3. Tentang Game */}
+      <AboutGame />
+
+      {/* 4. Pembatas Batik */}
+      <BatikDivider />
+
+      {/* 5. Fitur Game */}
       <GameFeatures
         eyebrow={featuresCopy.eyebrow}
         title={featuresCopy.title}
         emptyMessage={featuresCopy.emptyMessage}
         features={features}
       />
+
+      {/* 6. Karakter - Pilih Jagoanmu (Interactive Draggable Deck) */}
+      <LandingCards cards={cards ?? []} />
+
+      {/* 7. Pembatas Batik */}
+      <BatikDivider />
+
+      {/* 8. Cara Main */}
       {howToPlay && (
         <HowToPlay content={howToPlay} title={howToPlayCopy.title} />
       )}
+
+      {/* 9. Pembatas Batik */}
+      <BatikDivider />
+
+      {/* 10. Galeri */}
       <GallerySection
         eyebrow={galleryCopy.eyebrow}
         title={galleryCopy.title}
@@ -105,24 +113,30 @@ export default async function SiteHomePage() {
         emptyMessage={galleryCopy.emptyMessage}
         items={galleryItems ?? []}
       />
+
+      {/* 11. Pembatas Batik */}
+      <BatikDivider />
+
+      {/* 12. Kabar Terbaru (News) */}
+      {news && (
+        <LatestNews
+          items={news}
+          title={newsCopy.title}
+          ctaLabel={newsCopy.ctaLabel}
+        />
+      )}
+
+      {/* 13. Banner Wishlist Steam */}
+      <DownloadSection isLoggedIn={Boolean(session?.user?.email)} />
+
+      {/* 14. FAQ Accordion */}
       <FaqAccordion
         eyebrow={faqCopy.eyebrow}
         title={faqCopy.title}
         items={faqs ?? []}
       />
-      <DownloadSection isLoggedIn={Boolean(session?.user?.email)} />
-      <ContactSection
-        eyebrow={contactCopy.eyebrow}
-        title={contactCopy.title}
-        description={contactCopy.description}
-        emailLabel={contactCopy.emailLabel}
-        contactEmail={contactCopy.contactEmail}
-        socialTitle={contactCopy.socialTitle}
-        socialEmptyMessage={contactCopy.socialEmptyMessage}
-        socials={
-          socialItems?.map((s) => ({ platform: s.label, url: s.url })) ?? []
-        }
-      />
+
+      {/* 15. Komentar Komunitas */}
       <CommentsSection
         initialComments={comments}
         userSession={userSession}
@@ -132,6 +146,6 @@ export default async function SiteHomePage() {
         submitLabel={commentsCopy.submitLabel}
         submitError={commentsCopy.submitError}
       />
-    </>
+    </div>
   );
 }

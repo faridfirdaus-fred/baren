@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Anton, Inter } from "next/font/google";
+import { Anton, Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -15,18 +15,26 @@ const anton = Anton({
   display: "swap",
 });
 
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-display-custom",
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "BAREN | Rebut benteng. Kuasai arena.",
-  description: "BAREN adalah game aksi tim 5v5 terinspirasi benteng-bentengan.",
+  title: "BAREN | Party Game Lokal 2 vs 2 Nusantara",
+  description:
+    "Party game lokal 2 vs 2 terinspirasi permainan tradisional Baren atau Bebentengan. Lari, sembunyi, dan rebut benteng lawan bersama sahabatmu!",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_BASE_URL || "https://baren.example.com",
   ),
   openGraph: {
     type: "website",
     locale: "id_ID",
-    title: "BAREN | Rebut benteng. Kuasai arena.",
+    title: "BAREN | Party Game Lokal 2 vs 2 Nusantara",
     description:
-      "BAREN adalah game aksi tim 5v5 terinspirasi benteng-bentengan.",
+      "Party game lokal 2 vs 2 terinspirasi permainan tradisional Baren atau Bebentengan. Lari, sembunyi, dan rebut benteng lawan bersama sahabatmu!",
   },
   twitter: {
     card: "summary_large_image",
@@ -50,7 +58,7 @@ export default function RootLayout({
     <html
       lang="id"
       data-scroll-behavior="smooth"
-      className={`${inter.variable} ${anton.variable} h-full antialiased`}
+      className={`${inter.variable} ${anton.variable} ${plusJakartaSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         {children}

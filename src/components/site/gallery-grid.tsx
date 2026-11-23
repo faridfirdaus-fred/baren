@@ -108,9 +108,9 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                 onClick={() => buka(i)}
                 aria-haspopup="dialog"
                 aria-label={`Perbesar ${label}`}
-                className="block w-full border border-sand-600 bg-sand text-left transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember"
+                className="group block w-full rounded-2xl overflow-hidden border-2 border-[#542d14] bg-[#1f1007] text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f59e0b]"
               >
-                <span className="relative block aspect-video overflow-hidden bg-ink-700">
+                <span className="relative block aspect-video overflow-hidden bg-[#2f180a]">
                   {video ? (
                     <>
                       <video
@@ -126,10 +126,10 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                       />
                       <span
                         aria-hidden="true"
-                        className="absolute inset-0 flex items-center justify-center bg-ink/40"
+                        className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors"
                       >
-                        <span className="bg-ember p-4 text-sand">
-                          <IconPlay className="h-6 w-6" />
+                        <span className="w-12 h-12 rounded-full bg-[#c83820] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                          <IconPlay className="h-6 w-6 ml-0.5" />
                         </span>
                       </span>
                     </>
@@ -140,15 +140,15 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                       width={800}
                       height={450}
                       sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   )}
                 </span>
-                <span className="block p-5">
-                  <span className="eyebrow text-ember-700">
+                <span className="block p-4 sm:p-5 bg-[#1f1007]">
+                  <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-[#f59e0b] bg-[#f59e0b]/10 px-2.5 py-0.5 rounded-full mb-2">
                     {LABEL_JENIS[item.kind]}
                   </span>
-                  <span className="mt-2 block font-display text-lg uppercase leading-snug text-ink">
+                  <span className="block text-base sm:text-lg font-bold leading-snug text-[#faf6ee] line-clamp-1">
                     {label}
                   </span>
                 </span>

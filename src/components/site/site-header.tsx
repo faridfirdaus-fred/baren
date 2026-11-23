@@ -70,11 +70,15 @@ export function SiteHeader({
   const closeMenu = () => setMenuOpen(false);
 
   const linkCls =
-    "flex items-center gap-1 px-3 py-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember";
+    "flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs lg:text-[13px] font-bold uppercase tracking-[0.08em] text-[#faf6ee] transition-all hover:text-[#f59e0b] hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b]";
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 h-20 transition-colors duration-300 ${scrolled || menuOpen ? "border-b border-ink-700 bg-ink/95 backdrop-blur" : "bg-transparent"}`}
+      className={`fixed inset-x-0 top-0 z-50 h-20 transition-all duration-300 ${
+        scrolled || menuOpen
+          ? "border-b border-[#422310] bg-[#2f180a]/95 backdrop-blur-md shadow-lg"
+          : "bg-transparent"
+      }`}
     >
       <div className="container-baren flex h-full items-center justify-between gap-6 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
         <a

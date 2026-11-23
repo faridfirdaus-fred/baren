@@ -145,7 +145,7 @@ export function AdminLoginForm({
         type="submit"
         disabled={isSubmitting}
         aria-busy={isSubmitting}
-        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-none bg-ember-700 px-6 py-3.5 text-sm font-semibold uppercase tracking-[0.1em] text-sand transition-all duration-150 hover:bg-ember-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#c83820] hover:bg-[#a72d18] px-6 py-3.5 text-sm font-black uppercase tracking-[0.1em] text-white shadow-lg transition-all duration-150 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
       >
         {isSubmitting ? (
           <>

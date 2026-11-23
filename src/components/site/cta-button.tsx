@@ -1,23 +1,28 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-type CtaVariant = "ember" | "ink" | "ghost";
+type CtaVariant = "ember" | "gold" | "ink" | "ghost";
 type CtaSize = "md" | "sm";
 
 const variantClass: Record<CtaVariant, string> = {
-  // E12-3 — Kontras: ember-700+sand 5.13:1; hover ember-800 6.24:1.
-  ember: "bg-ember-700 text-sand hover:bg-ember-800",
-  // Ink di atas sand/ember: sand/ink 16:1.
-  ink: "bg-ink text-sand hover:bg-ink-800",
-  ghost: "border border-current bg-transparent hover:bg-sand/10",
+  // Terracotta Red (Nusantara Batik)
+  ember:
+    "bg-[#c83820] text-white hover:bg-[#a72d18] shadow-[0_4px_14px_rgba(200,56,32,0.4)] border border-[#e4572e]/60 active:scale-[0.98]",
+  // Golden Amber (Wishlist & Highlights)
+  gold: "bg-[#f59e0b] text-[#2f180a] font-extrabold hover:bg-[#d97706] shadow-[0_4px_14px_rgba(245,158,11,0.35)] border border-[#fbbf24] active:scale-[0.98]",
+  // Timber Dark
+  ink: "bg-[#2f180a] text-[#faf6ee] hover:bg-[#1f1007] shadow-md border border-[#422310] active:scale-[0.98]",
+  // Outlined Ghost
+  ghost:
+    "border-2 border-[#f59e0b] text-[#f59e0b] bg-[#2f180a]/70 backdrop-blur-sm hover:bg-[#f59e0b]/15 active:scale-[0.98]",
 };
 
 const sizeClass: Record<CtaSize, string> = {
-  md: "px-8 py-4 text-[1.125rem]",
-  sm: "px-5 py-3 text-sm",
+  md: "px-7 py-3.5 text-base sm:text-lg rounded-full font-bold tracking-wider",
+  sm: "px-5 py-2.5 text-xs sm:text-sm rounded-full font-bold tracking-wider",
 };
 
 const baseClass =
-  "inline-flex items-center justify-center gap-2 rounded-none font-medium uppercase leading-none tracking-[0.08em] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 font-bold uppercase leading-none transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b] disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50";
 
 type CtaButtonProps = {
   href?: string;

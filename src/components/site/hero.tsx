@@ -45,7 +45,11 @@ export async function Hero() {
         loop
         playsInline
         preload="auto"
-        poster={resolvePublicAssetUrl(content.poster) || content.poster}
+        poster={
+          resolvePublicAssetUrl(content.poster) ||
+          content.poster ||
+          "/media/baren-village-keyart.jpg"
+        }
         aria-hidden="true"
       >
         <source
@@ -53,24 +57,36 @@ export async function Hero() {
           type="video/mp4"
         />
       </video>
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/85 via-ink/60 to-ink/95" />
-      <div className="container-baren flex flex-col items-center py-12 text-center lg:py-16">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#2f180a]/90 via-[#2f180a]/65 to-[#2f180a]/95" />
+      <div className="container-baren flex flex-col items-center py-14 text-center lg:py-20">
+        {/* Eyebrow Badge Pill */}
+        <div className="mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1f1007]/80 backdrop-blur-md border border-[#f59e0b]/40 text-[#f59e0b] text-xs font-bold uppercase tracking-wider shadow-md">
+          <span className="text-[#c83820]">●</span> PARTY GAME LOKAL 2 VS 2 •
+          SEGERA DI STEAM
+        </div>
+
+        {/* 3D BAREN Wordmark */}
         <Image
           src="/brand/baren-wordmark.png"
           width={533}
           height={100}
           priority
           alt="BAREN"
-          className="h-auto w-[clamp(140px,18.2vw,210px)]"
+          className="h-auto w-[clamp(180px,26vw,340px)] drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)]"
         />
-        <h1 className="mt-8 max-w-3xl text-lg font-bold uppercase tracking-wider text-sand lg:text-xl">
+
+        <h1 className="mt-6 max-w-3xl text-xl sm:text-2xl font-black uppercase tracking-wide text-[#faf6ee] drop-shadow-sm">
           {content.title}
         </h1>
         {content.subtitle ? (
-          <p className="mt-3 max-w-2xl text-lg leading-7 text-sand/80">
+          <p className="mt-3 max-w-2xl text-base sm:text-lg leading-relaxed text-[#faf6ee]/90 font-medium">
             {content.subtitle}
           </p>
-        ) : null}
+        ) : (
+          <p className="mt-3 max-w-2xl text-base sm:text-lg leading-relaxed text-[#faf6ee]/90 font-medium">
+            Lari, sembunyi, dan rebut benteng lawan bersama sahabatmu!
+          </p>
+        )}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
           {isWishlistCta ? (
             isLoggedIn ? (
