@@ -158,7 +158,7 @@ export function CommentsManager() {
       <DeleteConfirmDialog
         open={!!deleteTarget}
         title="Hapus Komentar"
-        message={`Yakin hapus "${deleteTarget?.preview}"...?`}
+        message={`Apakah Anda yakin ingin menghapus komentar "${deleteTarget?.preview}..."?`}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
       />

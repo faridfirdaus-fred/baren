@@ -151,7 +151,7 @@ export default async function AdminDashboardPage() {
             className={adminButtonClass("secondary", "md")}
           >
             <Globe className="h-4 w-4 text-ember" aria-hidden="true" />
-            <span>Lihat Homepage</span>
+            <span>Lihat Situs</span>
             <ExternalLink
               className="h-3.5 w-3.5 text-sand-600"
               aria-hidden="true"
@@ -165,8 +165,8 @@ export default async function AdminDashboardPage() {
           Ringkasan metrik
         </h2>
         <p className="text-sm text-sand-600">
-          Angka dihitung langsung dari basis data saat halaman dimuat. Pilih
-          kartu untuk melihat dan mengelola data sumbernya.
+          Data diperbarui otomatis secara berkala. Pilih kartu untuk melihat dan
+          mengelola data terkait.
         </p>
         <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {metrics.map((metric) => (
@@ -206,8 +206,8 @@ export default async function AdminDashboardPage() {
             )}
           </p>
           <p className="mt-2 text-xs text-sand-600">
-            Maksimum dari waktu pembaruan konten; tidak termasuk komentar dan
-            wishlist.
+            Waktu pembaruan konten terakhir (tidak termasuk data komentar dan
+            wishlist).
           </p>
         </div>
       </section>

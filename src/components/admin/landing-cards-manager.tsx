@@ -155,7 +155,7 @@ export function LandingCardsManager() {
   const handleImageUploaded = (asset: UploadedAsset) => {
     setFormData((prev) => ({ ...prev, imageUrl: asset.publicUrl }));
     setToast({
-      message: "Gambar berhasil diunggah ke R2.",
+      message: "Gambar berhasil diunggah.",
       type: "success",
     });
   };
@@ -359,13 +359,13 @@ export function LandingCardsManager() {
           <div className="text-xs font-bold uppercase tracking-wider text-[#8c7b6d] px-1 flex items-center justify-between">
             <span>Daftar Kartu ({items.length})</span>
             <span className="text-[11px] text-[#542d14]">
-              💡 Drag baris atau gunakan ↑ ↓ untuk mengurutkan
+              💡 Geser baris atau gunakan tombol ↑ ↓ untuk mengatur urutan
             </span>
           </div>
 
           {items.length === 0 ? (
             <div className="p-8 rounded-3xl bg-white border-2 border-dashed border-[#2f180a]/15 text-center text-[#8c7b6d]">
-              Belum ada kartu landing. Klik tombol{" "}
+              Belum ada kartu konten. Klik tombol{" "}
               <strong>+ Tambah Kartu</strong>.
             </div>
           ) : (
@@ -432,7 +432,7 @@ export function LandingCardsManager() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-[10px] text-white/50 uppercase font-bold">
-                        No Img
+                        Tanpa Gambar
                       </div>
                     )}
                   </div>

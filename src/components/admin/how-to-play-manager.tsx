@@ -192,7 +192,7 @@ export function HowToPlayManager() {
     setVideoUrl(asset.publicUrl);
     setToast({
       message:
-        "Video demo berhasil diunggah ke R2. Klik 'Simpan Video' untuk menerapkan perubahan.",
+        "Video panduan berhasil diunggah. Klik 'Simpan Video' untuk menerapkan perubahan.",
       type: "success",
     });
   };
@@ -201,7 +201,7 @@ export function HowToPlayManager() {
     setStepForm((prev) => ({ ...prev, mediaUrl: asset.publicUrl }));
     setToast({
       message:
-        "Media langkah berhasil diunggah ke R2. Klik 'Simpan' untuk menerapkan perubahan.",
+        "Media langkah berhasil diunggah. Klik 'Simpan' untuk menerapkan perubahan.",
       type: "success",
     });
   };
@@ -226,7 +226,7 @@ export function HowToPlayManager() {
         return;
       }
 
-      setToast({ message: "Video demo disimpan", type: "success" });
+      setToast({ message: "Video panduan berhasil disimpan", type: "success" });
       await loadData();
     } catch (err) {
       setToast({ message: "Gagal menyimpan video", type: "error" });
@@ -236,14 +236,15 @@ export function HowToPlayManager() {
     }
   };
 
-  if (loading) return <p>Memuat how-to-play...</p>;
+  if (loading)
+    return <p className="text-sand-600">Memuat data cara bermain...</p>;
   if (error) return <p className="text-ember">{error}</p>;
 
   return (
     <div>
       <div className="mb-8 border border-line bg-ink-800 p-6">
         <h3 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
-          Video Demo
+          Video Panduan
         </h3>
         <form onSubmit={handleVideoSubmit} className="space-y-4">
           <div>

@@ -128,7 +128,8 @@ export function FaqManager() {
 
   // Handle delete
   const handleDelete = async (id: number) => {
-    if (!window.confirm("Hapus FAQ ini?")) return;
+    if (!window.confirm("Apakah Anda yakin ingin menghapus pertanyaan ini?"))
+      return;
 
     try {
       const res = await fetch(`/api/faq/${id}`, { method: "DELETE" });

@@ -214,9 +214,7 @@ export function AdminGalleryManager() {
         return;
       }
       if (!result.data.r2Deleted) {
-        setNotice(
-          "Record terhapus dari daftar, tetapi objek R2-nya tidak ditemukan (mungkin URL luar atau sudah hilang).",
-        );
+        setNotice("Item berhasil dihapus dari daftar galeri.");
       }
       if (editingId === item.id) cancelEdit();
       await loadGallery();
@@ -247,11 +245,13 @@ export function AdminGalleryManager() {
               onUploaded={(asset) => setUploaded(asset)}
             />
             {editingId === null && uploaded ? (
-              <p className={adminHelpClass}>Terunggah: {uploaded.publicUrl}</p>
+              <p className={adminHelpClass}>
+                Berkas berhasil diunggah dan siap disimpan.
+              </p>
             ) : null}
             {editingId !== null ? (
               <p className={adminHelpClass}>
-                Kosongkan unggahan untuk mempertahankan berkas lama.
+                Biarkan kosong jika tidak ingin mengganti berkas yang sudah ada.
               </p>
             ) : null}
           </div>

@@ -175,7 +175,7 @@ export function AdminBrandingManager() {
       shouldValidate: true,
     });
     setSuccessMessage(
-      "Logo baru berhasil diunggah ke R2. Klik 'Simpan Branding' untuk menerapkan perubahan.",
+      "Logo baru berhasil diunggah. Klik 'Simpan Branding' untuk menerapkan perubahan.",
     );
   };
 
@@ -185,7 +185,7 @@ export function AdminBrandingManager() {
       shouldValidate: true,
     });
     setSuccessMessage(
-      "Favicon baru berhasil diunggah ke R2. Klik 'Simpan Branding' untuk menerapkan perubahan.",
+      "Favicon baru berhasil diunggah. Klik 'Simpan Branding' untuk menerapkan perubahan.",
     );
   };
 
@@ -201,7 +201,7 @@ export function AdminBrandingManager() {
           Kelola Branding
         </h1>
         <p className="mt-1 text-sm text-sand-600">
-          Ubah nama game, tagline, logo, dan favicon situs publik (FR-ADM-08).
+          Ubah nama game, slogan, logo, dan favicon situs.
         </p>
       </header>
 
@@ -370,7 +370,7 @@ export function AdminBrandingManager() {
                 placeholder="https://..."
               />
               <p id="logoUrl-help" className="mt-1 text-xs text-sand-600">
-                Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan
+                Terisi otomatis saat mengunggah berkas di bawah, atau masukkan
                 tautan langsung.
               </p>
               {errors.logoUrl ? (
@@ -387,7 +387,7 @@ export function AdminBrandingManager() {
             {/* Uploader R2 Logo */}
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-sand-600">
-                Unggah Berkas Logo Baru ke R2
+                Unggah Berkas Logo Baru
               </p>
               <AssetUploader
                 purpose="logo"
@@ -463,7 +463,7 @@ export function AdminBrandingManager() {
                 placeholder="https://..."
               />
               <p id="faviconUrl-help" className="mt-1 text-xs text-sand-600">
-                Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan
+                Terisi otomatis saat mengunggah berkas di bawah, atau masukkan
                 tautan langsung.
               </p>
               {errors.faviconUrl ? (
@@ -480,7 +480,7 @@ export function AdminBrandingManager() {
             {/* Uploader R2 Favicon */}
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-sand-600">
-                Unggah Berkas Favicon Baru ke R2
+                Unggah Berkas Favicon Baru
               </p>
               <AssetUploader
                 purpose="favicon"

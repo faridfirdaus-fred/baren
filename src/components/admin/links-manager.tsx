@@ -170,11 +170,11 @@ export function LinksManager() {
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
             <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
-              Email & Copy Seksi Kontak
+              Email & Informasi Kontak
             </h2>
             <p className="mt-1 text-sm text-sand-600">
-              Email resmi, judul seksi, deskripsi, dan pesan kosong sekarang
-              dikelola di halaman Konten Landing.
+              Email resmi, judul seksi, deskripsi, dan teks kontak sekarang
+              dikelola di menu Konten Landing.
             </p>
           </div>
           <Link

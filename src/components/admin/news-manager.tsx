@@ -89,7 +89,7 @@ export function NewsManager() {
     setFormData((prev) => ({ ...prev, coverUrl: asset.publicUrl }));
     setToast({
       message:
-        "Sampul berhasil diunggah ke R2. Klik 'Simpan' untuk menerapkan perubahan.",
+        "Gambar sampul berhasil diunggah. Klik 'Simpan' untuk menerapkan perubahan.",
       type: "success",
     });
   };
@@ -179,17 +179,16 @@ export function NewsManager() {
     }
   };
 
-  if (loading) return <p>Memuat berita...</p>;
+  if (loading) return <p className="text-sand-600">Memuat data berita...</p>;
   if (error) return <p className="text-ember">{error}</p>;
 
   return (
     <div>
       <div className="mb-6 border border-line border-l-2 border-l-ember bg-ink-800 p-4">
         <p className="text-sm text-sand">
-          <strong>Catatan:</strong> Hanya{" "}
-          <strong>maksimal 3 berita terbaru</strong> yang tampil di landing
-          page. Jika kosong, seksi berita akan hilang. Berita yang
-          dipublikasikan dapat diakses di /berita/[slug].
+          <strong>Catatan:</strong> Maksimal <strong>3 berita terbaru</strong>{" "}
+          yang akan ditampilkan pada beranda situs. Berita yang berstatus terbit
+          dapat dibaca lengkap melalui halaman berita.
         </p>
       </div>
 
@@ -232,7 +231,7 @@ export function NewsManager() {
 
           <div>
             <label htmlFor="slug" className={adminLabelClass}>
-              Slug URL *
+              Tautan Halaman (Slug) *
             </label>
             <input
               id="slug"

@@ -229,7 +229,7 @@ export function LandingContentManager() {
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="featuresEyebrow" className={adminLabelClass}>
-                Eyebrow Fitur
+                Label Atas Fitur
               </label>
               <input
                 id="featuresEyebrow"
@@ -330,7 +330,7 @@ export function LandingContentManager() {
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="galleryEyebrow" className={adminLabelClass}>
-                Eyebrow Galeri
+                Label Atas Galeri
               </label>
               <input
                 id="galleryEyebrow"
@@ -490,7 +490,7 @@ export function LandingContentManager() {
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="faqEyebrow" className={adminLabelClass}>
-                Eyebrow FAQ
+                Label Atas FAQ
               </label>
               <input
                 id="faqEyebrow"
@@ -564,7 +564,7 @@ export function LandingContentManager() {
                   htmlFor="commentsLoginPrompt"
                   className={adminLabelClass}
                 >
-                  Prompt Login Pengunjung *
+                  Teks Ajakan Masuk *
                 </label>
                 <input
                   id="commentsLoginPrompt"
@@ -624,7 +624,7 @@ export function LandingContentManager() {
                     htmlFor="commentsSubmitError"
                     className={adminLabelClass}
                   >
-                    Pesan Galat Pengiriman
+                    Pesan Gagal Kirim
                   </label>
                   <input
                     id="commentsSubmitError"
@@ -650,7 +650,7 @@ export function LandingContentManager() {
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="contactEyebrow" className={adminLabelClass}>
-                Eyebrow Kontak
+                Label Atas Kontak
               </label>
               <input
                 id="contactEyebrow"
@@ -795,7 +795,7 @@ export function LandingContentManager() {
             disabled={submitting}
             className={adminButtonClass("primary", "md")}
           >
-            {submitting ? "Menyimpan..." : "Simpan Semua Konten Landing"}
+            {submitting ? "Menyimpan..." : "Simpan Semua Konten Beranda"}
           </button>
         </div>
       </form>

@@ -103,14 +103,14 @@ export function AssetUploader({
       if (!onUploaded) {
         patchFile(id, {
           status: "terunggah",
-          message: "Terunggah ke R2.",
+          message: "Berkas berhasil diunggah.",
           asset,
         });
         return;
       }
       patchFile(id, {
         status: "menyimpan",
-        message: "Terunggah. Menyimpan metadata…",
+        message: "Berkas terunggah. Menyimpan data…",
         asset,
       });
       try {
@@ -125,8 +125,8 @@ export function AssetUploader({
           status: "gagal-simpan",
           message:
             error instanceof Error && error.message
-              ? `Unggahan ok, simpan metadata gagal: ${error.message}`
-              : "Unggahan ok, simpan metadata gagal. Coba lagi tanpa mengunggah ulang.",
+              ? `Berkas terunggah, tetapi gagal menyimpan: ${error.message}`
+              : "Berkas terunggah, tetapi gagal menyimpan data. Silakan coba lagi.",
           asset,
         });
       }
@@ -157,7 +157,7 @@ export function AssetUploader({
         controller.signal,
         (info) =>
           patchFile(id, {
-            message: `Dikompres ${formatBytes(info.originalBytes)} → ${formatBytes(info.compressedBytes)}. Mengunggah…`,
+            message: `Mengoptimalkan berkas (${formatBytes(info.compressedBytes)}). Mengunggah…`,
           }),
       );
       abortRef.current.delete(id);

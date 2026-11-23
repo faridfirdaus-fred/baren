@@ -79,11 +79,12 @@ export function putErrorForStatus(status: number): PutError {
     return {
       kind: "signature",
       message:
-        "Unggahan ditolak R2 (kemungkinan tipe konten berubah atau URL rusak). Minta URL baru lalu coba lagi.",
+        "Gagal mengunggah berkas. Format berkas tidak sesuai atau tautan unggah kedaluwarsa. Silakan coba lagi.",
     };
   return {
     kind: "ambiguous",
-    message: `Unggahan gagal (status ${status || "jaringan"}). Coba lagi.`,
+    message:
+      "Gagal mengunggah berkas. Periksa koneksi internet Anda lalu coba lagi.",
   };
 }
 

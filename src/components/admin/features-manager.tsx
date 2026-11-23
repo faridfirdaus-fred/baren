@@ -84,7 +84,7 @@ export function FeaturesManager() {
     setFormData((prev) => ({ ...prev, iconUrl: asset.publicUrl }));
     setToast({
       message:
-        "Ikon berhasil diunggah ke R2. Klik 'Simpan' untuk menerapkan perubahan.",
+        "Ikon berhasil diunggah. Klik 'Simpan' untuk menerapkan perubahan.",
       type: "success",
     });
   };

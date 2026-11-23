@@ -83,7 +83,7 @@ export function HeroManager() {
     setFormData((prev) => ({ ...prev, videoUrl: asset.publicUrl }));
     setToast({
       message:
-        "Video berhasil diunggah ke R2. Klik 'Simpan Hero' untuk menerapkan perubahan.",
+        "Video berhasil diunggah. Klik 'Simpan Hero' untuk menerapkan perubahan.",
       type: "success",
     });
   };
@@ -92,7 +92,7 @@ export function HeroManager() {
     setFormData((prev) => ({ ...prev, backgroundUrl: asset.publicUrl }));
     setToast({
       message:
-        "Background berhasil diunggah ke R2. Klik 'Simpan Hero' untuk menerapkan perubahan.",
+        "Gambar latar berhasil diunggah. Klik 'Simpan Hero' untuk menerapkan perubahan.",
       type: "success",
     });
   };
@@ -122,7 +122,10 @@ export function HeroManager() {
         return;
       }
 
-      setToast({ message: "Hero disimpan", type: "success" });
+      setToast({
+        message: "Pengaturan Hero berhasil disimpan",
+        type: "success",
+      });
       await loadHero();
     } catch (err) {
       setToast({ message: "Gagal menyimpan hero", type: "error" });
@@ -132,7 +135,7 @@ export function HeroManager() {
     }
   };
 
-  if (loading) return <p>Memuat hero...</p>;
+  if (loading) return <p className="text-sand-600">Memuat data Hero...</p>;
   if (error) return <p className="text-ember">{error}</p>;
 
   return (
@@ -184,7 +187,7 @@ export function HeroManager() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <label htmlFor="backgroundUrl" className={adminLabelClass}>
-              Gambar Latar (Background)
+              Gambar Latar Belakang
             </label>
             <input
               id="backgroundUrl"
@@ -206,7 +209,7 @@ export function HeroManager() {
                   resolvePublicAssetUrl(formData.backgroundUrl) ||
                   formData.backgroundUrl
                 }
-                alt="Pratinjau background hero"
+                alt="Pratinjau gambar latar"
                 className="mt-2 max-h-36 w-full rounded border object-cover"
               />
             ) : null}
@@ -221,7 +224,7 @@ export function HeroManager() {
 
           <div>
             <label htmlFor="videoUrl" className={adminLabelClass}>
-              Video Loop Latar (MP4)
+              Video Latar Belakang (MP4)
             </label>
             <input
               id="videoUrl"
