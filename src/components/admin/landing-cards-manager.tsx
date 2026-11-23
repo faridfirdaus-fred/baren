@@ -108,15 +108,15 @@ export function LandingCardsManager() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/landing-cards");
+      const res = await fetch("/api/landing-cards?scope=admin");
       const json = (await res.json()) as ApiResponse;
       if (!json.ok) {
         setError(json.message || "Gagal memuat kartu");
         return;
       }
-      const loaded = (json.data || []).sort(
-        (a, b) => a.sortOrder - b.sortOrder,
-      );
+      const loaded = (json.data || [])
+        .filter((c) => c.slot?.toLowerCase() !== "karakter")
+        .sort((a, b) => a.sortOrder - b.sortOrder);
       setItems(loaded);
       if (loaded.length > 0 && editingId === null) {
         selectCardForEdit(loaded[0]);
@@ -350,6 +350,19 @@ export function LandingCardsManager() {
             <span>+ Tambah Kartu</span>
           </button>
         </div>
+      </div>
+
+      <div className="mb-6 p-4 rounded-2xl bg-[#faf6ee] border border-[#2f180a]/15 text-xs text-[#542d14] flex flex-wrap items-center justify-between gap-3">
+        <span>
+          💡 Ingin mengelola deck jagoan interaktif di seksi &ldquo;Pilih
+          Jagoanmu&rdquo;?
+        </span>
+        <a
+          href="/admin/characters"
+          className="font-bold text-[#c83820] hover:underline"
+        >
+          Buka Kelola Jagoan →
+        </a>
       </div>
 
       {/* Master-Detail 2-Column Split Workspace */}

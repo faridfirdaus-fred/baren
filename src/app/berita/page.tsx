@@ -4,7 +4,6 @@ import Image from "next/image";
 import { getAllPublishedNews } from "@/lib/news-content";
 import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {

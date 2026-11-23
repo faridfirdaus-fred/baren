@@ -3,8 +3,6 @@ import { getDb } from "@/db";
 import { news } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-export const runtime = "edge";
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || "https://baren.example.com";

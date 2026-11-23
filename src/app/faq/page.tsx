@@ -5,7 +5,6 @@ import { getLandingSettings } from "@/lib/settings-content";
 import { resolveFaqCopy } from "@/lib/landing-content";
 import { FaqAccordion } from "@/components/site/faq-accordion";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {

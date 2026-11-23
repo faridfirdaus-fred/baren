@@ -21,6 +21,7 @@ import {
   PlaySquare,
   Share2,
   Sparkles,
+  Users,
   X,
 } from "lucide-react";
 
@@ -58,12 +59,13 @@ const navGroups: NavGroup[] = [
     items: [
       { href: "/admin/landing", label: "Konten Landing", icon: FileText },
       { href: "/admin/hero", label: "Hero", icon: Sparkles },
-      { href: "/admin/landing-cards", label: "Kartu Landing", icon: Layers },
+      { href: "/admin/characters", label: "Jagoan", icon: Users },
       { href: "/admin/features", label: "Fitur", icon: Gamepad2 },
       { href: "/admin/how-to-play", label: "Cara Bermain", icon: PlaySquare },
       { href: "/admin/gallery", label: "Galeri", icon: Image },
       { href: "/admin/news", label: "Berita", icon: Newspaper },
       { href: "/admin/faq", label: "FAQ", icon: HelpCircle },
+      { href: "/admin/landing-cards", label: "Kartu Tambahan", icon: Layers },
     ],
   },
   {

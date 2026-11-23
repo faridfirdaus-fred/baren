@@ -237,6 +237,14 @@ export default async function AdminDashboardPage() {
           </li>
           <li>
             <Link
+              href="/admin/characters"
+              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            >
+              Kelola Jagoan
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/admin/landing-cards"
               className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
             >

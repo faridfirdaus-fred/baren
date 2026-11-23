@@ -1,5 +1,7 @@
 // E3-11: GET kartu terbit (publik) + POST kartu (admin).
 
+import { asc } from "drizzle-orm";
+
 import { getDb } from "@/db";
 import { landingCards } from "@/db/schema";
 import { requireAdminResponse } from "@/lib/api/guard";
@@ -61,13 +63,37 @@ function creator(db: Db): LandingCardCreator {
   };
 }
 
-/** Publik: kartu terbit berurutan. */
-export async function GET(): Promise<Response> {
+/** Publik: kartu terbit berurutan. Admin: ?scope=admin (semua status) + opsi ?slot= */
+export async function GET(request: Request): Promise<Response> {
   try {
+    const url = new URL(request.url);
+    const scope = url.searchParams.get("scope");
+    const slot = url.searchParams.get("slot");
     const db = getDb();
+
+    if (scope === "admin") {
+      const denied = await requireAdminResponse(
+        "GET /api/landing-cards?scope=admin",
+      );
+      if (denied) return denied;
+      const rows = await db
+        .select()
+        .from(landingCards)
+        .orderBy(asc(landingCards.sortOrder), asc(landingCards.id));
+      const mapped = rows.map(toRow);
+      const filtered = slot
+        ? mapped.filter((r) => r.slot.toLowerCase() === slot.toLowerCase())
+        : mapped;
+      return fromResult({ ok: true, data: filtered });
+    }
+
     const rows = await db.select().from(landingCards);
     const lister = { list: async () => rows.map(toRow) };
-    return fromResult({ ok: true, data: await readLandingCards(lister) });
+    const published = await readLandingCards(lister);
+    const filtered = slot
+      ? published.filter((r) => r.slot.toLowerCase() === slot.toLowerCase())
+      : published;
+    return fromResult({ ok: true, data: filtered });
   } catch (error) {
     console.error("GET /api/landing-cards gagal:", error);
     return fromResult(toDbResult(error));

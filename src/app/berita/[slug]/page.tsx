@@ -3,47 +3,19 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { resolvePublicAssetUrl } from "@/lib/assets-url";
+import { getPublishedNewsBySlug } from "@/lib/news-content";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-interface NewsItem {
-  id: number;
-  slug: string;
-  title: string;
-  excerpt: string;
-  body: string;
-  coverUrl: string | null;
-  status: "draft" | "published";
-  publishedAt: string | null;
-}
-
-async function getNewsItem(slug: string): Promise<NewsItem | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  try {
-    const res = await fetch(
-      `${baseUrl}/api/news?slug=${encodeURIComponent(slug)}`,
-      {
-        cache: "no-store",
-      },
-    );
-    if (!res.ok) return null;
-    const json = (await res.json()) as { ok: boolean; data?: NewsItem };
-    return json.ok && json.data ? json.data : null;
-  } catch {
-    return null;
-  }
-}
-
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const item = await getNewsItem(slug);
+  const item = await getPublishedNewsBySlug(slug);
 
   if (!item) {
     return {
@@ -66,7 +38,7 @@ export async function generateMetadata({
 
 export default async function NewsDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const item = await getNewsItem(slug);
+  const item = await getPublishedNewsBySlug(slug);
 
   if (!item) {
     notFound();

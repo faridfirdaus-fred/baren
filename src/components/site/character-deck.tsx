@@ -59,9 +59,15 @@ export function CharacterDeck({ customCards }: CharacterDeckProps) {
           name: c.title,
           tag: c.eyebrow || (idx % 2 === 0 ? "TIM ORANYE" : "TIM BIRU"),
           tagColor:
-            idx % 2 === 0
+            c.tone === "ember"
               ? "bg-[#e4572e] text-white"
-              : "bg-[#2563eb] text-white",
+              : c.tone === "dark"
+                ? "bg-[#2563eb] text-white"
+                : c.tone === "light"
+                  ? "bg-[#10b981] text-white"
+                  : idx % 2 === 0
+                    ? "bg-[#e4572e] text-white"
+                    : "bg-[#2563eb] text-white",
           imageUrl:
             (c.imageUrl && resolvePublicAssetUrl(c.imageUrl)) ||
             (idx === 0
@@ -69,7 +75,7 @@ export function CharacterDeck({ customCards }: CharacterDeckProps) {
               : idx === 1
                 ? "/art/about-art.jpg"
                 : "/art/feature-1.jpg"),
-          description: c.subtitle || c.body || undefined,
+          description: c.body || c.subtitle || undefined,
         }))
       : DEFAULT_CHARACTERS;
 
