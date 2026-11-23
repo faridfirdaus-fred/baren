@@ -51,6 +51,7 @@ export type ClientFileCheck = { ok: true } | { ok: false; message: string };
 
 const ACCEPT_BY_PURPOSE: Record<string, string[]> = {
   gallery: ["image/jpeg", "image/png", "image/webp", "video/mp4"],
+  galeri: ["image/jpeg", "image/png", "image/webp", "video/mp4"],
   hero: ["image/jpeg", "image/png", "image/webp", "video/mp4"],
   "hero-video": ["video/mp4"],
   "hero-background": ["image/jpeg", "image/png", "image/webp"],
@@ -74,6 +75,15 @@ export function acceptedMimeTypes(purpose: string): string[] {
 
 export function acceptedAttr(purpose: string): string {
   return acceptedMimeTypes(purpose).join(",");
+}
+
+export function acceptedLabel(purpose: string): string {
+  const mimes = acceptedMimeTypes(purpose);
+  const labels: string[] = [];
+  if (mimes.some((m) => m.startsWith("image/"))) labels.push("JPG, PNG, WebP");
+  if (mimes.includes("image/svg+xml")) labels.push("SVG");
+  if (mimes.includes("video/mp4")) labels.push("MP4");
+  return labels.join(" / ") || "JPG, PNG, WebP";
 }
 
 /** Validasi cepat di browser sebelum meminta presigned URL. */
@@ -261,6 +271,78 @@ export function putToR2(
  *
  * `onCompressed` opsional untuk UI (mis. "4,2 MB → 520 KB").
  */
+export function directUploadToWorker(
+  file: File,
+  purpose: string,
+  onProgress: UploadProgress,
+  signal: AbortSignal,
+): Promise<
+  | { ok: true; asset: UploadedAsset }
+  | { ok: false; error: PresignError | PutError }
+> {
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    const onAbort = () => xhr.abort();
+    if (signal.aborted) {
+      resolve({ ok: false, error: { kind: "aborted" } });
+      return;
+    }
+    signal.addEventListener("abort", onAbort, { once: true });
+    xhr.upload.addEventListener("progress", (event) => {
+      if (event.lengthComputable) onProgress(event.loaded, event.total);
+      else onProgress(event.loaded, file.size);
+    });
+    xhr.addEventListener("load", () => {
+      signal.removeEventListener("abort", onAbort);
+      try {
+        const json = JSON.parse(xhr.responseText);
+        if (xhr.status >= 200 && xhr.status < 300 && json.ok && json.data) {
+          onProgress(file.size, file.size);
+          resolve({ ok: true, asset: json.data });
+          return;
+        }
+        resolve({
+          ok: false,
+          error: {
+            kind: "server",
+            message:
+              json.error?.message || "Gagal mengunggah berkas ke server.",
+          },
+        });
+      } catch {
+        resolve({
+          ok: false,
+          error: {
+            kind: "server",
+            message: "Respons server tidak valid.",
+          },
+        });
+      }
+    });
+    xhr.addEventListener("error", () => {
+      signal.removeEventListener("abort", onAbort);
+      resolve({
+        ok: false,
+        error: {
+          kind: "ambiguous",
+          message: "Gagal mengunggah berkas. Periksa jaringan Anda.",
+        },
+      });
+    });
+    xhr.addEventListener("abort", () => {
+      signal.removeEventListener("abort", onAbort);
+      resolve({ ok: false, error: { kind: "aborted" } });
+    });
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("purpose", purpose);
+
+    xhr.open("POST", "/api/assets");
+    xhr.send(formData);
+  });
+}
+
 export async function uploadOneFile(
   file: File,
   purpose: string,
@@ -282,18 +364,35 @@ export async function uploadOneFile(
       compressedBytes: outcome.compressedBytes,
     });
   }
+
+  // 1. Coba presigned URL terlebih dahulu (direct-to-R2)
   const presigned = await requestPresign(payload, purpose);
-  if (!presigned.ok) return presigned;
-  const put = await putToR2(payload, presigned.triple, onProgress, signal);
-  if (!put.ok) return put;
-  return {
-    ok: true,
-    asset: {
-      key: presigned.triple.key,
-      publicUrl: presigned.triple.publicUrl,
-      name: payload.name,
-      size: payload.size,
-      mimeType: payload.type,
-    },
-  };
+  if (presigned.ok) {
+    const put = await putToR2(payload, presigned.triple, onProgress, signal);
+    if (put.ok) {
+      return {
+        ok: true,
+        asset: {
+          key: presigned.triple.key,
+          publicUrl: presigned.triple.publicUrl,
+          name: payload.name,
+          size: payload.size,
+          mimeType: payload.type,
+        },
+      };
+    }
+    // Jika dibatalkan user, jangan coba fallback
+    if (put.error.kind === "aborted") return put;
+  } else {
+    // Jika tidak terotorisasi, jangan coba fallback
+    if (
+      presigned.error.kind === "unauthorized" ||
+      presigned.error.kind === "forbidden"
+    ) {
+      return presigned;
+    }
+  }
+
+  // 2. Fallback otomatis: Unggah langsung lewat endpoint Worker (binding BAREN_ASSETS)
+  return await directUploadToWorker(payload, purpose, onProgress, signal);
 }

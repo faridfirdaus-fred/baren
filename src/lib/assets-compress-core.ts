@@ -66,7 +66,7 @@ export function normalizeCompressPurpose(
   if (p === "how-to-play-media") return "how-to-play-media";
   if (p === "landing-image") return "landing-image";
   if (p === "news-cover") return "news-cover";
-  if (p === "gallery") return "gallery";
+  if (p === "gallery" || p === "galeri") return "gallery";
   if (p === "news") return "news";
   if (p === "logo") return "logo";
   if (p === "ikon" || p === "icon") return p as CompressPurpose;

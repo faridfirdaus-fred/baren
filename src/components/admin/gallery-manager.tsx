@@ -243,7 +243,7 @@ export function AdminGalleryManager() {
               Berkas
             </label>
             <AssetUploader
-              purpose="galeri"
+              purpose="gallery"
               onUploaded={(asset) => setUploaded(asset)}
             />
             {editingId === null && uploaded ? (
@@ -255,73 +255,76 @@ export function AdminGalleryManager() {
               </p>
             ) : null}
           </div>
-          <div>
-            <label htmlFor="gallery-kind" className={adminLabelClass}>
-              Jenis
-            </label>
-            <select
-              id="gallery-kind"
-              className={adminSelectClass}
-              {...register("kind")}
-            >
-              {galleryKinds.map((kind) => (
-                <option key={kind} value={kind}>
-                  {kindLabels[kind]}
-                </option>
-              ))}
-            </select>
-            {errors.kind ? (
-              <p
-                id="gallery-kind-error"
-                role="alert"
-                className={adminErrorClass}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div>
+              <label htmlFor="gallery-kind" className={adminLabelClass}>
+                Jenis
+              </label>
+              <select
+                id="gallery-kind"
+                className={adminSelectClass}
+                {...register("kind")}
               >
-                {errors.kind.message}
-              </p>
-            ) : null}
-          </div>
-          <div>
-            <label htmlFor="gallery-title" className={adminLabelClass}>
-              Judul (opsional)
-            </label>
-            <input
-              id="gallery-title"
-              type="text"
-              className={adminInputClass}
-              {...register("title")}
-            />
-            {errors.title ? (
-              <p
-                id="gallery-title-error"
-                role="alert"
-                className={adminErrorClass}
-              >
-                {errors.title.message}
-              </p>
-            ) : null}
-          </div>
-          <div>
-            <label htmlFor="gallery-sort-order" className={adminLabelClass}>
-              Urutan
-            </label>
-            <input
-              id="gallery-sort-order"
-              type="number"
-              min={0}
-              step={1}
-              required
-              className={`${adminInputClass} max-w-40`}
-              {...register("sortOrder", { valueAsNumber: true })}
-            />
-            {errors.sortOrder ? (
-              <p
-                id="gallery-sort-order-error"
-                role="alert"
-                className={adminErrorClass}
-              >
-                {errors.sortOrder.message}
-              </p>
-            ) : null}
+                {galleryKinds.map((kind) => (
+                  <option key={kind} value={kind}>
+                    {kindLabels[kind]}
+                  </option>
+                ))}
+              </select>
+              {errors.kind ? (
+                <p
+                  id="gallery-kind-error"
+                  role="alert"
+                  className={adminErrorClass}
+                >
+                  {errors.kind.message}
+                </p>
+              ) : null}
+            </div>
+            <div>
+              <label htmlFor="gallery-title" className={adminLabelClass}>
+                Judul (opsional)
+              </label>
+              <input
+                id="gallery-title"
+                type="text"
+                placeholder="Contoh: Screenshot Aksi"
+                className={adminInputClass}
+                {...register("title")}
+              />
+              {errors.title ? (
+                <p
+                  id="gallery-title-error"
+                  role="alert"
+                  className={adminErrorClass}
+                >
+                  {errors.title.message}
+                </p>
+              ) : null}
+            </div>
+            <div>
+              <label htmlFor="gallery-sort-order" className={adminLabelClass}>
+                Urutan
+              </label>
+              <input
+                id="gallery-sort-order"
+                type="number"
+                min={0}
+                step={1}
+                required
+                className={adminInputClass}
+                {...register("sortOrder", { valueAsNumber: true })}
+              />
+              {errors.sortOrder ? (
+                <p
+                  id="gallery-sort-order-error"
+                  role="alert"
+                  className={adminErrorClass}
+                >
+                  {errors.sortOrder.message}
+                </p>
+              ) : null}
+            </div>
           </div>
           {errors.root ? (
             <p role="alert" className={adminErrorClass}>

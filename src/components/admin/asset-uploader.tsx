@@ -5,7 +5,7 @@ import { useCallback, useId, useRef, useState } from "react";
 import { adminButtonClass } from "./button-styles";
 import {
   acceptedAttr,
-  acceptedMimeTypes,
+  acceptedLabel,
   checkClientFile,
   formatBytes,
   uploadOneFile,
@@ -196,7 +196,6 @@ export function AssetUploader({
     (incoming: FileList | File[]) => {
       const list = Array.from(incoming);
       if (list.length === 0 || disabled) return;
-      const accepted = acceptedMimeTypes(purpose);
       const next: UploaderFileState[] = [];
       const valid: File[] = [];
       for (const file of list) {
@@ -224,7 +223,7 @@ export function AssetUploader({
       const rejected = next.filter((f) => f.status === "gagal");
       setError(
         rejected.length > 0
-          ? `${rejected.length} berkas ditolak (${accepted.join(", ")}; gambar ≤5 MB, video ≤50 MB).`
+          ? `${rejected.length} berkas ditolak (${acceptedLabel(purpose)}; gambar ≤5 MB, video ≤50 MB).`
           : null,
       );
       setFiles((prev) => [...prev, ...next]);
@@ -292,7 +291,7 @@ export function AssetUploader({
           setDragActive(false);
           addFiles(event.dataTransfer.files);
         }}
-        className={`flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-none border-2 border-dashed px-6 py-10 text-center transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember ${
+        className={`flex w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded border-2 border-dashed px-4 py-6 text-center transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember ${
           dragActive
             ? "border-ember bg-ember/10"
             : "border-sand/25 bg-ink hover:border-ember/70 hover:bg-ink-700/40"
@@ -300,13 +299,12 @@ export function AssetUploader({
       >
         <p
           id={inputId}
-          className="font-display text-lg uppercase tracking-wide text-sand"
+          className="font-display text-base uppercase tracking-wide text-sand"
         >
           Seret & letakkan berkas di sini
         </p>
-        <p id={helpId} className="text-sm text-sand/70">
-          atau klik untuk memilih berkas ({acceptedAttr(purpose)}; gambar ≤5 MB,
-          video ≤50 MB)
+        <p id={helpId} className="text-xs text-sand/70">
+          atau klik untuk memilih berkas ({acceptedLabel(purpose)})
         </p>
         <input
           ref={inputRef}
@@ -330,9 +328,8 @@ export function AssetUploader({
       {files.length > 0 ? (
         <div className="mt-4">
           <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-sand/70">
-              {files.length} berkas diproses (langsung ke R2). Setelah selesai,
-              simpan formulir di bawah untuk menyimpan perubahan.
+            <p className="text-xs text-sand/70">
+              {files.length} berkas siap. Jangan lupa klik Simpan di formulir.
             </p>
             <button
               type="button"

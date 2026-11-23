@@ -252,67 +252,57 @@ export function AdminBrandingManager() {
           ) : null}
 
           {/* Bagian Identitas Teks */}
-          <section className="grid gap-5 border border-line bg-ink-800 p-6">
+          <section className="border border-line bg-ink-800 p-6">
             <h2 className="font-display text-xl font-bold uppercase tracking-wider text-sand">
               Identitas Nama & Tagline
             </h2>
 
-            <div>
-              <label htmlFor="namaGame" className={adminLabelClass}>
-                Nama Game <span className="text-ember">*</span>
-              </label>
-              <input
-                id="namaGame"
-                type="text"
-                {...register("namaGame")}
-                aria-invalid={Boolean(errors.namaGame)}
-                aria-describedby={
-                  errors.namaGame ? "namaGame-error" : "namaGame-help"
-                }
-                className={adminInputClass}
-                placeholder="Contoh: BAREN"
-              />
-              <p id="namaGame-help" className="mt-1 text-xs text-sand-600">
-                Nama utama game yang tampil di header dan judul tab peramban.
-              </p>
-              {errors.namaGame ? (
-                <p
-                  id="namaGame-error"
-                  role="alert"
-                  className="mt-1 text-xs text-ember"
-                >
-                  {errors.namaGame.message}
-                </p>
-              ) : null}
-            </div>
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label htmlFor="namaGame" className={adminLabelClass}>
+                  Nama Game <span className="text-ember">*</span>
+                </label>
+                <input
+                  id="namaGame"
+                  type="text"
+                  {...register("namaGame")}
+                  aria-invalid={Boolean(errors.namaGame)}
+                  className={adminInputClass}
+                  placeholder="Contoh: BAREN"
+                />
+                {errors.namaGame ? (
+                  <p
+                    id="namaGame-error"
+                    role="alert"
+                    className="mt-1 text-xs text-ember"
+                  >
+                    {errors.namaGame.message}
+                  </p>
+                ) : null}
+              </div>
 
-            <div>
-              <label htmlFor="tagline" className={adminLabelClass}>
-                Tagline Game
-              </label>
-              <input
-                id="tagline"
-                type="text"
-                {...register("tagline")}
-                aria-invalid={Boolean(errors.tagline)}
-                aria-describedby={
-                  errors.tagline ? "tagline-error" : "tagline-help"
-                }
-                className={adminInputClass}
-                placeholder="Contoh: Rebut benteng. Kuasai arena."
-              />
-              <p id="tagline-help" className="mt-1 text-xs text-sand-600">
-                Slogan atau deskripsi ringkas yang tampil pada meta deskripsi.
-              </p>
-              {errors.tagline ? (
-                <p
-                  id="tagline-error"
-                  role="alert"
-                  className="mt-1 text-xs text-ember"
-                >
-                  {errors.tagline.message}
-                </p>
-              ) : null}
+              <div>
+                <label htmlFor="tagline" className={adminLabelClass}>
+                  Tagline Game
+                </label>
+                <input
+                  id="tagline"
+                  type="text"
+                  {...register("tagline")}
+                  aria-invalid={Boolean(errors.tagline)}
+                  className={adminInputClass}
+                  placeholder="Contoh: Rebut benteng. Kuasai arena."
+                />
+                {errors.tagline ? (
+                  <p
+                    id="tagline-error"
+                    role="alert"
+                    className="mt-1 text-xs text-ember"
+                  >
+                    {errors.tagline.message}
+                  </p>
+                ) : null}
+              </div>
             </div>
           </section>
 

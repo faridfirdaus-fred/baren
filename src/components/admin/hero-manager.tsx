@@ -8,7 +8,6 @@ import {
   adminCheckboxClass,
   adminLabelClass,
   adminErrorClass,
-  adminHelpClass,
 } from "./form-styles";
 import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
@@ -140,209 +139,218 @@ export function HeroManager() {
     <div>
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 border border-line bg-ink-800 p-6"
+        className="space-y-6 border border-line bg-ink-800 p-6"
       >
-        <div>
-          <label htmlFor="title" className={adminLabelClass}>
-            Judul *
-          </label>
-          <input
-            id="title"
-            type="text"
-            value={formData.title}
-            onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
-            }
-            className={adminInputClass}
-            required
-          />
-          {formErrors.title && (
-            <p className={adminErrorClass}>{formErrors.title[0]}</p>
-          )}
-        </div>
-
-        <div>
-          <label htmlFor="subtitle" className={adminLabelClass}>
-            Subjudul
-          </label>
-          <input
-            id="subtitle"
-            type="text"
-            value={formData.subtitle}
-            onChange={(e) =>
-              setFormData({ ...formData, subtitle: e.target.value })
-            }
-            className={adminInputClass}
-          />
-          {formErrors.subtitle && (
-            <p className={adminErrorClass}>{formErrors.subtitle[0]}</p>
-          )}
-        </div>
-
-        <div>
-          <label htmlFor="videoUrl" className={adminLabelClass}>
-            Video URL
-          </label>
-          <input
-            id="videoUrl"
-            type="url"
-            value={formData.videoUrl}
-            onChange={(e) =>
-              setFormData({ ...formData, videoUrl: e.target.value })
-            }
-            className={adminInputClass}
-            placeholder="https://... (MP4)"
-          />
-          <p className={adminHelpClass}>
-            Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan tautan
-            MP4 langsung.
-          </p>
-          {formErrors.videoUrl && (
-            <p className={adminErrorClass}>{formErrors.videoUrl[0]}</p>
-          )}
-          {formData.videoUrl.trim() ? (
-            <video
-              src={formData.videoUrl}
-              preload="metadata"
-              muted
-              playsInline
-              controls
-              className="mt-2 max-h-48 w-full rounded border"
-              aria-label="Pratinjau video hero"
-            />
-          ) : null}
-          <div className="mt-2">
-            <p className="mb-1 text-sm font-medium">
-              Unggah Video Baru ke R2 (MP4 ≤ 50 MB)
-            </p>
-            <AssetUploader
-              purpose="hero-video"
-              onUploaded={handleVideoUploaded}
-              disabled={submitting}
-            />
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="backgroundUrl" className={adminLabelClass}>
-            Background URL
-          </label>
-          <input
-            id="backgroundUrl"
-            type="url"
-            value={formData.backgroundUrl}
-            onChange={(e) =>
-              setFormData({ ...formData, backgroundUrl: e.target.value })
-            }
-            className={adminInputClass}
-            placeholder="https://... (JPG/PNG/WebP)"
-          />
-          <p className={adminHelpClass}>
-            Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan tautan
-            gambar langsung.
-          </p>
-          {formErrors.backgroundUrl && (
-            <p className={adminErrorClass}>{formErrors.backgroundUrl[0]}</p>
-          )}
-          {formData.backgroundUrl.trim() ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={
-                resolvePublicAssetUrl(formData.backgroundUrl) ||
-                formData.backgroundUrl
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label htmlFor="title" className={adminLabelClass}>
+              Judul *
+            </label>
+            <input
+              id="title"
+              type="text"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
               }
-              alt="Pratinjau background hero"
-              className="mt-2 max-h-48 w-full rounded border object-cover"
+              className={adminInputClass}
+              required
             />
-          ) : null}
-          <div className="mt-2">
-            <p className="mb-1 text-sm font-medium">
-              Unggah Background Baru ke R2 (JPG/PNG/WebP ≤ 5 MB)
-            </p>
-            <AssetUploader
-              purpose="hero-background"
-              onUploaded={handleBackgroundUploaded}
-              disabled={submitting}
+            {formErrors.title && (
+              <p className={adminErrorClass}>{formErrors.title[0]}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="subtitle" className={adminLabelClass}>
+              Subjudul
+            </label>
+            <input
+              id="subtitle"
+              type="text"
+              value={formData.subtitle}
+              onChange={(e) =>
+                setFormData({ ...formData, subtitle: e.target.value })
+              }
+              className={adminInputClass}
             />
+            {formErrors.subtitle && (
+              <p className={adminErrorClass}>{formErrors.subtitle[0]}</p>
+            )}
           </div>
         </div>
 
-        <div>
-          <label htmlFor="primaryCtaLabel" className={adminLabelClass}>
-            CTA Utama Label
-          </label>
-          <input
-            id="primaryCtaLabel"
-            type="text"
-            value={formData.primaryCtaLabel}
-            onChange={(e) =>
-              setFormData({ ...formData, primaryCtaLabel: e.target.value })
-            }
-            className={adminInputClass}
-          />
-          {formErrors.primaryCtaLabel && (
-            <p className={adminErrorClass}>{formErrors.primaryCtaLabel[0]}</p>
-          )}
+        {/* Media Background & Video */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <label htmlFor="backgroundUrl" className={adminLabelClass}>
+              Gambar Latar (Background)
+            </label>
+            <input
+              id="backgroundUrl"
+              type="url"
+              value={formData.backgroundUrl}
+              onChange={(e) =>
+                setFormData({ ...formData, backgroundUrl: e.target.value })
+              }
+              className={adminInputClass}
+              placeholder="https://..."
+            />
+            {formErrors.backgroundUrl && (
+              <p className={adminErrorClass}>{formErrors.backgroundUrl[0]}</p>
+            )}
+            {formData.backgroundUrl.trim() ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={
+                  resolvePublicAssetUrl(formData.backgroundUrl) ||
+                  formData.backgroundUrl
+                }
+                alt="Pratinjau background hero"
+                className="mt-2 max-h-36 w-full rounded border object-cover"
+              />
+            ) : null}
+            <div className="mt-2">
+              <AssetUploader
+                purpose="hero-background"
+                onUploaded={handleBackgroundUploaded}
+                disabled={submitting}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="videoUrl" className={adminLabelClass}>
+              Video Loop Latar (MP4)
+            </label>
+            <input
+              id="videoUrl"
+              type="url"
+              value={formData.videoUrl}
+              onChange={(e) =>
+                setFormData({ ...formData, videoUrl: e.target.value })
+              }
+              className={adminInputClass}
+              placeholder="https://... (MP4)"
+            />
+            {formErrors.videoUrl && (
+              <p className={adminErrorClass}>{formErrors.videoUrl[0]}</p>
+            )}
+            {formData.videoUrl.trim() ? (
+              <video
+                src={formData.videoUrl}
+                preload="metadata"
+                muted
+                playsInline
+                controls
+                className="mt-2 max-h-36 w-full rounded border"
+                aria-label="Pratinjau video hero"
+              />
+            ) : null}
+            <div className="mt-2">
+              <AssetUploader
+                purpose="hero-video"
+                onUploaded={handleVideoUploaded}
+                disabled={submitting}
+              />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="primaryCtaUrl" className={adminLabelClass}>
-            CTA Utama URL
-          </label>
-          <input
-            id="primaryCtaUrl"
-            type="text"
-            value={formData.primaryCtaUrl}
-            onChange={(e) =>
-              setFormData({ ...formData, primaryCtaUrl: e.target.value })
-            }
-            className={adminInputClass}
-          />
-          <p className={adminHelpClass}>
-            Diawali https:// atau ID anchor (contoh: #wishlist).
-          </p>
-          {formErrors.primaryCtaUrl && (
-            <p className={adminErrorClass}>{formErrors.primaryCtaUrl[0]}</p>
-          )}
-        </div>
+        {/* Tombol CTA */}
+        <div className="grid grid-cols-1 gap-6 border-t border-line/50 pt-4 md:grid-cols-2">
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-sand-500">
+              Tombol Aksi Utama
+            </h4>
+            <div>
+              <label htmlFor="primaryCtaLabel" className={adminLabelClass}>
+                Label Tombol
+              </label>
+              <input
+                id="primaryCtaLabel"
+                type="text"
+                placeholder="GABUNG WISHLIST"
+                value={formData.primaryCtaLabel}
+                onChange={(e) =>
+                  setFormData({ ...formData, primaryCtaLabel: e.target.value })
+                }
+                className={adminInputClass}
+              />
+              {formErrors.primaryCtaLabel && (
+                <p className={adminErrorClass}>
+                  {formErrors.primaryCtaLabel[0]}
+                </p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="primaryCtaUrl" className={adminLabelClass}>
+                Tautan / Target (URL atau #anchor)
+              </label>
+              <input
+                id="primaryCtaUrl"
+                type="text"
+                placeholder="#wishlist"
+                value={formData.primaryCtaUrl}
+                onChange={(e) =>
+                  setFormData({ ...formData, primaryCtaUrl: e.target.value })
+                }
+                className={adminInputClass}
+              />
+              {formErrors.primaryCtaUrl && (
+                <p className={adminErrorClass}>{formErrors.primaryCtaUrl[0]}</p>
+              )}
+            </div>
+          </div>
 
-        <div>
-          <label htmlFor="secondaryCtaLabel" className={adminLabelClass}>
-            CTA Sekunder Label
-          </label>
-          <input
-            id="secondaryCtaLabel"
-            type="text"
-            value={formData.secondaryCtaLabel}
-            onChange={(e) =>
-              setFormData({ ...formData, secondaryCtaLabel: e.target.value })
-            }
-            className={adminInputClass}
-          />
-          {formErrors.secondaryCtaLabel && (
-            <p className={adminErrorClass}>{formErrors.secondaryCtaLabel[0]}</p>
-          )}
-        </div>
-
-        <div>
-          <label htmlFor="secondaryCtaUrl" className={adminLabelClass}>
-            CTA Sekunder URL
-          </label>
-          <input
-            id="secondaryCtaUrl"
-            type="text"
-            value={formData.secondaryCtaUrl}
-            onChange={(e) =>
-              setFormData({ ...formData, secondaryCtaUrl: e.target.value })
-            }
-            className={adminInputClass}
-          />
-          <p className={adminHelpClass}>
-            Diawali https:// atau ID anchor (contoh: #unduh).
-          </p>
-          {formErrors.secondaryCtaUrl && (
-            <p className={adminErrorClass}>{formErrors.secondaryCtaUrl[0]}</p>
-          )}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-sand-500">
+              Tombol Aksi Sekunder
+            </h4>
+            <div>
+              <label htmlFor="secondaryCtaLabel" className={adminLabelClass}>
+                Label Tombol
+              </label>
+              <input
+                id="secondaryCtaLabel"
+                type="text"
+                placeholder="PELAJARI GAME"
+                value={formData.secondaryCtaLabel}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    secondaryCtaLabel: e.target.value,
+                  })
+                }
+                className={adminInputClass}
+              />
+              {formErrors.secondaryCtaLabel && (
+                <p className={adminErrorClass}>
+                  {formErrors.secondaryCtaLabel[0]}
+                </p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="secondaryCtaUrl" className={adminLabelClass}>
+                Tautan / Target (URL atau #anchor)
+              </label>
+              <input
+                id="secondaryCtaUrl"
+                type="text"
+                placeholder="#unduh"
+                value={formData.secondaryCtaUrl}
+                onChange={(e) =>
+                  setFormData({ ...formData, secondaryCtaUrl: e.target.value })
+                }
+                className={adminInputClass}
+              />
+              {formErrors.secondaryCtaUrl && (
+                <p className={adminErrorClass}>
+                  {formErrors.secondaryCtaUrl[0]}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">

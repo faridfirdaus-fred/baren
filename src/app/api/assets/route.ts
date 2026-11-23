@@ -31,11 +31,12 @@
 
 import { requireAdminResponse } from "@/lib/api/guard";
 import { parseJsonBody } from "@/lib/api/parse";
-import { fromResult, internalError, ok } from "@/lib/api/response";
+import { fail, fromResult, internalError, ok } from "@/lib/api/response";
 import { deleteAssetObject } from "@/lib/api/assets";
 import {
   assetDeleteRequestSchema,
   assetPresignRequestSchema,
+  validateAssetRequest,
 } from "@/lib/assets-validation";
 import {
   PRESIGNED_URL_MAX_EXPIRY_SECONDS,
@@ -44,6 +45,7 @@ import {
   createAssetKey,
   createPresignedPutUrl,
   deleteAsset,
+  getR2Bucket,
   verifyStoredAsset,
 } from "@/lib/r2";
 
@@ -89,9 +91,73 @@ export async function PUT(request: Request): Promise<Response> {
       `PUT /api/assets presign ok (key=${key}, expires=${expiresInSeconds}s).`,
     );
     return ok({ key, uploadUrl, publicUrl });
-  } catch {
+  } catch (error) {
     // Kredensial R2 belum dikonfigurasi / gagal signing -> 500 generik.
-    console.error("PUT /api/assets presign gagal.");
+    console.error("PUT /api/assets presign gagal:", error);
+    return internalError();
+  }
+}
+
+/** POST: Unggah langsung ke R2 via binding BAREN_ASSETS (fallback direct upload). */
+export async function POST(request: Request): Promise<Response> {
+  const denied = await requireAdminResponse("POST /api/assets");
+  if (denied) return denied;
+
+  let formData: FormData;
+  try {
+    formData = await request.formData();
+  } catch (err) {
+    console.error("POST /api/assets gagal parse formData:", err);
+    return fail("VALIDATION_ERROR", "Data formulir tidak valid.", 400);
+  }
+
+  const file = formData.get("file") as File | null;
+  const purpose = ((formData.get("purpose") as string | null) || "gallery")
+    .trim()
+    .toLowerCase();
+
+  if (!file || typeof file.size !== "number" || file.size <= 0) {
+    return fail("VALIDATION_ERROR", "Berkas tidak ditemukan atau kosong.", 400);
+  }
+
+  const validationError = validateAssetRequest({
+    purpose,
+    mimeType: file.type,
+    bytes: file.size,
+    fileName: file.name,
+  });
+  if (validationError) {
+    return fail("VALIDATION_ERROR", validationError, 400);
+  }
+
+  let key: string;
+  let publicUrl: string;
+  try {
+    key = createAssetKey(purpose, file.type);
+    publicUrl = buildPublicAssetUrl(key);
+  } catch (err) {
+    console.error("POST /api/assets key/url gagal dibuat:", err);
+    return internalError();
+  }
+
+  try {
+    const bucket = getR2Bucket();
+    const arrayBuffer = await file.arrayBuffer();
+    await bucket.put(key, arrayBuffer, {
+      httpMetadata: {
+        contentType: file.type,
+      },
+    });
+    console.info(`POST /api/assets direct upload sukses (key=${key}).`);
+    return ok({
+      key,
+      publicUrl,
+      name: file.name,
+      size: file.size,
+      mimeType: file.type,
+    });
+  } catch (err) {
+    console.error("POST /api/assets direct upload gagal:", err);
     return internalError();
   }
 }

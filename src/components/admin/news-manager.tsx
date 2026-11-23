@@ -9,7 +9,6 @@ import {
   adminSelectClass,
   adminLabelClass,
   adminErrorClass,
-  adminHelpClass,
 } from "./form-styles";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
@@ -202,55 +201,55 @@ export function NewsManager() {
           {editingId ? "Edit Berita" : "Tambah Berita"}
         </h3>
 
-        <div className="mb-4">
-          <label htmlFor="title" className={adminLabelClass}>
-            Judul *
-          </label>
-          <input
-            id="title"
-            type="text"
-            value={formData.title}
-            onChange={(e) => {
-              const title = e.target.value;
-              setFormData((prev) => ({
-                ...prev,
-                title,
-                slug:
-                  editingId === null && !slugTouched
-                    ? slugifyTitle(title)
-                    : prev.slug,
-              }));
-            }}
-            className={adminInputClass}
-            required
-          />
-          {formErrors.title && (
-            <p className={adminErrorClass}>{formErrors.title[0]}</p>
-          )}
-        </div>
+        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label htmlFor="title" className={adminLabelClass}>
+              Judul Berita *
+            </label>
+            <input
+              id="title"
+              type="text"
+              value={formData.title}
+              onChange={(e) => {
+                const title = e.target.value;
+                setFormData((prev) => ({
+                  ...prev,
+                  title,
+                  slug:
+                    editingId === null && !slugTouched
+                      ? slugifyTitle(title)
+                      : prev.slug,
+                }));
+              }}
+              className={adminInputClass}
+              required
+              placeholder="Judul artikel atau pengumuman..."
+            />
+            {formErrors.title && (
+              <p className={adminErrorClass}>{formErrors.title[0]}</p>
+            )}
+          </div>
 
-        <div className="mb-4">
-          <label htmlFor="slug" className={adminLabelClass}>
-            Slug *
-          </label>
-          <input
-            id="slug"
-            type="text"
-            value={formData.slug}
-            onChange={(e) => {
-              setSlugTouched(true);
-              setFormData({ ...formData, slug: e.target.value });
-            }}
-            className={adminInputClass}
-            required
-          />
-          <p className={adminHelpClass}>
-            Dipakai di URL /berita/[slug]. Terisi otomatis dari judul; bisa
-            diubah.
-          </p>
-          {formErrors.slug && (
-            <p className={adminErrorClass}>{formErrors.slug[0]}</p>
-          )}
+          <div>
+            <label htmlFor="slug" className={adminLabelClass}>
+              Slug URL *
+            </label>
+            <input
+              id="slug"
+              type="text"
+              value={formData.slug}
+              onChange={(e) => {
+                setSlugTouched(true);
+                setFormData({ ...formData, slug: e.target.value });
+              }}
+              className={adminInputClass}
+              required
+              placeholder="slug-artikel"
+            />
+            {formErrors.slug && (
+              <p className={adminErrorClass}>{formErrors.slug[0]}</p>
+            )}
+          </div>
         </div>
 
         <div className="mb-4">
@@ -288,67 +287,62 @@ export function NewsManager() {
           )}
         </div>
 
-        <div className="mb-4">
-          <label htmlFor="coverUrl" className={adminLabelClass}>
-            URL Cover
-          </label>
-          <input
-            id="coverUrl"
-            type="url"
-            value={formData.coverUrl}
-            onChange={(e) =>
-              setFormData({ ...formData, coverUrl: e.target.value })
-            }
-            className={adminInputClass}
-            placeholder="https://... (JPG/PNG/WebP)"
-          />
-          <p className={adminHelpClass}>
-            Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan tautan
-            gambar langsung.
-          </p>
-          {formErrors.coverUrl && (
-            <p className={adminErrorClass}>{formErrors.coverUrl[0]}</p>
-          )}
-          {formData.coverUrl.trim() ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={
-                resolvePublicAssetUrl(formData.coverUrl) || formData.coverUrl
+        <div className="mb-4 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="md:col-span-2">
+            <label htmlFor="coverUrl" className={adminLabelClass}>
+              Gambar Sampul (Cover)
+            </label>
+            <input
+              id="coverUrl"
+              type="url"
+              value={formData.coverUrl}
+              onChange={(e) =>
+                setFormData({ ...formData, coverUrl: e.target.value })
               }
-              alt="Pratinjau sampul berita"
-              className="mt-2 max-h-48 w-full rounded border object-cover"
+              className={adminInputClass}
+              placeholder="https://... (atau pilih berkas di bawah)"
             />
-          ) : null}
-          <div className="mt-2">
-            <p className="mb-1 text-sm font-medium">
-              Unggah Sampul Baru ke R2 (JPG/PNG/WebP ≤ 5 MB)
-            </p>
-            <AssetUploader
-              purpose="news-cover"
-              onUploaded={handleCoverUploaded}
-              disabled={submitting}
-            />
+            {formErrors.coverUrl && (
+              <p className={adminErrorClass}>{formErrors.coverUrl[0]}</p>
+            )}
+            {formData.coverUrl.trim() ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={
+                  resolvePublicAssetUrl(formData.coverUrl) || formData.coverUrl
+                }
+                alt="Pratinjau sampul berita"
+                className="mt-2 max-h-40 w-full rounded border object-cover"
+              />
+            ) : null}
+            <div className="mt-2">
+              <AssetUploader
+                purpose="news-cover"
+                onUploaded={handleCoverUploaded}
+                disabled={submitting}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="mb-4">
-          <label htmlFor="status" className={adminLabelClass}>
-            Status
-          </label>
-          <select
-            id="status"
-            value={formData.status}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                status: e.target.value as "draft" | "published",
-              })
-            }
-            className={adminSelectClass}
-          >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-          </select>
+          <div>
+            <label htmlFor="status" className={adminLabelClass}>
+              Status Publikasi
+            </label>
+            <select
+              id="status"
+              value={formData.status}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  status: e.target.value as "draft" | "published",
+                })
+              }
+              className={adminSelectClass}
+            >
+              <option value="draft">Draft (Draf)</option>
+              <option value="published">Published (Terbit)</option>
+            </select>
+          </div>
         </div>
 
         <div className="flex gap-2">

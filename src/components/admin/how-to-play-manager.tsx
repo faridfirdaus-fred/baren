@@ -258,25 +258,7 @@ export function HowToPlayManager() {
               className={adminInputClass}
               placeholder="https://... (MP4)"
             />
-            <p className={adminHelpClass}>
-              Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan
-              tautan MP4 langsung.
-            </p>
-            {videoUrl.trim() ? (
-              <video
-                src={videoUrl}
-                preload="metadata"
-                muted
-                playsInline
-                controls
-                className="mt-2 max-h-48 w-full rounded border"
-                aria-label="Pratinjau video demo"
-              />
-            ) : null}
             <div className="mt-2">
-              <p className="mb-1 text-sm font-medium">
-                Unggah Video Demo Baru ke R2 (MP4 ≤ 50 MB)
-              </p>
               <AssetUploader
                 purpose="how-to-play-video"
                 onUploaded={handleVideoUploaded}
@@ -299,42 +281,63 @@ export function HowToPlayManager() {
           {editingStepId ? "Edit Langkah" : "Tambah Langkah"}
         </h3>
         <form onSubmit={handleStepSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="step" className={adminLabelClass}>
-              Nomor Langkah *
-            </label>
-            <input
-              id="step"
-              type="number"
-              value={stepForm.step}
-              onChange={(e) =>
-                setStepForm({ ...stepForm, step: Number(e.target.value) })
-              }
-              className={adminInputClass}
-              required
-            />
-            {formErrors.step && (
-              <p className={adminErrorClass}>{formErrors.step[0]}</p>
-            )}
-          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-6">
+            <div className="sm:col-span-1">
+              <label htmlFor="step" className={adminLabelClass}>
+                No. Langkah *
+              </label>
+              <input
+                id="step"
+                type="number"
+                value={stepForm.step}
+                onChange={(e) =>
+                  setStepForm({ ...stepForm, step: Number(e.target.value) })
+                }
+                className={adminInputClass}
+                required
+              />
+              {formErrors.step && (
+                <p className={adminErrorClass}>{formErrors.step[0]}</p>
+              )}
+            </div>
 
-          <div>
-            <label htmlFor="title" className={adminLabelClass}>
-              Judul *
-            </label>
-            <input
-              id="title"
-              type="text"
-              value={stepForm.title}
-              onChange={(e) =>
-                setStepForm({ ...stepForm, title: e.target.value })
-              }
-              className={adminInputClass}
-              required
-            />
-            {formErrors.title && (
-              <p className={adminErrorClass}>{formErrors.title[0]}</p>
-            )}
+            <div className="sm:col-span-4">
+              <label htmlFor="title" className={adminLabelClass}>
+                Judul Langkah *
+              </label>
+              <input
+                id="title"
+                type="text"
+                value={stepForm.title}
+                onChange={(e) =>
+                  setStepForm({ ...stepForm, title: e.target.value })
+                }
+                className={adminInputClass}
+                required
+                placeholder="Contoh: Pilih Karakter Anda"
+              />
+              {formErrors.title && (
+                <p className={adminErrorClass}>{formErrors.title[0]}</p>
+              )}
+            </div>
+
+            <div className="sm:col-span-1">
+              <label htmlFor="sortOrder" className={adminLabelClass}>
+                Urutan
+              </label>
+              <input
+                id="sortOrder"
+                type="number"
+                value={stepForm.sortOrder}
+                onChange={(e) =>
+                  setStepForm({
+                    ...stepForm,
+                    sortOrder: Number(e.target.value),
+                  })
+                }
+                className={adminInputClass}
+              />
+            </div>
           </div>
 
           <div>
@@ -349,12 +352,13 @@ export function HowToPlayManager() {
               }
               className={adminTextareaClass}
               rows={3}
+              placeholder="Jelaskan instruksi atau taktik langkah ini..."
             />
           </div>
 
           <div>
             <label htmlFor="mediaUrl" className={adminLabelClass}>
-              URL Media
+              Media Langkah (Gambar / Video)
             </label>
             <input
               id="mediaUrl"
@@ -364,12 +368,8 @@ export function HowToPlayManager() {
                 setStepForm({ ...stepForm, mediaUrl: e.target.value })
               }
               className={adminInputClass}
-              placeholder="https://... (gambar/video)"
+              placeholder="https://... (atau pilih berkas di bawah)"
             />
-            <p className={adminHelpClass}>
-              Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan
-              tautan langsung.
-            </p>
             {stepForm.mediaUrl.trim() ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -377,34 +377,16 @@ export function HowToPlayManager() {
                   resolvePublicAssetUrl(stepForm.mediaUrl) || stepForm.mediaUrl
                 }
                 alt="Pratinjau media langkah"
-                className="mt-2 max-h-48 w-full rounded border object-cover"
+                className="mt-2 max-h-40 w-full rounded border object-cover"
               />
             ) : null}
             <div className="mt-2">
-              <p className="mb-1 text-sm font-medium">
-                Unggah Media Langkah ke R2 (gambar ≤ 5 MB / MP4 ≤ 50 MB)
-              </p>
               <AssetUploader
                 purpose="how-to-play-media"
                 onUploaded={handleStepMediaUploaded}
                 disabled={submitting}
               />
             </div>
-          </div>
-
-          <div>
-            <label htmlFor="sortOrder" className={adminLabelClass}>
-              Urutan
-            </label>
-            <input
-              id="sortOrder"
-              type="number"
-              value={stepForm.sortOrder}
-              onChange={(e) =>
-                setStepForm({ ...stepForm, sortOrder: Number(e.target.value) })
-              }
-              className={adminInputClass}
-            />
           </div>
 
           <div className="flex gap-2">

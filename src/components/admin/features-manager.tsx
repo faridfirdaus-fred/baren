@@ -189,24 +189,52 @@ export function FeaturesManager() {
           {editingId ? "Edit Fitur" : "Tambah Fitur"}
         </h2>
 
-        <div className="mb-4">
-          <label htmlFor="feature-title" className={adminLabelClass}>
-            Judul *
-          </label>
-          <input
-            id="feature-title"
-            type="text"
-            value={formData.title}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, title: e.target.value }))
-            }
-            disabled={submitting}
-            required
-            className={adminInputClass}
-          />
-          {formErrors.title && (
-            <p className="mt-1 text-sm text-ember">{formErrors.title[0]}</p>
-          )}
+        <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-4">
+          <div className="sm:col-span-3">
+            <label htmlFor="feature-title" className={adminLabelClass}>
+              Judul *
+            </label>
+            <input
+              id="feature-title"
+              type="text"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, title: e.target.value }))
+              }
+              disabled={submitting}
+              required
+              className={adminInputClass}
+              placeholder="Contoh: Arena Taktikal 5v5"
+            />
+            {formErrors.title && (
+              <p className="mt-1 text-sm text-ember">{formErrors.title[0]}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="feature-sort-order" className={adminLabelClass}>
+              Urutan
+            </label>
+            <input
+              id="feature-sort-order"
+              type="number"
+              min={0}
+              value={formData.sortOrder}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  sortOrder: parseInt(e.target.value, 10) || 0,
+                }))
+              }
+              disabled={submitting}
+              className={adminInputClass}
+            />
+            {formErrors.sortOrder && (
+              <p className="mt-1 text-sm text-ember">
+                {formErrors.sortOrder[0]}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="mb-4">
@@ -225,6 +253,7 @@ export function FeaturesManager() {
             disabled={submitting}
             rows={3}
             className={adminTextareaClass}
+            placeholder="Deskripsi singkat mengenai keunggulan fitur game ini..."
           />
           {formErrors.description && (
             <p className="mt-1 text-sm text-ember">
@@ -235,7 +264,7 @@ export function FeaturesManager() {
 
         <div className="mb-4">
           <label htmlFor="feature-icon-url" className={adminLabelClass}>
-            URL Ikon
+            Ikon Fitur
           </label>
           <input
             id="feature-icon-url"
@@ -245,13 +274,9 @@ export function FeaturesManager() {
               setFormData((prev) => ({ ...prev, iconUrl: e.target.value }))
             }
             disabled={submitting}
-            placeholder="https://..."
+            placeholder="https://... (atau unggah berkas di bawah)"
             className={adminInputClass}
           />
-          <p className="mt-1 text-xs text-sand-600">
-            Diisi otomatis saat mengunggah ikon di bawah, atau masukkan tautan
-            langsung.
-          </p>
           {formErrors.iconUrl && (
             <p className="mt-1 text-sm text-ember">{formErrors.iconUrl[0]}</p>
           )}
@@ -260,42 +285,16 @@ export function FeaturesManager() {
             <img
               src={resolvePublicAssetUrl(formData.iconUrl) || formData.iconUrl}
               alt="Pratinjau ikon fitur"
-              className="mt-2 h-16 w-16 rounded border border-line bg-ink object-contain p-1"
+              className="mt-2 h-14 w-14 rounded border border-line bg-ink object-contain p-1"
             />
           ) : null}
-          <div className="mt-3">
-            <p className="mb-1 text-sm font-medium">
-              Unggah Ikon Baru ke R2 (JPG/PNG/WebP/SVG ≤ 5 MB)
-            </p>
+          <div className="mt-2">
             <AssetUploader
               purpose="ikon"
               onUploaded={handleIconUploaded}
               disabled={submitting}
             />
           </div>
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="feature-sort-order" className={adminLabelClass}>
-            Urutan
-          </label>
-          <input
-            id="feature-sort-order"
-            type="number"
-            min={0}
-            value={formData.sortOrder}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                sortOrder: parseInt(e.target.value, 10) || 0,
-              }))
-            }
-            disabled={submitting}
-            className={`${adminInputClass} max-w-40`}
-          />
-          {formErrors.sortOrder && (
-            <p className="mt-1 text-sm text-ember">{formErrors.sortOrder[0]}</p>
-          )}
         </div>
 
         <div className="flex flex-wrap gap-2">

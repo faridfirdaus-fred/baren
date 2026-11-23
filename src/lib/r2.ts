@@ -62,7 +62,8 @@ function readEnvValue(name: string): string | undefined {
 
 /** Baca konfigurasi R2 dari env; lempar error deskriptif bila belum diset. */
 export function getR2PresignEnv(): R2PresignEnv {
-  const accountId = readEnvValue("R2_ACCOUNT_ID");
+  const accountId =
+    readEnvValue("R2_ACCOUNT_ID") ?? "712362c33f34736e4edcf9478ddf9a15";
   const bucketName =
     readEnvValue("R2_BUCKET_NAME") ??
     readEnvValue("R2_BUCKET") ??
@@ -312,7 +313,10 @@ export async function createPresignedPutUrl(input: PresignedPutInput): Promise<{
   }
 
   const resolved = input.env ?? {};
-  const accountId = resolved.accountId ?? readEnvValue("R2_ACCOUNT_ID");
+  const accountId =
+    resolved.accountId ??
+    readEnvValue("R2_ACCOUNT_ID") ??
+    "712362c33f34736e4edcf9478ddf9a15";
   const bucketName =
     resolved.bucketName ??
     readEnvValue("R2_BUCKET_NAME") ??

@@ -10,7 +10,6 @@ import {
   adminCheckboxClass,
   adminLabelClass,
   adminErrorClass,
-  adminHelpClass,
 } from "./form-styles";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
@@ -285,74 +284,84 @@ export function LandingCardsManager() {
           {editingId ? "Edit Kartu" : "Tambah Kartu"}
         </h3>
 
-        <div>
-          <label htmlFor="slot" className={adminLabelClass}>
-            Slot
-          </label>
-          <input
-            id="slot"
-            type="text"
-            value={formData.slot}
-            onChange={(e) => setFormData({ ...formData, slot: e.target.value })}
-            className={adminInputClass}
-          />
-          {formErrors.slot && (
-            <p className={adminErrorClass}>{formErrors.slot[0]}</p>
-          )}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label htmlFor="title" className={adminLabelClass}>
+              Judul Kartu *
+            </label>
+            <input
+              id="title"
+              type="text"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+              className={adminInputClass}
+              required
+              placeholder="Contoh: Senjata Khusus"
+            />
+            {formErrors.title && (
+              <p className={adminErrorClass}>{formErrors.title[0]}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="slot" className={adminLabelClass}>
+              Slot / Posisi (opsional)
+            </label>
+            <input
+              id="slot"
+              type="text"
+              value={formData.slot}
+              onChange={(e) =>
+                setFormData({ ...formData, slot: e.target.value })
+              }
+              className={adminInputClass}
+              placeholder="Contoh: featured"
+            />
+            {formErrors.slot && (
+              <p className={adminErrorClass}>{formErrors.slot[0]}</p>
+            )}
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="title" className={adminLabelClass}>
-            Judul *
-          </label>
-          <input
-            id="title"
-            type="text"
-            value={formData.title}
-            onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
-            }
-            className={adminInputClass}
-            required
-          />
-          {formErrors.title && (
-            <p className={adminErrorClass}>{formErrors.title[0]}</p>
-          )}
-        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label htmlFor="eyebrow" className={adminLabelClass}>
+              Eyebrow (opsional)
+            </label>
+            <input
+              id="eyebrow"
+              type="text"
+              value={formData.eyebrow}
+              onChange={(e) =>
+                setFormData({ ...formData, eyebrow: e.target.value })
+              }
+              className={adminInputClass}
+              placeholder="Contoh: ARSENAL"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="eyebrow" className={adminLabelClass}>
-            Eyebrow
-          </label>
-          <input
-            id="eyebrow"
-            type="text"
-            value={formData.eyebrow}
-            onChange={(e) =>
-              setFormData({ ...formData, eyebrow: e.target.value })
-            }
-            className={adminInputClass}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="subtitle" className={adminLabelClass}>
-            Subjudul
-          </label>
-          <input
-            id="subtitle"
-            type="text"
-            value={formData.subtitle}
-            onChange={(e) =>
-              setFormData({ ...formData, subtitle: e.target.value })
-            }
-            className={adminInputClass}
-          />
+          <div>
+            <label htmlFor="subtitle" className={adminLabelClass}>
+              Subjudul (opsional)
+            </label>
+            <input
+              id="subtitle"
+              type="text"
+              value={formData.subtitle}
+              onChange={(e) =>
+                setFormData({ ...formData, subtitle: e.target.value })
+              }
+              className={adminInputClass}
+              placeholder="Koleksi persenjataan mutakhir"
+            />
+          </div>
         </div>
 
         <div>
           <label htmlFor="body" className={adminLabelClass}>
-            Isi
+            Deskripsi / Isi
           </label>
           <textarea
             id="body"
@@ -360,12 +369,13 @@ export function LandingCardsManager() {
             onChange={(e) => setFormData({ ...formData, body: e.target.value })}
             className={adminTextareaClass}
             rows={3}
+            placeholder="Deskripsi kartu yang ditampilkan pada seksi..."
           />
         </div>
 
         <div>
           <label htmlFor="imageUrl" className={adminLabelClass}>
-            URL Gambar
+            Gambar Kartu
           </label>
           <input
             id="imageUrl"
@@ -375,12 +385,8 @@ export function LandingCardsManager() {
               setFormData({ ...formData, imageUrl: e.target.value })
             }
             className={adminInputClass}
-            placeholder="https://... (JPG/PNG/WebP)"
+            placeholder="https://... (atau pilih berkas di bawah)"
           />
-          <p className={adminHelpClass}>
-            Diisi otomatis saat mengunggah via R2 di bawah, atau masukkan tautan
-            gambar langsung.
-          </p>
           {formData.imageUrl.trim() ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -388,13 +394,10 @@ export function LandingCardsManager() {
                 resolvePublicAssetUrl(formData.imageUrl) || formData.imageUrl
               }
               alt="Pratinjau gambar kartu"
-              className="mt-2 max-h-48 w-full rounded border object-cover"
+              className="mt-2 max-h-40 w-full rounded border object-cover"
             />
           ) : null}
           <div className="mt-2">
-            <p className="mb-1 text-sm font-medium">
-              Unggah Gambar Baru ke R2 (JPG/PNG/WebP ≤ 5 MB)
-            </p>
             <AssetUploader
               purpose="landing-image"
               onUploaded={handleImageUploaded}
@@ -403,70 +406,76 @@ export function LandingCardsManager() {
           </div>
         </div>
 
-        <div>
-          <label htmlFor="ctaLabel" className={adminLabelClass}>
-            Label CTA
-          </label>
-          <input
-            id="ctaLabel"
-            type="text"
-            value={formData.ctaLabel}
-            onChange={(e) =>
-              setFormData({ ...formData, ctaLabel: e.target.value })
-            }
-            className={adminInputClass}
-          />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label htmlFor="ctaLabel" className={adminLabelClass}>
+              Label Tombol (CTA)
+            </label>
+            <input
+              id="ctaLabel"
+              type="text"
+              value={formData.ctaLabel}
+              onChange={(e) =>
+                setFormData({ ...formData, ctaLabel: e.target.value })
+              }
+              className={adminInputClass}
+              placeholder="Contoh: LIHAT DETAIL"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="ctaUrl" className={adminLabelClass}>
+              URL / Target Tombol (CTA)
+            </label>
+            <input
+              id="ctaUrl"
+              type="url"
+              value={formData.ctaUrl}
+              onChange={(e) =>
+                setFormData({ ...formData, ctaUrl: e.target.value })
+              }
+              className={adminInputClass}
+              placeholder="https://..."
+            />
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="ctaUrl" className={adminLabelClass}>
-            URL CTA
-          </label>
-          <input
-            id="ctaUrl"
-            type="url"
-            value={formData.ctaUrl}
-            onChange={(e) =>
-              setFormData({ ...formData, ctaUrl: e.target.value })
-            }
-            className={adminInputClass}
-          />
-        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="tone" className={adminLabelClass}>
+              Tema Warna (Tone)
+            </label>
+            <select
+              id="tone"
+              value={formData.tone}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  tone: e.target.value as "dark" | "light" | "ember",
+                })
+              }
+              className={adminSelectClass}
+            >
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+              <option value="ember">Ember</option>
+            </select>
+          </div>
 
-        <div>
-          <label htmlFor="tone" className={adminLabelClass}>
-            Tone
-          </label>
-          <select
-            id="tone"
-            value={formData.tone}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                tone: e.target.value as "dark" | "light" | "ember",
-              })
-            }
-            className={adminSelectClass}
-          >
-            <option value="dark">Dark</option>
-            <option value="light">Light</option>
-            <option value="ember">Ember</option>
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="sortOrder" className={adminLabelClass}>
-            Urutan
-          </label>
-          <input
-            id="sortOrder"
-            type="number"
-            value={formData.sortOrder}
-            onChange={(e) =>
-              setFormData({ ...formData, sortOrder: Number(e.target.value) })
-            }
-            className={adminInputClass}
-          />
+          <div>
+            <label htmlFor="sortOrder" className={adminLabelClass}>
+              Urutan
+            </label>
+            <input
+              id="sortOrder"
+              type="number"
+              value={formData.sortOrder}
+              onChange={(e) =>
+                setFormData({ ...formData, sortOrder: Number(e.target.value) })
+              }
+              className={adminInputClass}
+            />
+          </div>
         </div>
 
         <div className="flex items-center gap-2">

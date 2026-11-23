@@ -220,17 +220,13 @@ export function LandingContentManager() {
         />
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-10">
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Seksi Fitur Utama */}
-        <section className="rounded-lg border border-line bg-ink-800 p-6">
-          <h2 className="text-xl font-bold uppercase tracking-wider text-sand">
+        <section className="rounded-lg border border-line bg-ink-800 p-5">
+          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
             Seksi Fitur Utama
           </h2>
-          <p className="mt-1 text-sm text-sand-600">
-            Daftar kartu fitur dikelola terpisah di modul Game Content.
-          </p>
-
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="featuresEyebrow" className={adminLabelClass}>
                 Eyebrow Fitur
@@ -271,20 +267,25 @@ export function LandingContentManager() {
                 <p className={adminErrorClass}>{formErrors.featuresTitle[0]}</p>
               )}
             </div>
+          </div>
 
-            <div>
+          <details className="mt-4 border-t border-line/40 pt-2 text-xs text-sand-500">
+            <summary className="cursor-pointer font-medium hover:text-ember">
+              + Opsi teks lanjutan (pesan kosong)
+            </summary>
+            <div className="mt-3">
               <label htmlFor="featuresEmptyMessage" className={adminLabelClass}>
                 Pesan Kosong (bila belum ada fitur)
               </label>
-              <textarea
+              <input
                 id="featuresEmptyMessage"
                 name="featuresEmptyMessage"
-                rows={2}
+                type="text"
                 value={formData.featuresEmptyMessage}
                 onChange={handleChange}
                 maxLength={500}
-                className={adminTextareaClass}
-                placeholder="Fitur belum tersedia. Tambahkan melalui panel admin."
+                className={adminInputClass}
+                placeholder="Fitur belum tersedia."
               />
               {formErrors.featuresEmptyMessage && (
                 <p className={adminErrorClass}>
@@ -292,54 +293,41 @@ export function LandingContentManager() {
                 </p>
               )}
             </div>
-          </div>
+          </details>
         </section>
 
         {/* Seksi Cara Bermain */}
-        <section className="rounded-lg border border-line bg-ink-800 p-6">
-          <h2 className="text-xl font-bold uppercase tracking-wider text-sand">
+        <section className="rounded-lg border border-line bg-ink-800 p-5">
+          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
             Seksi Cara Bermain
           </h2>
-          <p className="mt-1 text-sm text-sand-600">
-            Langkah bernomor dan video demo dikelola di modul Kelola How to
-            Play.
-          </p>
-
-          <div className="mt-6 space-y-4">
-            <div>
-              <label htmlFor="howToPlayTitle" className={adminLabelClass}>
-                Judul Seksi Cara Bermain *
-              </label>
-              <input
-                id="howToPlayTitle"
-                name="howToPlayTitle"
-                type="text"
-                required
-                value={formData.howToPlayTitle}
-                onChange={handleChange}
-                maxLength={200}
-                className={adminInputClass}
-                placeholder="CARA BERMAIN"
-              />
-              {formErrors.howToPlayTitle && (
-                <p className={adminErrorClass}>
-                  {formErrors.howToPlayTitle[0]}
-                </p>
-              )}
-            </div>
+          <div className="mt-4">
+            <label htmlFor="howToPlayTitle" className={adminLabelClass}>
+              Judul Seksi Cara Bermain *
+            </label>
+            <input
+              id="howToPlayTitle"
+              name="howToPlayTitle"
+              type="text"
+              required
+              value={formData.howToPlayTitle}
+              onChange={handleChange}
+              maxLength={200}
+              className={adminInputClass}
+              placeholder="CARA BERMAIN"
+            />
+            {formErrors.howToPlayTitle && (
+              <p className={adminErrorClass}>{formErrors.howToPlayTitle[0]}</p>
+            )}
           </div>
         </section>
 
         {/* Seksi Galeri */}
-        <section className="rounded-lg border border-line bg-ink-800 p-6">
-          <h2 className="text-xl font-bold uppercase tracking-wider text-sand">
+        <section className="rounded-lg border border-line bg-ink-800 p-5">
+          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
             Seksi Galeri Permainan
           </h2>
-          <p className="mt-1 text-sm text-sand-600">
-            Aset gambar dan video galeri dikelola di modul Kelola Galeri.
-          </p>
-
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="galleryEyebrow" className={adminLabelClass}>
                 Eyebrow Galeri
@@ -380,29 +368,34 @@ export function LandingContentManager() {
                 <p className={adminErrorClass}>{formErrors.galleryTitle[0]}</p>
               )}
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="galleryDescription" className={adminLabelClass}>
-                Deskripsi Galeri
-              </label>
-              <textarea
-                id="galleryDescription"
-                name="galleryDescription"
-                rows={2}
-                value={formData.galleryDescription}
-                onChange={handleChange}
-                maxLength={500}
-                className={adminTextareaClass}
-                placeholder="Tangkapan layar, ilustrasi konsep, dan video cuplikan arena pertempuran..."
-              />
-              {formErrors.galleryDescription && (
-                <p className={adminErrorClass}>
-                  {formErrors.galleryDescription[0]}
-                </p>
-              )}
-            </div>
+          <div className="mt-4">
+            <label htmlFor="galleryDescription" className={adminLabelClass}>
+              Deskripsi Galeri
+            </label>
+            <textarea
+              id="galleryDescription"
+              name="galleryDescription"
+              rows={2}
+              value={formData.galleryDescription}
+              onChange={handleChange}
+              maxLength={500}
+              className={adminTextareaClass}
+              placeholder="Tangkapan layar, ilustrasi konsep, dan video cuplikan arena pertempuran..."
+            />
+            {formErrors.galleryDescription && (
+              <p className={adminErrorClass}>
+                {formErrors.galleryDescription[0]}
+              </p>
+            )}
+          </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+          <details className="mt-4 border-t border-line/40 pt-2 text-xs text-sand-500">
+            <summary className="cursor-pointer font-medium hover:text-ember">
+              + Opsi teks lanjutan (pesan kosong)
+            </summary>
+            <div className="mt-3 grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="galleryEmptyTitle" className={adminLabelClass}>
                   Judul Kosong Galeri
@@ -417,11 +410,6 @@ export function LandingContentManager() {
                   className={adminInputClass}
                   placeholder="Segera Hadir"
                 />
-                {formErrors.galleryEmptyTitle && (
-                  <p className={adminErrorClass}>
-                    {formErrors.galleryEmptyTitle[0]}
-                  </p>
-                )}
               </div>
 
               <div>
@@ -441,27 +429,17 @@ export function LandingContentManager() {
                   className={adminInputClass}
                   placeholder="Media resmi BAREN sedang disiapkan..."
                 />
-                {formErrors.galleryEmptyMessage && (
-                  <p className={adminErrorClass}>
-                    {formErrors.galleryEmptyMessage[0]}
-                  </p>
-                )}
               </div>
             </div>
-          </div>
+          </details>
         </section>
 
         {/* Seksi Berita & Artikel */}
-        <section className="rounded-lg border border-line bg-ink-800 p-6">
-          <h2 className="text-xl font-bold uppercase tracking-wider text-sand">
+        <section className="rounded-lg border border-line bg-ink-800 p-5">
+          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
             Seksi Artikel / Berita
           </h2>
-          <p className="mt-1 text-sm text-sand-600">
-            Daftar artikel dikelola di modul Kelola Berita. Bila tidak ada
-            artikel terbit, seksi otomatis disembunyikan.
-          </p>
-
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="newsTitle" className={adminLabelClass}>
                 Judul Seksi Artikel *
@@ -484,7 +462,7 @@ export function LandingContentManager() {
 
             <div>
               <label htmlFor="newsCtaLabel" className={adminLabelClass}>
-                Label Tautan Semua Berita *
+                Label Tombol Semua Berita *
               </label>
               <input
                 id="newsCtaLabel"
@@ -505,15 +483,11 @@ export function LandingContentManager() {
         </section>
 
         {/* Seksi FAQ */}
-        <section className="rounded-lg border border-line bg-ink-800 p-6">
-          <h2 className="text-xl font-bold uppercase tracking-wider text-sand">
+        <section className="rounded-lg border border-line bg-ink-800 p-5">
+          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
             Seksi FAQ
           </h2>
-          <p className="mt-1 text-sm text-sand-600">
-            Daftar pertanyaan dan jawaban dikelola di modul Kelola FAQ.
-          </p>
-
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="faqEyebrow" className={adminLabelClass}>
                 Eyebrow FAQ
@@ -556,142 +530,124 @@ export function LandingContentManager() {
         </section>
 
         {/* Seksi Komentar */}
-        <section className="rounded-lg border border-line bg-ink-800 p-6">
-          <h2 className="text-xl font-bold uppercase tracking-wider text-sand">
+        <section className="rounded-lg border border-line bg-ink-800 p-5">
+          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
             Seksi Komentar Komunitas
           </h2>
-          <p className="mt-1 text-sm text-sand-600">
-            Moderasi dan penghapusan komentar dilakukan di modul Kelola
-            Komentar.
-          </p>
+          <div className="mt-4">
+            <label htmlFor="commentsTitle" className={adminLabelClass}>
+              Judul Seksi Komentar *
+            </label>
+            <input
+              id="commentsTitle"
+              name="commentsTitle"
+              type="text"
+              required
+              value={formData.commentsTitle}
+              onChange={handleChange}
+              maxLength={200}
+              className={adminInputClass}
+              placeholder="KOMENTAR KOMUNITAS"
+            />
+            {formErrors.commentsTitle && (
+              <p className={adminErrorClass}>{formErrors.commentsTitle[0]}</p>
+            )}
+          </div>
 
-          <div className="mt-6 space-y-4">
-            <div>
-              <label htmlFor="commentsTitle" className={adminLabelClass}>
-                Judul Seksi Komentar *
-              </label>
-              <input
-                id="commentsTitle"
-                name="commentsTitle"
-                type="text"
-                required
-                value={formData.commentsTitle}
-                onChange={handleChange}
-                maxLength={200}
-                className={adminInputClass}
-                placeholder="KOMENTAR KOMUNITAS"
-              />
-              {formErrors.commentsTitle && (
-                <p className={adminErrorClass}>{formErrors.commentsTitle[0]}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="commentsLoginPrompt" className={adminLabelClass}>
-                Prompt Login Pengunjung *
-              </label>
-              <textarea
-                id="commentsLoginPrompt"
-                name="commentsLoginPrompt"
-                rows={2}
-                required
-                value={formData.commentsLoginPrompt}
-                onChange={handleChange}
-                maxLength={500}
-                className={adminTextareaClass}
-                placeholder="Masuk dengan akun Google untuk meninggalkan komentar..."
-              />
-              {formErrors.commentsLoginPrompt && (
-                <p className={adminErrorClass}>
-                  {formErrors.commentsLoginPrompt[0]}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="commentsEmptyMessage" className={adminLabelClass}>
-                Pesan Belum Ada Komentar
-              </label>
-              <input
-                id="commentsEmptyMessage"
-                name="commentsEmptyMessage"
-                type="text"
-                value={formData.commentsEmptyMessage}
-                onChange={handleChange}
-                maxLength={500}
-                className={adminInputClass}
-                placeholder="Belum ada komentar. Jadilah yang pertama memberikan masukan!"
-              />
-              {formErrors.commentsEmptyMessage && (
-                <p className={adminErrorClass}>
-                  {formErrors.commentsEmptyMessage[0]}
-                </p>
-              )}
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
+          <details className="mt-4 border-t border-line/40 pt-2 text-xs text-sand-500">
+            <summary className="cursor-pointer font-medium hover:text-ember">
+              + Opsi teks lanjutan (prompt, tombol & pesan kirim)
+            </summary>
+            <div className="mt-3 space-y-3">
               <div>
                 <label
-                  htmlFor="commentsSubmitLabel"
+                  htmlFor="commentsLoginPrompt"
                   className={adminLabelClass}
                 >
-                  Label Tombol Kirim *
+                  Prompt Login Pengunjung *
                 </label>
                 <input
-                  id="commentsSubmitLabel"
-                  name="commentsSubmitLabel"
+                  id="commentsLoginPrompt"
+                  name="commentsLoginPrompt"
                   type="text"
                   required
-                  value={formData.commentsSubmitLabel}
-                  onChange={handleChange}
-                  maxLength={100}
-                  className={adminInputClass}
-                  placeholder="KIRIM KOMENTAR"
-                />
-                {formErrors.commentsSubmitLabel && (
-                  <p className={adminErrorClass}>
-                    {formErrors.commentsSubmitLabel[0]}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="commentsSubmitError"
-                  className={adminLabelClass}
-                >
-                  Pesan Galat Pengiriman
-                </label>
-                <input
-                  id="commentsSubmitError"
-                  name="commentsSubmitError"
-                  type="text"
-                  value={formData.commentsSubmitError}
+                  value={formData.commentsLoginPrompt}
                   onChange={handleChange}
                   maxLength={500}
                   className={adminInputClass}
-                  placeholder="Gagal mengirim komentar. Silakan coba lagi."
+                  placeholder="Masuk dengan akun Google untuk meninggalkan komentar..."
                 />
-                {formErrors.commentsSubmitError && (
-                  <p className={adminErrorClass}>
-                    {formErrors.commentsSubmitError[0]}
-                  </p>
-                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="commentsEmptyMessage"
+                  className={adminLabelClass}
+                >
+                  Pesan Belum Ada Komentar
+                </label>
+                <input
+                  id="commentsEmptyMessage"
+                  name="commentsEmptyMessage"
+                  type="text"
+                  value={formData.commentsEmptyMessage}
+                  onChange={handleChange}
+                  maxLength={500}
+                  className={adminInputClass}
+                  placeholder="Belum ada komentar."
+                />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="commentsSubmitLabel"
+                    className={adminLabelClass}
+                  >
+                    Label Tombol Kirim *
+                  </label>
+                  <input
+                    id="commentsSubmitLabel"
+                    name="commentsSubmitLabel"
+                    type="text"
+                    required
+                    value={formData.commentsSubmitLabel}
+                    onChange={handleChange}
+                    maxLength={100}
+                    className={adminInputClass}
+                    placeholder="KIRIM KOMENTAR"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="commentsSubmitError"
+                    className={adminLabelClass}
+                  >
+                    Pesan Galat Pengiriman
+                  </label>
+                  <input
+                    id="commentsSubmitError"
+                    name="commentsSubmitError"
+                    type="text"
+                    value={formData.commentsSubmitError}
+                    onChange={handleChange}
+                    maxLength={500}
+                    className={adminInputClass}
+                    placeholder="Gagal mengirim komentar."
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          </details>
         </section>
 
         {/* Seksi Kontak & Media Sosial */}
-        <section className="rounded-lg border border-line bg-ink-800 p-6">
-          <h2 className="text-xl font-bold uppercase tracking-wider text-sand">
+        <section className="rounded-lg border border-line bg-ink-800 p-5">
+          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
             Seksi Kontak & Informasi
           </h2>
-          <p className="mt-1 text-sm text-sand-600">
-            Tautan platform media sosial dikelola di modul Kelola Tautan.
-          </p>
-
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="contactEyebrow" className={adminLabelClass}>
                 Eyebrow Kontak
@@ -732,92 +688,83 @@ export function LandingContentManager() {
                 <p className={adminErrorClass}>{formErrors.contactTitle[0]}</p>
               )}
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="contactDescription" className={adminLabelClass}>
-                Deskripsi Kontak
-              </label>
-              <textarea
-                id="contactDescription"
-                name="contactDescription"
-                rows={2}
-                value={formData.contactDescription}
-                onChange={handleChange}
-                maxLength={500}
-                className={adminTextareaClass}
-                placeholder="Punya pertanyaan seputar game, kemitraan, atau ingin bergabung..."
-              />
-              {formErrors.contactDescription && (
-                <p className={adminErrorClass}>
-                  {formErrors.contactDescription[0]}
-                </p>
-              )}
-            </div>
+          <div className="mt-4">
+            <label htmlFor="contactDescription" className={adminLabelClass}>
+              Deskripsi Kontak
+            </label>
+            <textarea
+              id="contactDescription"
+              name="contactDescription"
+              rows={2}
+              value={formData.contactDescription}
+              onChange={handleChange}
+              maxLength={500}
+              className={adminTextareaClass}
+              placeholder="Punya pertanyaan seputar game, kemitraan, atau ingin bergabung..."
+            />
+            {formErrors.contactDescription && (
+              <p className={adminErrorClass}>
+                {formErrors.contactDescription[0]}
+              </p>
+            )}
+          </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+          <div className="mt-4">
+            <label htmlFor="emailKontak" className={adminLabelClass}>
+              Alamat Email Kontak Resmi
+            </label>
+            <input
+              id="emailKontak"
+              name="emailKontak"
+              type="email"
+              value={formData.emailKontak}
+              onChange={handleChange}
+              maxLength={320}
+              className={adminInputClass}
+              placeholder="halo@baren.game"
+            />
+            {formErrors.emailKontak && (
+              <p className={adminErrorClass}>{formErrors.emailKontak[0]}</p>
+            )}
+          </div>
+
+          <details className="mt-4 border-t border-line/40 pt-2 text-xs text-sand-500">
+            <summary className="cursor-pointer font-medium hover:text-ember">
+              + Opsi teks lanjutan (label email & medsos)
+            </summary>
+            <div className="mt-3 grid gap-4 sm:grid-cols-3">
               <div>
                 <label htmlFor="contactEmailLabel" className={adminLabelClass}>
-                  Label Email Kontak *
+                  Label Email Kontak
                 </label>
                 <input
                   id="contactEmailLabel"
                   name="contactEmailLabel"
                   type="text"
-                  required
                   value={formData.contactEmailLabel}
                   onChange={handleChange}
                   maxLength={100}
                   className={adminInputClass}
                   placeholder="EMAIL RESMI"
                 />
-                {formErrors.contactEmailLabel && (
-                  <p className={adminErrorClass}>
-                    {formErrors.contactEmailLabel[0]}
-                  </p>
-                )}
               </div>
 
-              <div>
-                <label htmlFor="emailKontak" className={adminLabelClass}>
-                  Alamat Email Kontak
-                </label>
-                <input
-                  id="emailKontak"
-                  name="emailKontak"
-                  type="email"
-                  value={formData.emailKontak}
-                  onChange={handleChange}
-                  maxLength={320}
-                  className={adminInputClass}
-                  placeholder="halo@baren.game"
-                />
-                {formErrors.emailKontak && (
-                  <p className={adminErrorClass}>{formErrors.emailKontak[0]}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="contactSocialTitle" className={adminLabelClass}>
-                  Judul Media Sosial *
+                  Judul Media Sosial
                 </label>
                 <input
                   id="contactSocialTitle"
                   name="contactSocialTitle"
                   type="text"
-                  required
                   value={formData.contactSocialTitle}
                   onChange={handleChange}
                   maxLength={200}
                   className={adminInputClass}
                   placeholder="IKUTI MEDIA SOSIAL"
                 />
-                {formErrors.contactSocialTitle && (
-                  <p className={adminErrorClass}>
-                    {formErrors.contactSocialTitle[0]}
-                  </p>
-                )}
               </div>
 
               <div>
@@ -825,7 +772,7 @@ export function LandingContentManager() {
                   htmlFor="contactSocialEmptyMessage"
                   className={adminLabelClass}
                 >
-                  Pesan Media Sosial Kosong
+                  Pesan Medsos Kosong
                 </label>
                 <input
                   id="contactSocialEmptyMessage"
@@ -835,16 +782,11 @@ export function LandingContentManager() {
                   onChange={handleChange}
                   maxLength={500}
                   className={adminInputClass}
-                  placeholder="Saluran media sosial resmi akan segera diumumkan."
+                  placeholder="Segera diumumkan."
                 />
-                {formErrors.contactSocialEmptyMessage && (
-                  <p className={adminErrorClass}>
-                    {formErrors.contactSocialEmptyMessage[0]}
-                  </p>
-                )}
               </div>
             </div>
-          </div>
+          </details>
         </section>
 
         <div className="flex justify-end gap-4 border-t border-line pt-6">
