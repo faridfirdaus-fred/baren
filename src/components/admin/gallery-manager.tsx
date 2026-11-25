@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useForm, type FieldPath } from "react-hook-form";
 
 import { AssetUploader } from "@/components/admin/asset-uploader";
+import { Skeleton } from "@/components/ui/skeleton";
 import { adminButtonClass } from "@/components/admin/button-styles";
 import {
   adminErrorClass,
@@ -384,7 +385,30 @@ export function AdminGalleryManager() {
           </select>
         </div>
         {notice ? <p role="status">{notice}</p> : null}
-        {items === null && loadError === null ? <p>Memuat galeri...</p> : null}
+        {items === null && loadError === null ? (
+          <div
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            role="status"
+            aria-label="Memuat galeri"
+          >
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="border border-line bg-ink-800 p-4 space-y-3"
+              >
+                <Skeleton variant="admin" className="aspect-video w-full" />
+                <div className="flex justify-between items-center">
+                  <Skeleton variant="admin" className="h-4 w-28" />
+                  <Skeleton variant="admin" className="h-4 w-16" />
+                </div>
+                <div className="flex gap-2">
+                  <Skeleton variant="admin" className="h-7 w-14" />
+                  <Skeleton variant="admin" className="h-7 w-14" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
         {loadError ? (
           <div role="alert" className="space-y-3">
             <p>{loadError}</p>

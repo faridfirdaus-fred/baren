@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { adminButtonClass } from "./button-styles";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   adminErrorClass,
   adminInputClass,
@@ -147,7 +148,53 @@ export function FaqManager() {
     }
   };
 
-  if (loading) return <p className="text-sand-600">Memuat FAQ...</p>;
+  if (loading) {
+    return (
+      <div
+        className="grid max-w-3xl gap-8"
+        role="status"
+        aria-label="Memuat FAQ"
+      >
+        <div className="border border-line bg-ink-800 p-6 space-y-4">
+          <Skeleton variant="admin" className="h-6 w-36" />
+          <div className="space-y-2">
+            <Skeleton variant="admin" className="h-4 w-24" />
+            <Skeleton variant="admin" className="h-10 w-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton variant="admin" className="h-4 w-20" />
+            <Skeleton variant="admin" className="h-24 w-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton variant="admin" className="h-4 w-16" />
+            <Skeleton variant="admin" className="h-10 w-32" />
+          </div>
+          <Skeleton variant="admin" className="h-10 w-28" />
+        </div>
+        <div className="grid gap-3">
+          <Skeleton variant="admin" className="h-6 w-32" />
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="border border-line bg-ink-800 p-4 space-y-2"
+              >
+                <div className="flex justify-between items-center">
+                  <Skeleton variant="admin" className="h-4 w-20" />
+                  <div className="flex gap-2">
+                    <Skeleton variant="admin" className="h-7 w-14" />
+                    <Skeleton variant="admin" className="h-7 w-14" />
+                  </div>
+                </div>
+                <Skeleton variant="admin" className="h-5 w-3/4" />
+                <Skeleton variant="admin" className="h-4 w-full" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid max-w-3xl gap-8">

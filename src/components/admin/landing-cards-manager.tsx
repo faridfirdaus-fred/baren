@@ -13,6 +13,7 @@ import {
   ArrowDown,
 } from "lucide-react";
 import { AssetUploader } from "./asset-uploader";
+import { Skeleton } from "@/components/ui/skeleton";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import type { UploadedAsset } from "@/lib/assets-client";
 import { resolvePublicAssetUrl } from "@/lib/assets-url";
@@ -305,8 +306,37 @@ export function LandingCardsManager() {
 
   if (loading) {
     return (
-      <div className="p-8 text-center text-[#542d14] font-bold">
-        Memuat kartu landing...
+      <div
+        className="w-full space-y-8"
+        role="status"
+        aria-label="Memuat kartu landing"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div className="space-y-2">
+            <Skeleton variant="light" className="h-8 w-48" />
+            <Skeleton variant="light" className="h-4 w-80 max-w-full" />
+          </div>
+          <Skeleton variant="light" className="h-10 w-32 rounded-xl" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="rounded-3xl border-2 border-[#2f180a]/10 bg-white p-6 shadow-sm space-y-4"
+            >
+              <Skeleton
+                variant="light"
+                className="aspect-video w-full rounded-2xl"
+              />
+              <Skeleton variant="light" className="h-5 w-32" />
+              <Skeleton variant="light" className="h-4 w-full" />
+              <div className="flex justify-between items-center pt-2">
+                <Skeleton variant="light" className="h-7 w-20 rounded-lg" />
+                <Skeleton variant="light" className="h-7 w-16 rounded-lg" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

@@ -127,3 +127,34 @@ export function ContentCard({
     </article>
   );
 }
+
+export function ContentCardSkeleton({
+  aspect = "video",
+  tone = "light",
+  className = "",
+}: {
+  aspect?: CardAspect;
+  tone?: CardTone;
+  className?: string;
+}) {
+  const toneClass =
+    tone === "light"
+      ? "border-sand-600 bg-sand text-ink"
+      : "border-ink-700 bg-ink-800 text-sand";
+  return (
+    <article
+      aria-hidden="true"
+      className={`block border ${toneClass} ${className}`}
+    >
+      <div
+        className={`relative ${aspectClass[aspect]} animate-pulse bg-ink-700/50`}
+      />
+      <div className="p-6 space-y-3">
+        <div className="h-3 w-20 animate-pulse rounded bg-ink/10 dark:bg-sand/10" />
+        <div className="h-6 w-3/4 animate-pulse rounded bg-ink/10 dark:bg-sand/10" />
+        <div className="h-4 w-full animate-pulse rounded bg-ink/10 dark:bg-sand/10" />
+        <div className="h-4 w-2/3 animate-pulse rounded bg-ink/10 dark:bg-sand/10" />
+      </div>
+    </article>
+  );
+}

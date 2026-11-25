@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { adminInputClass } from "./form-styles";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { adminButtonClass } from "@/components/admin/button-styles";
 import type { WishlistPage } from "@/lib/api/wishlist";
@@ -203,9 +204,17 @@ export function AdminWishlistManager() {
         ) : null}
 
         {loading && !data ? (
-          <p className="py-8 text-center text-sm text-sand/60">
-            Memuat data wishlist...
-          </p>
+          <div
+            className="overflow-x-auto border border-ink-700 bg-ink-800/30 p-4 space-y-3"
+            role="status"
+            aria-label="Memuat data wishlist..."
+          >
+            <Skeleton variant="admin" className="h-8 w-full" />
+            <Skeleton variant="admin" className="h-10 w-full" />
+            <Skeleton variant="admin" className="h-10 w-full" />
+            <Skeleton variant="admin" className="h-10 w-full" />
+            <Skeleton variant="admin" className="h-10 w-full" />
+          </div>
         ) : null}
 
         {data && data.items.length === 0 && !error ? (

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { adminButtonClass } from "./button-styles";
+import { Skeleton } from "@/components/ui/skeleton";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import { Toast } from "./toast";
 import { formatDateTimeId } from "@/lib/admin/datetime";
@@ -77,7 +78,34 @@ export function CommentsManager() {
     }
   };
 
-  if (loading) return <p>Memuat komentar...</p>;
+  if (loading) {
+    return (
+      <div className="space-y-4" role="status" aria-label="Memuat komentar">
+        <Skeleton variant="admin" className="h-5 w-48 mb-4" />
+        <div className="space-y-3">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="flex gap-3 border border-line bg-ink-800 p-4"
+            >
+              <Skeleton
+                variant="admin"
+                className="h-9 w-9 rounded-full shrink-0"
+              />
+              <div className="flex-1 space-y-2">
+                <div className="flex justify-between items-center">
+                  <Skeleton variant="admin" className="h-4 w-28" />
+                  <Skeleton variant="admin" className="h-4 w-20" />
+                </div>
+                <Skeleton variant="admin" className="h-4 w-full" />
+                <Skeleton variant="admin" className="h-4 w-3/4" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
   if (error)
     return (
       <p

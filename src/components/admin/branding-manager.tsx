@@ -8,6 +8,7 @@ import { z } from "zod";
 import { adminInputClass, adminLabelClass } from "./form-styles";
 
 import { AssetUploader } from "@/components/admin/asset-uploader";
+import { Skeleton } from "@/components/ui/skeleton";
 import { adminButtonClass } from "@/components/admin/button-styles";
 import {
   fetchBranding,
@@ -206,8 +207,29 @@ export function AdminBrandingManager() {
       </header>
 
       {loading ? (
-        <div className="border border-line bg-ink-800 p-6 text-sand-600">
-          <p>Memuat pengaturan branding…</p>
+        <div
+          className="border border-line bg-ink-800 p-6 space-y-6"
+          role="status"
+          aria-label="Memuat pengaturan branding"
+        >
+          <div className="space-y-4">
+            <Skeleton variant="admin" className="h-6 w-36" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Skeleton variant="admin" className="h-4 w-24" />
+                <Skeleton variant="admin" className="h-10 w-full" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton variant="admin" className="h-4 w-24" />
+                <Skeleton variant="admin" className="h-10 w-full" />
+              </div>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <Skeleton variant="admin" className="h-6 w-28" />
+            <Skeleton variant="admin" className="h-32 w-full" />
+          </div>
+          <Skeleton variant="admin" className="h-10 w-36" />
         </div>
       ) : null}
 

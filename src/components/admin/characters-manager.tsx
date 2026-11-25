@@ -15,6 +15,7 @@ import {
   Users,
 } from "lucide-react";
 import { AssetUploader } from "./asset-uploader";
+import { Skeleton } from "@/components/ui/skeleton";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 import type { UploadedAsset } from "@/lib/assets-client";
 import { resolvePublicAssetUrl } from "@/lib/assets-url";
@@ -353,8 +354,41 @@ export function CharactersManager() {
 
   if (loading) {
     return (
-      <div className="p-8 text-center text-[#542d14] font-bold">
-        Memuat data jagoan...
+      <div
+        className="w-full space-y-8"
+        role="status"
+        aria-label="Memuat data jagoan"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div className="space-y-2">
+            <Skeleton variant="light" className="h-8 w-64" />
+            <Skeleton variant="light" className="h-4 w-96 max-w-full" />
+          </div>
+          <Skeleton variant="light" className="h-10 w-36 rounded-xl" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="rounded-3xl border-2 border-[#2f180a]/10 bg-white p-6 shadow-sm space-y-4"
+            >
+              <Skeleton
+                variant="light"
+                className="aspect-[4/3] w-full rounded-2xl"
+              />
+              <div className="flex justify-between items-center">
+                <Skeleton variant="light" className="h-5 w-32" />
+                <Skeleton variant="light" className="h-6 w-20 rounded-full" />
+              </div>
+              <Skeleton variant="light" className="h-4 w-full" />
+              <Skeleton variant="light" className="h-4 w-2/3" />
+              <div className="flex gap-2 pt-2">
+                <Skeleton variant="light" className="h-9 w-20 rounded-xl" />
+                <Skeleton variant="light" className="h-9 w-20 rounded-xl" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

@@ -9,6 +9,7 @@ import {
   adminErrorClass,
 } from "./form-styles";
 import { Toast } from "./toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface LandingSettingsState {
   featuresEyebrow: string;
@@ -189,8 +190,34 @@ export function LandingContentManager() {
 
   if (loading) {
     return (
-      <div className="p-8 text-center text-sand-600">
-        Memuat konten landing...
+      <div
+        className="space-y-6"
+        role="status"
+        aria-label="Memuat konten landing"
+      >
+        {[1, 2, 3].map((section) => (
+          <div
+            key={section}
+            className="rounded-lg border border-line bg-ink-800 p-5 space-y-4"
+          >
+            <Skeleton variant="admin" className="h-6 w-48" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Skeleton variant="admin" className="h-4 w-24" />
+                <Skeleton variant="admin" className="h-10 w-full" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton variant="admin" className="h-4 w-24" />
+                <Skeleton variant="admin" className="h-10 w-full" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Skeleton variant="admin" className="h-4 w-20" />
+              <Skeleton variant="admin" className="h-20 w-full" />
+            </div>
+          </div>
+        ))}
+        <Skeleton variant="admin" className="h-10 w-40" />
       </div>
     );
   }

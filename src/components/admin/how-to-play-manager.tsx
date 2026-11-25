@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AssetUploader } from "./asset-uploader";
+import { Skeleton } from "@/components/ui/skeleton";
 import { adminButtonClass } from "./button-styles";
 import {
   adminInputClass,
@@ -236,8 +237,42 @@ export function HowToPlayManager() {
     }
   };
 
-  if (loading)
-    return <p className="text-sand-600">Memuat data cara bermain...</p>;
+  if (loading) {
+    return (
+      <div
+        className="space-y-8"
+        role="status"
+        aria-label="Memuat data cara bermain"
+      >
+        <div className="border border-line bg-ink-800 p-6 space-y-4">
+          <Skeleton variant="admin" className="h-6 w-36" />
+          <div className="space-y-2">
+            <Skeleton variant="admin" className="h-4 w-28" />
+            <Skeleton variant="admin" className="h-10 w-full" />
+          </div>
+          <Skeleton variant="admin" className="h-10 w-32" />
+        </div>
+        <div className="border border-line bg-ink-800 p-6 space-y-4">
+          <Skeleton variant="admin" className="h-6 w-40" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="sm:col-span-2 space-y-2">
+              <Skeleton variant="admin" className="h-4 w-24" />
+              <Skeleton variant="admin" className="h-10 w-full" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton variant="admin" className="h-4 w-16" />
+              <Skeleton variant="admin" className="h-10 w-full" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Skeleton variant="admin" className="h-4 w-24" />
+            <Skeleton variant="admin" className="h-20 w-full" />
+          </div>
+          <Skeleton variant="admin" className="h-10 w-32" />
+        </div>
+      </div>
+    );
+  }
   if (error) return <p className="text-ember">{error}</p>;
 
   return (

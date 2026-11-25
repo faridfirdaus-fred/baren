@@ -9,6 +9,7 @@ import {
 } from "./form-styles";
 
 import { adminButtonClass } from "@/components/admin/button-styles";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface SocialLink {
   id: number;
@@ -322,7 +323,16 @@ export function LinksManager() {
           </h3>
 
           {socialLoading ? (
-            <p className="text-sand-600">Memuat tautan sosial...</p>
+            <div
+              className="border border-line bg-ink-800 p-4 space-y-3"
+              role="status"
+              aria-label="Memuat tautan sosial"
+            >
+              <Skeleton variant="admin" className="h-8 w-full" />
+              <Skeleton variant="admin" className="h-10 w-full" />
+              <Skeleton variant="admin" className="h-10 w-full" />
+              <Skeleton variant="admin" className="h-10 w-full" />
+            </div>
           ) : socialLinks.length === 0 ? (
             <p className="text-sand-600">
               Belum ada tautan sosial. Tambahkan tautan di atas.
