@@ -14,12 +14,13 @@
 
 **Riwayat Revisi**
 
-| Versi | Tanggal         | Perubahan                                                                                                                                                                                                                        |
-| ----- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.0   | —               | Versi awal SRS BAREN Web.                                                                                                                                                                                                        |
-| 1.1   | 8 Oktober 2026  | Penambahan mode **Waiting List** dengan login **Google OAuth**, entitas `waitlist`, kebutuhan fungsional terkait (FR-PUB-18..25, FR-ADM-28..30), dan **acuan desain** (Valorant).                                                |
-| 1.2   | 14 Oktober 2026 | Menetapkan Next.js 16 (App Router) sesuai baseline proyek.                                                                                                                                                                       |
-| 1.3   | 17 Oktober 2026 | Rename **Waiting List → Wishlist** (`waitlist` → `wishlist`); news landing **maks 3 tanpa halaman detail** (E7-2 DITUNDA); tambah `landing_cards`, `comments`, FR-PUB-26, FR-ADM-31; nav dipangkas (tanpa ESPORTS/LEBIH BANYAK). |
+| Versi | Tanggal          | Perubahan                                                                                                                                                                                                                                                                              |
+| ----- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0   | —                | Versi awal SRS BAREN Web.                                                                                                                                                                                                                                                              |
+| 1.1   | 8 Oktober 2026   | Penambahan mode **Waiting List** dengan login **Google OAuth**, entitas `waitlist`, kebutuhan fungsional terkait (FR-PUB-18..25, FR-ADM-28..30), dan **acuan desain** (Valorant).                                                                                                      |
+| 1.2   | 14 Oktober 2026  | Menetapkan Next.js 16 (App Router) sesuai baseline proyek.                                                                                                                                                                                                                             |
+| 1.3   | 17 Oktober 2026  | Rename **Waiting List → Wishlist** (`waitlist` → `wishlist`); news landing **maks 3 tanpa halaman detail** (E7-2 DITUNDA); tambah `landing_cards`, `comments`, FR-PUB-26, FR-ADM-31; nav dipangkas (tanpa ESPORTS/LEBIH BANYAK).                                                       |
+| 1.4   | 27 November 2026 | Revisi mitra pengembang game: tema **Putih Modern Minimalis** pada Panel Admin & Situs Publik, penyederhanaan formulir admin berbasis Master-Detail, penggantian placeholder dengan visual asli game BAREN, serta galeri multi-foto dokumentasi event pada artikel (`/berita/[slug]`). |
 
 ---
 
@@ -390,17 +391,17 @@ Tabel berikut memuat garis besar entitas yang disimpan pada Neon Postgres. Ranca
 
 ### 3.6 Pedoman Desain (Design Guidelines)
 
-Gaya visual landing page mengacu pada situs resmi VALORANT (https://playvalorant.com/id-id) dan **disesuaikan dengan identitas visual serta branding BAREN**.
+Sesuai revisi mitra pengembang game (v1.4), gaya visual Situs Publik dan Panel Admin menganut estetika **Putih Modern Minimalis (Modern Minimalist Light)** yang bersih, mudah dibaca, dan menonjolkan aset visual asli permainan BAREN.
 
-| ID    | Pedoman                                                                                                                           |
-| ----- | --------------------------------------------------------------------------------------------------------------------------------- |
-| DG-01 | Layout hero layar penuh (full-bleed) dengan gambar/video latar beresolusi tinggi dan judul besar yang menonjol.                   |
-| DG-02 | Palet warna gelap (dark theme) kontras tinggi dengan satu warna aksen utama sesuai branding BAREN.                                |
-| DG-03 | Tipografi tegas dan berkarakter (display font untuk judul, sans-serif untuk isi) yang sesuai nuansa permainan tradisional modern. |
-| DG-04 | Tombol CTA bergaya tegas (uppercase, sudut tegas/geometris) dengan efek hover yang jelas.                                         |
-| DG-05 | Struktur seksi berbasis blok dengan pemisah visual jelas; mendukung pola seksi bergantian teks–gambar.                            |
-| DG-06 | Navigasi atas yang transparan di atas hero dan berubah menjadi solid saat digulir.                                                |
-| DG-07 | Animasi halus pada transisi seksi dan hover elemen (tidak berlebihan, menjaga performa NFR-PRF).                                  |
-| DG-08 | Kartu konten (fitur, berita, galeri) dengan rasio gambar konsisten dan overlay gradien.                                           |
-| DG-09 | Tetap mematuhi C-01 (bahasa Indonesia), C-02 (mobile-first), dan NFR-ACC-01 (aksesibilitas).                                      |
-| DG-10 | Tidak menyalin aset berhak cipta milik pihak ketiga; hanya mengadopsi pola tata letak dan gaya visual secara umum.                |
+| ID    | Pedoman                                                                                                                                    |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| DG-01 | Layout hero modern bersih dengan bingkai/latar video atau gambar gameplay beresolusi tinggi serta judul yang menonjol dan proporsional.    |
+| DG-02 | Palet warna putih modern minimalis (`#ffffff` / `#f8fafc`), teks gelap kontras tinggi (`#0f172a`), dan satu warna aksen utama (`#c83820`). |
+| DG-03 | Tipografi sans-serif modern yang bersih dan mudah dibaca (Plus Jakarta Sans / Inter) dengan hierarki ukuran jelas.                         |
+| DG-04 | Tombol CTA modern tegas dengan sudut membulat rapi (`rounded-xl` / `rounded-full`) dan umpan balik hover/fokus jelas.                      |
+| DG-05 | Struktur seksi berbasis ruang putih lega dan kartu berbatas tipis; formulir CMS memakai pola Master-Detail ringkas setara modul Jagoan.    |
+| DG-06 | Navigasi atas putih kaca (_glassmorphism_) yang menempel rapi saat digulir dan berfungsi lintas halaman.                                   |
+| DG-07 | Animasi halus pada transisi seksi dan hover elemen (tidak berlebihan, menjaga performa NFR-PRF).                                           |
+| DG-08 | Kartu konten (fitur, berita/event, galeri, karakter) dengan rasio gambar konsisten menggunakan visual asli game & event BAREN.             |
+| DG-09 | Tetap mematuhi C-01 (bahasa Indonesia), C-02 (mobile-first), dan NFR-ACC-01 (aksesibilitas).                                               |
+| DG-10 | Tidak menyalin aset berhak cipta milik pihak ketiga; seluruh placeholder memakai aset resmi game dan dokumentasi event BAREN.              |

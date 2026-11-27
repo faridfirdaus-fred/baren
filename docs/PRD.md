@@ -75,7 +75,7 @@
 - **Game Features** — daftar fitur utama dengan ikon/gambar.
 - **How to Play** — langkah bermain bernomor + video demo.
 - **Gallery** — screenshot, artwork, banner, video.
-- **News/Updates** — maks 3 berita terbit di landing; 0 item → seksi hilang; tanpa halaman detail (detail slug DITUNDA).
+- **News/Updates** — maks 3 berita terbit di landing; halaman daftar `/berita` dan halaman detail `/berita/[slug]` mendukung galeri multi-foto dokumentasi event BAREN.
 - **Kartu Fleksibel** — daftar `landing_cards` (pengganti Event/About/Agents/Maps): gambar, eyebrow, judul, subjudul, paragraf, CTA, urutan, status terbit.
 - **Wishlist** — pendaftaran pengunjung via login Google OAuth (rename dari Waiting List); alur ≤ 3 langkah; istilah publik selalu "wishlist".
 - **Komentar** — satu kolom di landing; wajib login Google; langsung tayang; admin hanya hapus.
