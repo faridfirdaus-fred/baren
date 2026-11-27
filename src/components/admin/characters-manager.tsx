@@ -8,15 +8,21 @@ import {
   Trash2,
   Plus,
   ExternalLink,
-  Check,
   ArrowUp,
   ArrowDown,
   Sparkles,
-  Users,
 } from "lucide-react";
 import { AssetUploader } from "./asset-uploader";
+import { adminButtonClass } from "./button-styles";
+import {
+  adminErrorClass,
+  adminInputClass,
+  adminLabelClass,
+  adminTextareaClass,
+} from "./form-styles";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
+import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
 import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
@@ -52,27 +58,41 @@ interface ApiResponse {
   fields?: Record<string, string[]>;
 }
 
+const PRESET_ART = [
+  { label: "Jagoan Biru", url: "/art/char-biru.jpg" },
+  { label: "Jagoan Merah", url: "/art/char-merah.jpg" },
+  { label: "Jagoan Hijau", url: "/art/char-hijau.jpg" },
+  { label: "Jagoan Kuning", url: "/art/char-kuning.jpg" },
+];
+
 const DEFAULT_SEEDS = [
   {
-    title: "Maskot Oranye",
-    eyebrow: "TIM ORANYE",
-    tone: "ember" as const,
-    imageUrl: "/art/agents-art.jpg",
-    body: "Pelari tangguh bermahkota adat oranye yang lincah merebut benteng lawan.",
-  },
-  {
-    title: "Maskot Biru",
+    title: "Raka — Pelari Biru",
     eyebrow: "TIM BIRU",
     tone: "dark" as const,
-    imageUrl: "/art/about-art.jpg",
-    body: "Penjaga benteng setia bertudung biru yang sigap menangkap penyusup.",
+    imageUrl: "/art/char-biru.jpg",
+    body: "Pelari gesit berikat kepala batik yang andal memancing lawan dan merebut benteng.",
   },
   {
-    title: "Pelari Kampung",
-    eyebrow: "SIAP BERLARI",
+    title: "Bima — Penjaga Merah",
+    eyebrow: "TIM MERAH",
+    tone: "ember" as const,
+    imageUrl: "/art/char-merah.jpg",
+    body: "Penjaga benteng tangguh yang sigap menangkap penyusup sebelum menyentuh markas.",
+  },
+  {
+    title: "Damar — Penyelamat Hijau",
+    eyebrow: "SPESIALIS RESCUE",
     tone: "light" as const,
-    imageUrl: "/art/feature-1.jpg",
-    body: "Anak kampung pemberani berikat kepala batik Nusantara dengan dash cepat.",
+    imageUrl: "/art/char-hijau.jpg",
+    body: "Cerdik mencari celah untuk membebaskan rekan setim dari zona tahanan.",
+  },
+  {
+    title: "Sari — Penyerbu Kuning",
+    eyebrow: "PENYERBU CEPAT",
+    tone: "ember" as const,
+    imageUrl: "/art/char-kuning.jpg",
+    body: "Lincah melakukan dash mengejutkan ke benteng lawan di detik-detik penentuan.",
   },
 ];
 
@@ -82,10 +102,10 @@ export function CharactersManager() {
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<CharacterFormData>({
     title: "",
-    eyebrow: "TIM ORANYE",
+    eyebrow: "TIM BIRU",
     body: "",
-    imageUrl: "/art/agents-art.jpg",
-    tone: "ember",
+    imageUrl: "/art/char-biru.jpg",
+    tone: "dark",
     sortOrder: 0,
     isPublished: true,
   });
@@ -100,8 +120,6 @@ export function CharactersManager() {
     message: string;
     type: "success" | "error";
   } | null>(null);
-
-  // Drag and drop state
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
 
@@ -122,10 +140,10 @@ export function CharactersManager() {
   const startCreateNew = () => {
     setFormData({
       title: "",
-      eyebrow: "TIM ORANYE",
+      eyebrow: "TIM BIRU",
       body: "",
-      imageUrl: "",
-      tone: "ember",
+      imageUrl: "/art/char-biru.jpg",
+      tone: "dark",
       sortOrder: items.length,
       isPublished: true,
     });
@@ -164,8 +182,7 @@ export function CharactersManager() {
   const handleImageUploaded = (asset: UploadedAsset) => {
     setFormData((prev) => ({ ...prev, imageUrl: asset.publicUrl }));
     setToast({
-      message:
-        "Artwork jagoan berhasil diunggah. Klik 'Simpan' untuk menerapkan.",
+      message: "Gambar jagoan diunggah. Klik Simpan untuk menerapkan.",
       type: "success",
     });
   };
@@ -198,11 +215,8 @@ export function CharactersManager() {
       );
 
       const json = (await res.json()) as ApiResponse;
-
       if (!json.ok) {
-        if (json.fields) {
-          setFormErrors(json.fields);
-        }
+        if (json.fields) setFormErrors(json.fields);
         setToast({
           message: json.message || "Gagal menyimpan data jagoan",
           type: "error",
@@ -211,12 +225,9 @@ export function CharactersManager() {
       }
 
       setToast({
-        message: isEditing
-          ? "Jagoan berhasil diperbarui"
-          : "Jagoan baru berhasil ditambahkan",
+        message: isEditing ? "Jagoan diperbarui" : "Jagoan ditambahkan",
         type: "success",
       });
-
       await loadCharacters();
     } catch (err) {
       setToast({ message: "Terjadi kesalahan sistem", type: "error" });
@@ -228,13 +239,11 @@ export function CharactersManager() {
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
-
     try {
       const res = await fetch(`/api/landing-cards/${deleteTarget.id}`, {
         method: "DELETE",
       });
       const json = (await res.json()) as ApiResponse;
-
       if (!json.ok) {
         setToast({
           message: json.message || "Gagal menghapus jagoan",
@@ -242,60 +251,15 @@ export function CharactersManager() {
         });
         return;
       }
-
-      setToast({ message: "Jagoan berhasil dihapus", type: "success" });
-      setDeleteTarget(null);
-
-      if (editingId === deleteTarget.id) {
-        startCreateNew();
-      }
-
+      setToast({ message: "Jagoan dihapus", type: "success" });
+      if (editingId === deleteTarget.id) startCreateNew();
       await loadCharacters();
     } catch (err) {
       setToast({ message: "Gagal menghapus jagoan", type: "error" });
       console.error(err);
+    } finally {
+      setDeleteTarget(null);
     }
-  };
-
-  const moveItem = async (index: number, direction: "up" | "down") => {
-    const targetIndex = direction === "up" ? index - 1 : index + 1;
-    if (targetIndex < 0 || targetIndex >= items.length) return;
-
-    const newOrder = [...items];
-    const [moved] = newOrder.splice(index, 1);
-    newOrder.splice(targetIndex, 0, moved);
-
-    setItems(newOrder);
-    await reorder(newOrder.map((c) => c.id));
-  };
-
-  const handleDragStart = (idx: number) => {
-    setDraggedIdx(idx);
-  };
-
-  const handleDragOver = (e: React.DragEvent, idx: number) => {
-    e.preventDefault();
-    if (draggedIdx === null || draggedIdx === idx) return;
-    setDragOverIdx(idx);
-  };
-
-  const handleDrop = async (e: React.DragEvent, dropIdx: number) => {
-    e.preventDefault();
-    if (draggedIdx === null || draggedIdx === dropIdx) {
-      setDraggedIdx(null);
-      setDragOverIdx(null);
-      return;
-    }
-
-    const newItems = [...items];
-    const [movedItem] = newItems.splice(draggedIdx, 1);
-    newItems.splice(dropIdx, 0, movedItem);
-
-    setItems(newItems);
-    setDraggedIdx(null);
-    setDragOverIdx(null);
-
-    await reorder(newItems.map((c) => c.id));
   };
 
   const reorder = async (ids: number[]) => {
@@ -313,11 +277,37 @@ export function CharactersManager() {
         });
         return;
       }
-      setToast({ message: "Urutan berhasil diperbarui", type: "success" });
+      setToast({ message: "Urutan diperbarui", type: "success" });
     } catch (err) {
       setToast({ message: "Gagal mengubah urutan", type: "error" });
       console.error(err);
     }
+  };
+
+  const moveItem = async (index: number, direction: "up" | "down") => {
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= items.length) return;
+    const newOrder = [...items];
+    const [moved] = newOrder.splice(index, 1);
+    newOrder.splice(targetIndex, 0, moved);
+    setItems(newOrder);
+    await reorder(newOrder.map((c) => c.id));
+  };
+
+  const handleDrop = async (e: React.DragEvent, dropIdx: number) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === dropIdx) {
+      setDraggedIdx(null);
+      setDragOverIdx(null);
+      return;
+    }
+    const newItems = [...items];
+    const [movedItem] = newItems.splice(draggedIdx, 1);
+    newItems.splice(dropIdx, 0, movedItem);
+    setItems(newItems);
+    setDraggedIdx(null);
+    setDragOverIdx(null);
+    await reorder(newItems.map((c) => c.id));
   };
 
   const handleSeedDefaults = async () => {
@@ -340,12 +330,12 @@ export function CharactersManager() {
         });
       }
       setToast({
-        message: "3 Jagoan bawaan berhasil disalin ke basis data!",
+        message: "4 Jagoan bawaan berhasil ditambahkan.",
         type: "success",
       });
       await loadCharacters();
     } catch (err) {
-      setToast({ message: "Gagal menyalin jagoan bawaan", type: "error" });
+      setToast({ message: "Gagal menambahkan jagoan bawaan", type: "error" });
       console.error(err);
     } finally {
       setSubmitting(false);
@@ -354,40 +344,18 @@ export function CharactersManager() {
 
   if (loading) {
     return (
-      <div
-        className="w-full space-y-8"
-        role="status"
-        aria-label="Memuat data jagoan"
-      >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div className="space-y-2">
-            <Skeleton variant="light" className="h-8 w-64" />
-            <Skeleton variant="light" className="h-4 w-96 max-w-full" />
-          </div>
-          <Skeleton variant="light" className="h-10 w-36 rounded-xl" />
+      <div className="space-y-6" role="status" aria-label="Memuat data jagoan">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-56" />
+          <Skeleton className="h-10 w-36" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="rounded-3xl border-2 border-[#2f180a]/10 bg-white p-6 shadow-sm space-y-4"
-            >
-              <Skeleton
-                variant="light"
-                className="aspect-[4/3] w-full rounded-2xl"
-              />
-              <div className="flex justify-between items-center">
-                <Skeleton variant="light" className="h-5 w-32" />
-                <Skeleton variant="light" className="h-6 w-20 rounded-full" />
-              </div>
-              <Skeleton variant="light" className="h-4 w-full" />
-              <Skeleton variant="light" className="h-4 w-2/3" />
-              <div className="flex gap-2 pt-2">
-                <Skeleton variant="light" className="h-9 w-20 rounded-xl" />
-                <Skeleton variant="light" className="h-9 w-20 rounded-xl" />
-              </div>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <div className="space-y-3 lg:col-span-7">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-24 w-full rounded-2xl" />
+            ))}
+          </div>
+          <Skeleton className="h-96 w-full rounded-2xl lg:col-span-5" />
         </div>
       </div>
     );
@@ -395,93 +363,83 @@ export function CharactersManager() {
 
   if (error) {
     return (
-      <div className="p-6 bg-red-50 text-[#c83820] font-bold rounded-2xl border border-red-200">
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-medium text-red-700">
         {error}
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      {/* Top Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div className="space-y-6">
+      <header className="flex flex-col justify-between gap-4 border-b border-zinc-200 pb-4 sm:flex-row sm:items-center">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-[#c83820]/10 text-[#c83820]">
-              <Users className="w-5 h-5" />
-            </span>
-            <h1 className="text-3xl font-black text-[#2f180a] tracking-tight">
-              Kelola Jagoan (Karakter)
-            </h1>
-          </div>
-          <p className="text-sm font-medium text-[#542d14] mt-1">
-            Atur kartu jagoan di seksi &ldquo;Pilih Jagoanmu&rdquo; pada beranda
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+            Kelola Jagoan
+          </h1>
+          <p className="mt-1 text-sm text-zinc-500">
+            Atur kartu karakter pada seksi Pilih Jagoanmu di halaman utama.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <a
             href="/#karakter"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#2f180a]/20 bg-white text-xs font-bold uppercase tracking-wider text-[#2f180a] hover:bg-[#faf6ee] shadow-sm transition-all"
+            className={adminButtonClass("secondary", "md")}
           >
-            <ExternalLink className="w-4 h-4 text-[#8c7b6d]" />
+            <ExternalLink className="h-4 w-4 text-zinc-400" />
             <span>Lihat di Beranda</span>
           </a>
           <button
             type="button"
             onClick={startCreateNew}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#c83820] hover:bg-[#a72d18] text-white text-xs font-black uppercase tracking-wider shadow-md transition-all cursor-pointer"
+            className={adminButtonClass("primary", "md")}
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="h-4 w-4" />
             <span>Tambah Jagoan</span>
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* Main Grid: Daftar Jagoan & Form Inspector */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Kolom Kiri: Daftar Jagoan Deck */}
-        <div className="lg:col-span-7 flex flex-col gap-3">
-          <div className="flex items-center justify-between px-2 mb-1">
-            <span className="text-xs font-black uppercase tracking-wider text-[#542d14]">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        {/* Daftar Jagoan */}
+        <div className="flex flex-col gap-3 lg:col-span-7">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
               Urutan Jagoan ({items.length})
-            </span>
-            <span className="text-xs text-[#8c7b6d] font-medium hidden sm:inline">
-              Geser kartu atau pakai panah untuk mengubah urutan
+            </h2>
+            <span className="hidden text-xs text-zinc-400 sm:inline">
+              Geser atau gunakan panah untuk mengatur urutan
             </span>
           </div>
 
           {items.length === 0 ? (
-            <div className="p-8 text-center rounded-3xl border-2 border-dashed border-[#2f180a]/20 bg-white flex flex-col items-center justify-center">
-              <div className="w-16 h-16 rounded-full bg-[#f59e0b]/15 text-[#f59e0b] flex items-center justify-center mb-4">
-                <Sparkles className="w-8 h-8" />
-              </div>
-              <h2 className="text-lg font-black text-[#2f180a]">
-                Belum Ada Jagoan Tersimpan
-              </h2>
-              <p className="text-sm text-[#542d14] max-w-md mt-1 mb-6 leading-relaxed">
-                Saat ini situs publik menampilkan 3 jagoan bawaan (Maskot
-                Oranye, Maskot Biru, dan Pelari Kampung). Salin data bawaan ini
-                agar bisa diedit langsung!
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-300 bg-white p-8 text-center">
+              <Sparkles className="mb-3 h-7 w-7 text-zinc-400" />
+              <h3 className="text-base font-semibold text-zinc-900">
+                Belum ada jagoan kustom
+              </h3>
+              <p className="mt-1 mb-5 max-w-md text-sm text-zinc-500">
+                Beranda saat ini memakai 4 jagoan bawaan. Anda dapat menyalin
+                data bawaan tersebut untuk diedit langsung.
               </p>
-              <div className="flex flex-wrap gap-3 justify-center">
+              <div className="flex flex-wrap justify-center gap-2.5">
                 <button
                   type="button"
                   onClick={handleSeedDefaults}
                   disabled={submitting}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#c83820] text-white text-sm font-bold uppercase tracking-wider shadow-md hover:bg-[#a72d18] transition-all disabled:opacity-50"
+                  className={adminButtonClass("primary", "md")}
                 >
-                  <Sparkles className="w-4 h-4" />
-                  <span>Salin 3 Jagoan Bawaan</span>
+                  <Sparkles className="h-4 w-4" />
+                  <span>Salin 4 Jagoan Bawaan</span>
                 </button>
                 <button
                   type="button"
                   onClick={startCreateNew}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl border-2 border-[#2f180a]/20 bg-white text-sm font-bold uppercase tracking-wider text-[#2f180a] hover:bg-[#faf6ee] transition-all"
+                  className={adminButtonClass("secondary", "md")}
                 >
-                  <Plus className="w-4 h-4" />
-                  <span>Buat dari Kosong</span>
+                  <Plus className="h-4 w-4" />
+                  <span>Buat Baru</span>
                 </button>
               </div>
             </div>
@@ -489,41 +447,29 @@ export function CharactersManager() {
             items.map((item, idx) => {
               const isSelected = editingId === item.id;
               const isOver = dragOverIdx === idx;
-              const isBeingDragged = draggedIdx === idx;
-
-              const toneBadge =
-                item.tone === "ember"
-                  ? "bg-[#e4572e] text-white"
-                  : item.tone === "dark"
-                    ? "bg-[#2563eb] text-white"
-                    : "bg-[#10b981] text-white";
-
               return (
                 <div
                   key={item.id}
                   draggable
-                  onDragStart={() => handleDragStart(idx)}
-                  onDragOver={(e) => handleDragOver(e, idx)}
-                  onDrop={(e) => handleDrop(e, idx)}
-                  className={`group relative flex items-center gap-3 p-3.5 sm:p-4 rounded-2xl border-2 transition-all bg-white cursor-pointer ${
-                    isSelected
-                      ? "border-[#c83820] shadow-md ring-2 ring-[#c83820]/10"
-                      : "border-[#2f180a]/15 hover:border-[#2f180a]/30"
-                  } ${isOver ? "border-dashed border-amber-500 scale-[1.01]" : ""} ${
-                    isBeingDragged ? "opacity-40" : "opacity-100"
-                  }`}
+                  onDragStart={() => setDraggedIdx(idx)}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    if (draggedIdx !== null && draggedIdx !== idx)
+                      setDragOverIdx(idx);
+                  }}
+                  onDrop={(e) => void handleDrop(e, idx)}
                   onClick={() => selectCardForEdit(item)}
+                  className={`flex cursor-pointer items-center gap-3.5 rounded-2xl border bg-white p-3.5 transition-all ${
+                    isSelected
+                      ? "border-zinc-900 ring-2 ring-zinc-900/10"
+                      : "border-zinc-200 hover:border-zinc-300"
+                  } ${isOver ? "border-dashed border-zinc-900" : ""}`}
                 >
-                  {/* Drag Handle */}
-                  <div
-                    className="text-[#8c7b6d] hover:text-[#2f180a] cursor-grab active:cursor-grabbing p-1 shrink-0"
-                    title="Tarik untuk memindahkan urutan"
-                  >
-                    <GripVertical className="w-5 h-5" />
+                  <div className="shrink-0 cursor-grab p-1 text-zinc-400 hover:text-zinc-700">
+                    <GripVertical className="h-4 w-4" />
                   </div>
 
-                  {/* Thumbnail */}
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-[#2f180a] border border-[#2f180a]/15 shrink-0">
+                  <div className="relative h-16 w-14 shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
                     {item.imageUrl ? (
                       <Image
                         src={
@@ -531,47 +477,43 @@ export function CharactersManager() {
                         }
                         alt={item.title}
                         fill
-                        sizes="80px"
+                        sizes="64px"
                         className="object-cover"
                         unoptimized
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-xs font-bold text-white/40">
-                        No Art
+                      <div className="flex h-full w-full items-center justify-center text-[10px] font-medium text-zinc-400">
+                        Kosong
                       </div>
                     )}
                   </div>
 
-                  {/* Info Jagoan */}
-                  <div className="flex-1 min-w-0 pr-2">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <span
-                        className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full ${toneBadge}`}
-                      >
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex flex-wrap items-center gap-1.5">
+                      <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-[11px] font-semibold text-zinc-700">
                         {item.eyebrow || "JAGOAN"}
                       </span>
-                      {item.isPublished === 1 ? (
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#10b981] flex items-center gap-1">
-                          <Check className="w-3 h-3" /> Terbit
-                        </span>
-                      ) : (
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#8c7b6d]">
-                          Draf
-                        </span>
-                      )}
+                      <span
+                        className={`rounded-md px-2 py-0.5 text-[11px] font-semibold ${
+                          item.isPublished === 1
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-zinc-100 text-zinc-500"
+                        }`}
+                      >
+                        {item.isPublished === 1 ? "Terbit" : "Draf"}
+                      </span>
                     </div>
-                    <h3 className="text-base font-black text-[#2f180a] truncate leading-tight">
+                    <h3 className="truncate text-sm font-semibold text-zinc-900">
                       {item.title}
                     </h3>
                     {item.body && (
-                      <p className="text-xs text-[#542d14] line-clamp-1 mt-0.5 font-medium">
+                      <p className="mt-0.5 line-clamp-1 text-xs text-zinc-500">
                         {item.body}
                       </p>
                     )}
                   </div>
 
-                  {/* Quick Order Up/Down Buttons */}
-                  <div className="flex flex-col gap-1 shrink-0">
+                  <div className="flex shrink-0 flex-col gap-1">
                     <button
                       type="button"
                       disabled={idx === 0}
@@ -579,10 +521,10 @@ export function CharactersManager() {
                         e.stopPropagation();
                         void moveItem(idx, "up");
                       }}
-                      className="p-1 rounded-lg border border-[#2f180a]/15 text-[#2f180a] hover:bg-[#faf6ee] disabled:opacity-20 transition-all"
+                      className="rounded-lg border border-zinc-200 p-1 text-zinc-600 hover:bg-zinc-50 disabled:opacity-25"
                       title="Naikkan urutan"
                     >
-                      <ArrowUp className="w-3.5 h-3.5" />
+                      <ArrowUp className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
@@ -591,29 +533,24 @@ export function CharactersManager() {
                         e.stopPropagation();
                         void moveItem(idx, "down");
                       }}
-                      className="p-1 rounded-lg border border-[#2f180a]/15 text-[#2f180a] hover:bg-[#faf6ee] disabled:opacity-20 transition-all"
+                      className="rounded-lg border border-zinc-200 p-1 text-zinc-600 hover:bg-zinc-50 disabled:opacity-25"
                       title="Turunkan urutan"
                     >
-                      <ArrowDown className="w-3.5 h-3.5" />
+                      <ArrowDown className="h-3.5 w-3.5" />
                     </button>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex shrink-0 items-center gap-1">
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         selectCardForEdit(item);
                       }}
-                      className={`p-2 rounded-xl border border-[#2f180a]/15 transition-all ${
-                        isSelected
-                          ? "bg-[#c83820] text-white border-transparent"
-                          : "bg-white text-[#2f180a] hover:bg-[#faf6ee]"
-                      }`}
+                      className={adminButtonClass("secondary", "icon-sm")}
                       title="Edit jagoan"
                     >
-                      <Pencil className="w-4 h-4" />
+                      <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
@@ -621,10 +558,10 @@ export function CharactersManager() {
                         e.stopPropagation();
                         setDeleteTarget({ id: item.id, title: item.title });
                       }}
-                      className="p-2 rounded-xl border border-[#2f180a]/15 bg-white text-[#c83820] hover:bg-red-50 transition-all"
+                      className={adminButtonClass("danger", "icon-sm")}
                       title="Hapus jagoan"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
@@ -633,30 +570,27 @@ export function CharactersManager() {
           )}
         </div>
 
-        {/* Kolom Kanan: Inspector Formulir Edit Jagoan */}
+        {/* Form Inspector */}
         <div className="lg:col-span-5">
-          <div className="rounded-3xl bg-white border-2 border-[#2f180a]/15 p-6 sm:p-7 shadow-lg sticky top-24">
-            <div className="flex items-center justify-between pb-4 border-b border-[#2f180a]/10 mb-5">
-              <h2 className="text-xl font-black text-[#2f180a]">
+          <div className="sticky top-6 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
+            <div className="mb-4 flex items-center justify-between border-b border-zinc-100 pb-3.5">
+              <h2 className="text-base font-bold text-zinc-900">
                 {editingId ? "Edit Jagoan" : "Tambah Jagoan"}
               </h2>
-              {formData.isPublished ? (
-                <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-[#10b981] text-white">
-                  TERBIT
-                </span>
-              ) : (
-                <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-stone-300 text-stone-700">
-                  DRAF
-                </span>
-              )}
+              <span
+                className={`rounded-md px-2.5 py-0.5 text-xs font-semibold ${
+                  formData.isPublished
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "bg-zinc-100 text-zinc-500"
+                }`}
+              >
+                {formData.isPublished ? "Terbit" : "Draf"}
+              </span>
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div>
-                <label
-                  htmlFor="char-title"
-                  className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1.5"
-                >
+                <label htmlFor="char-title" className={adminLabelClass}>
                   Nama Jagoan *
                 </label>
                 <input
@@ -667,85 +601,63 @@ export function CharactersManager() {
                     setFormData({ ...formData, title: e.target.value })
                   }
                   required
-                  placeholder="Contoh: Maskot Oranye"
-                  className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3.5 py-2.5 text-sm text-[#2f180a] focus:border-[#c83820] focus:outline-none bg-[#faf6ee]/50 font-medium"
+                  placeholder="Contoh: Raka — Pelari Biru"
+                  className={adminInputClass}
                 />
                 {formErrors.title && (
-                  <p className="text-xs font-bold text-[#c83820] mt-1">
-                    {formErrors.title[0]}
-                  </p>
+                  <p className={adminErrorClass}>{formErrors.title[0]}</p>
                 )}
               </div>
 
-              <div>
-                <label
-                  htmlFor="char-eyebrow"
-                  className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1.5"
-                >
-                  Peran / Label Tim
-                </label>
-                <input
-                  id="char-eyebrow"
-                  type="text"
-                  value={formData.eyebrow}
-                  onChange={(e) =>
-                    setFormData({ ...formData, eyebrow: e.target.value })
-                  }
-                  placeholder="Contoh: TIM ORANYE atau PELARI CEPAT"
-                  className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3.5 py-2.5 text-sm text-[#2f180a] focus:border-[#c83820] focus:outline-none bg-[#faf6ee]/50 font-medium"
-                />
-              </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="char-eyebrow" className={adminLabelClass}>
+                    Peran / Tim
+                  </label>
+                  <input
+                    id="char-eyebrow"
+                    type="text"
+                    value={formData.eyebrow}
+                    onChange={(e) =>
+                      setFormData({ ...formData, eyebrow: e.target.value })
+                    }
+                    placeholder="Contoh: TIM BIRU"
+                    className={adminInputClass}
+                  />
+                </div>
 
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1.5">
-                  Warna Tim / Tema Tag
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, tone: "ember" })}
-                    className={`py-2 px-3 rounded-xl text-xs font-bold border-2 transition-all flex items-center justify-center gap-1.5 ${
-                      formData.tone === "ember"
-                        ? "border-[#e4572e] bg-[#e4572e] text-white shadow-sm"
-                        : "border-[#2f180a]/15 bg-white text-[#2f180a] hover:bg-[#faf6ee]"
-                    }`}
-                  >
-                    <span className="w-2.5 h-2.5 rounded-full bg-white/80" />
-                    <span>Oranye</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, tone: "dark" })}
-                    className={`py-2 px-3 rounded-xl text-xs font-bold border-2 transition-all flex items-center justify-center gap-1.5 ${
-                      formData.tone === "dark"
-                        ? "border-[#2563eb] bg-[#2563eb] text-white shadow-sm"
-                        : "border-[#2f180a]/15 bg-white text-[#2f180a] hover:bg-[#faf6ee]"
-                    }`}
-                  >
-                    <span className="w-2.5 h-2.5 rounded-full bg-white/80" />
-                    <span>Biru</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, tone: "light" })}
-                    className={`py-2 px-3 rounded-xl text-xs font-bold border-2 transition-all flex items-center justify-center gap-1.5 ${
-                      formData.tone === "light"
-                        ? "border-[#10b981] bg-[#10b981] text-white shadow-sm"
-                        : "border-[#2f180a]/15 bg-white text-[#2f180a] hover:bg-[#faf6ee]"
-                    }`}
-                  >
-                    <span className="w-2.5 h-2.5 rounded-full bg-white/80" />
-                    <span>Hijau</span>
-                  </button>
+                <div>
+                  <span className={adminLabelClass}>Aksen Kartu</span>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {(
+                      [
+                        { key: "dark", label: "Biru" },
+                        { key: "ember", label: "Merah" },
+                        { key: "light", label: "Hijau" },
+                      ] as const
+                    ).map((opt) => (
+                      <button
+                        key={opt.key}
+                        type="button"
+                        onClick={() =>
+                          setFormData({ ...formData, tone: opt.key })
+                        }
+                        className={`min-h-11 rounded-xl border text-xs font-semibold transition-colors ${
+                          formData.tone === opt.key
+                            ? "border-zinc-900 bg-zinc-900 text-white"
+                            : "border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50"
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
               <div>
-                <label
-                  htmlFor="char-desc"
-                  className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1.5"
-                >
-                  Deskripsi Keahlian & Karakter
+                <label htmlFor="char-desc" className={adminLabelClass}>
+                  Deskripsi Singkat
                 </label>
                 <textarea
                   id="char-desc"
@@ -754,108 +666,85 @@ export function CharactersManager() {
                     setFormData({ ...formData, body: e.target.value })
                   }
                   rows={3}
-                  placeholder="Contoh: Pelari tangguh bermahkota adat yang lincah merebut benteng lawan..."
-                  className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3.5 py-2.5 text-sm text-[#2f180a] focus:border-[#c83820] focus:outline-none bg-[#faf6ee]/50 font-medium resize-none"
+                  placeholder="Contoh: Pelari gesit yang andal memancing penjaga lawan..."
+                  className={adminTextareaClass}
                 />
               </div>
 
-              {/* Upload Gambar Artwork Jagoan */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1.5">
-                  Foto / Artwork Jagoan
-                </label>
+                <span className={adminLabelClass}>Gambar Jagoan</span>
+                {formData.imageUrl && (
+                  <div className="relative mb-2.5 h-36 w-full overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
+                    <Image
+                      src={
+                        resolvePublicAssetUrl(formData.imageUrl) ||
+                        formData.imageUrl
+                      }
+                      alt="Pratinjau jagoan"
+                      fill
+                      className="object-contain"
+                      unoptimized
+                    />
+                  </div>
+                )}
                 <AssetUploader
                   purpose="landing-image"
                   onUploaded={handleImageUploaded}
                 />
-
-                <div className="mt-2 flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={formData.imageUrl}
-                    onChange={(e) =>
-                      setFormData({ ...formData, imageUrl: e.target.value })
-                    }
-                    placeholder="/art/agents-art.jpg atau URL Cloudflare R2"
-                    className="w-full rounded-xl border border-[#2f180a]/15 px-3 py-1.5 text-xs text-[#2f180a] bg-white font-mono"
-                  />
-                </div>
-
-                {/* Tombol Pilihan Aset Bawaan */}
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  <span className="text-[11px] text-[#8c7b6d] font-bold self-center mr-1">
-                    Aset cepat:
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                  <span className="mr-1 text-[11px] font-medium text-zinc-500">
+                    Gambar game:
                   </span>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        imageUrl: "/art/agents-art.jpg",
-                      })
-                    }
-                    className="px-2 py-0.5 rounded-lg border border-[#2f180a]/15 bg-[#faf6ee] text-[10px] font-bold text-[#2f180a] hover:bg-[#c83820] hover:text-white transition-all"
-                  >
-                    Agents Art
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        imageUrl: "/art/about-art.jpg",
-                      })
-                    }
-                    className="px-2 py-0.5 rounded-lg border border-[#2f180a]/15 bg-[#faf6ee] text-[10px] font-bold text-[#2f180a] hover:bg-[#c83820] hover:text-white transition-all"
-                  >
-                    About Art
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        imageUrl: "/art/feature-1.jpg",
-                      })
-                    }
-                    className="px-2 py-0.5 rounded-lg border border-[#2f180a]/20 bg-[#faf6ee] text-[10px] font-bold text-[#2f180a] hover:bg-[#c83820] hover:text-white transition-all"
-                  >
-                    Pelari Art
-                  </button>
+                  {PRESET_ART.map((preset) => (
+                    <button
+                      key={preset.url}
+                      type="button"
+                      onClick={() =>
+                        setFormData({ ...formData, imageUrl: preset.url })
+                      }
+                      className={`rounded-lg border px-2 py-1 text-[11px] font-medium transition-colors ${
+                        formData.imageUrl === preset.url
+                          ? "border-zinc-900 bg-zinc-900 text-white"
+                          : "border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              {/* Status Publikasi */}
-              <div className="flex items-center justify-between p-3 rounded-2xl bg-[#faf6ee] border border-[#2f180a]/10 mt-2">
-                <span className="text-xs font-bold text-[#2f180a] uppercase tracking-wider">
-                  Publikasikan di Beranda
+              <div className="flex items-center justify-between rounded-xl border border-zinc-200 bg-zinc-50/70 px-3.5 py-2.5">
+                <span className="text-xs font-semibold text-zinc-700">
+                  Tampilkan di beranda
                 </span>
                 <button
                   type="button"
+                  role="switch"
+                  aria-checked={formData.isPublished}
                   onClick={() =>
                     setFormData({
                       ...formData,
                       isPublished: !formData.isPublished,
                     })
                   }
-                  className={`w-12 h-6 rounded-full transition-colors relative p-0.5 cursor-pointer ${
-                    formData.isPublished ? "bg-[#10b981]" : "bg-stone-300"
+                  className={`relative h-6 w-11 cursor-pointer rounded-full p-0.5 transition-colors ${
+                    formData.isPublished ? "bg-zinc-900" : "bg-zinc-300"
                   }`}
                 >
-                  <div
-                    className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${
-                      formData.isPublished ? "translate-x-6" : "translate-x-0"
+                  <span
+                    className={`block h-5 w-5 rounded-full bg-white shadow-xs transition-transform ${
+                      formData.isPublished ? "translate-x-5" : "translate-x-0"
                     }`}
                   />
                 </button>
               </div>
 
-              {/* Action Buttons Form */}
-              <div className="flex gap-2.5 mt-3 pt-3 border-t border-[#2f180a]/10">
+              <div className="flex gap-2 border-t border-zinc-100 pt-3">
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-3 px-4 rounded-xl bg-[#c83820] hover:bg-[#a72d18] text-white text-xs font-black uppercase tracking-wider shadow-md transition-all disabled:opacity-50 cursor-pointer"
+                  className={adminButtonClass("primary", "md", "flex-1")}
                 >
                   {submitting
                     ? "Menyimpan..."
@@ -867,7 +756,7 @@ export function CharactersManager() {
                   <button
                     type="button"
                     onClick={startCreateNew}
-                    className="py-3 px-4 rounded-xl border border-[#2f180a]/20 bg-white text-xs font-bold uppercase tracking-wider text-[#2f180a] hover:bg-[#faf6ee] transition-all"
+                    className={adminButtonClass("secondary", "md")}
                   >
                     Batal
                   </button>
@@ -878,33 +767,20 @@ export function CharactersManager() {
         </div>
       </div>
 
-      {/* Dialog Konfirmasi Hapus */}
       <DeleteConfirmDialog
         open={deleteTarget !== null}
-        title="Hapus Jagoan Ini?"
-        message={`Apakah Anda yakin ingin menghapus "${deleteTarget?.title}"? Tindakan ini tidak dapat dibatalkan.`}
+        title="Hapus Jagoan"
+        message={`Yakin ingin menghapus "${deleteTarget?.title}"?`}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
       />
 
-      {/* Toast Feedback */}
       {toast && (
-        <div
-          role="status"
-          aria-live="polite"
-          className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl shadow-xl text-xs font-bold text-white transition-all animate-bounce ${
-            toast.type === "success" ? "bg-[#10b981]" : "bg-[#c83820]"
-          }`}
-        >
-          <span>{toast.message}</span>
-          <button
-            type="button"
-            onClick={() => setToast(null)}
-            className="ml-2 hover:opacity-80 p-1"
-          >
-            ✕
-          </button>
-        </div>
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

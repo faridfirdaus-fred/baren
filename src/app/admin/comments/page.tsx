@@ -18,7 +18,14 @@ export default async function CommentsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Kelola Komentar</h1>
+      <header className="mb-6 border-b border-zinc-200 pb-4">
+        <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+          Kelola Komentar
+        </h1>
+        <p className="mt-1 text-sm text-zinc-500">
+          Pantau dan hapus komentar pengunjung dari halaman utama.
+        </p>
+      </header>
       <CommentsManager />
     </div>
   );

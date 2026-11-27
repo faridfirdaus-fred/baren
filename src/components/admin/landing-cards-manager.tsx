@@ -2,19 +2,28 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   GripVertical,
   Pencil,
   Trash2,
   Plus,
   ExternalLink,
-  Check,
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
 import { AssetUploader } from "./asset-uploader";
+import { adminButtonClass } from "./button-styles";
+import {
+  adminErrorClass,
+  adminInputClass,
+  adminLabelClass,
+  adminSelectClass,
+  adminTextareaClass,
+} from "./form-styles";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
+import { Toast } from "./toast";
 import type { UploadedAsset } from "@/lib/assets-client";
 import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
@@ -54,6 +63,13 @@ interface ApiResponse {
   fields?: Record<string, string[]>;
 }
 
+const PRESET_CARD_IMAGES = [
+  { label: "Arena Kampung", url: "/art/feature-1.jpg" },
+  { label: "Aksi Tangkap", url: "/art/feature-2.jpg" },
+  { label: "Pasar Ramai", url: "/art/feature-3.jpg" },
+  { label: "Booth Event", url: "/art/event-art.jpg" },
+];
+
 export function LandingCardsManager() {
   const [items, setItems] = useState<LandingCard[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +80,7 @@ export function LandingCardsManager() {
     title: "",
     subtitle: "",
     body: "",
-    imageUrl: "",
+    imageUrl: "/art/feature-1.jpg",
     ctaLabel: "Gabung Wishlist",
     ctaUrl: "#wishlist",
     tone: "light",
@@ -82,8 +98,6 @@ export function LandingCardsManager() {
     message: string;
     type: "success" | "error";
   } | null>(null);
-
-  // Drag and drop state
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
 
@@ -137,12 +151,12 @@ export function LandingCardsManager() {
 
   const startCreateNew = () => {
     setFormData({
-      slot: "Karakter",
+      slot: "Tentang",
       eyebrow: "",
       title: "",
       subtitle: "",
       body: "",
-      imageUrl: "",
+      imageUrl: "/art/feature-1.jpg",
       ctaLabel: "Gabung Wishlist",
       ctaUrl: "#wishlist",
       tone: "light",
@@ -156,7 +170,7 @@ export function LandingCardsManager() {
   const handleImageUploaded = (asset: UploadedAsset) => {
     setFormData((prev) => ({ ...prev, imageUrl: asset.publicUrl }));
     setToast({
-      message: "Gambar berhasil diunggah.",
+      message: "Gambar berhasil diunggah. Klik Simpan untuk menerapkan.",
       type: "success",
     });
   };
@@ -165,36 +179,46 @@ export function LandingCardsManager() {
     e.preventDefault();
     setFormErrors({});
     setSubmitting(true);
+    const isEditing = editingId !== null;
+    // Pastikan tidak tersimpan sebagai slot karakter agar tidak hilang dari daftar ini
+    const safeSlot =
+      formData.slot.trim().toLowerCase() === "karakter"
+        ? "Tentang"
+        : formData.slot.trim() || "Tentang";
 
     try {
-      const url = editingId
+      const url = isEditing
         ? `/api/landing-cards/${editingId}`
         : "/api/landing-cards";
-      const method = editingId ? "PUT" : "POST";
+      const method = isEditing ? "PUT" : "POST";
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          slot: safeSlot,
+          ctaLabel: formData.ctaLabel.trim() || undefined,
+          ctaUrl: formData.ctaUrl.trim() || undefined,
+          eyebrow: formData.eyebrow.trim() || undefined,
+          subtitle: formData.subtitle.trim() || undefined,
+          body: formData.body.trim() || undefined,
+          imageUrl: formData.imageUrl.trim() || undefined,
           isPublished: formData.isPublished ? 1 : 0,
         }),
       });
       const json = (await res.json()) as ApiResponse;
 
       if (!json.ok) {
-        if (json.fields) {
-          setFormErrors(json.fields);
-        } else {
-          setToast({
-            message: json.message || "Gagal menyimpan kartu",
-            type: "error",
-          });
-        }
+        if (json.fields) setFormErrors(json.fields);
+        setToast({
+          message: json.message || "Gagal menyimpan kartu",
+          type: "error",
+        });
         return;
       }
 
       setToast({
-        message: "Perubahan disimpan",
+        message: isEditing ? "Kartu diperbarui" : "Kartu ditambahkan",
         type: "success",
       });
       await loadCards();
@@ -221,9 +245,7 @@ export function LandingCardsManager() {
         return;
       }
       setToast({ message: "Kartu dihapus", type: "success" });
-      if (editingId === deleteTarget.id) {
-        setEditingId(null);
-      }
+      if (editingId === deleteTarget.id) startCreateNew();
       await loadCards();
     } catch (err) {
       setToast({ message: "Gagal menghapus kartu", type: "error" });
@@ -231,55 +253,6 @@ export function LandingCardsManager() {
     } finally {
       setDeleteTarget(null);
     }
-  };
-
-  // Reordering via Buttons
-  const handleMoveUp = async (id: number) => {
-    const idx = items.findIndex((c) => c.id === id);
-    if (idx <= 0) return;
-    const newOrder = [...items];
-    [newOrder[idx - 1], newOrder[idx]] = [newOrder[idx], newOrder[idx - 1]];
-    setItems(newOrder);
-    await reorder(newOrder.map((c) => c.id));
-  };
-
-  const handleMoveDown = async (id: number) => {
-    const idx = items.findIndex((c) => c.id === id);
-    if (idx < 0 || idx >= items.length - 1) return;
-    const newOrder = [...items];
-    [newOrder[idx], newOrder[idx + 1]] = [newOrder[idx + 1], newOrder[idx]];
-    setItems(newOrder);
-    await reorder(newOrder.map((c) => c.id));
-  };
-
-  // Drag and Drop Handlers
-  const handleDragStart = (idx: number) => {
-    setDraggedIdx(idx);
-  };
-
-  const handleDragOver = (e: React.DragEvent, idx: number) => {
-    e.preventDefault();
-    if (draggedIdx === null || draggedIdx === idx) return;
-    setDragOverIdx(idx);
-  };
-
-  const handleDrop = async (e: React.DragEvent, dropIdx: number) => {
-    e.preventDefault();
-    if (draggedIdx === null || draggedIdx === dropIdx) {
-      setDraggedIdx(null);
-      setDragOverIdx(null);
-      return;
-    }
-
-    const newItems = [...items];
-    const [movedItem] = newItems.splice(draggedIdx, 1);
-    newItems.splice(dropIdx, 0, movedItem);
-
-    setItems(newItems);
-    setDraggedIdx(null);
-    setDragOverIdx(null);
-
-    await reorder(newItems.map((c) => c.id));
   };
 
   const reorder = async (ids: number[]) => {
@@ -297,45 +270,56 @@ export function LandingCardsManager() {
         });
         return;
       }
-      setToast({ message: "Urutan berhasil diperbarui", type: "success" });
+      setToast({ message: "Urutan diperbarui", type: "success" });
     } catch (err) {
       setToast({ message: "Gagal mengubah urutan", type: "error" });
       console.error(err);
     }
   };
 
+  const moveCard = async (idx: number, dir: "up" | "down") => {
+    const target = dir === "up" ? idx - 1 : idx + 1;
+    if (target < 0 || target >= items.length) return;
+    const next = [...items];
+    [next[idx], next[target]] = [next[target], next[idx]];
+    setItems(next);
+    await reorder(next.map((c) => c.id));
+  };
+
+  const handleDrop = async (e: React.DragEvent, dropIdx: number) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === dropIdx) {
+      setDraggedIdx(null);
+      setDragOverIdx(null);
+      return;
+    }
+    const newItems = [...items];
+    const [movedItem] = newItems.splice(draggedIdx, 1);
+    newItems.splice(dropIdx, 0, movedItem);
+    setItems(newItems);
+    setDraggedIdx(null);
+    setDragOverIdx(null);
+    await reorder(newItems.map((c) => c.id));
+  };
+
   if (loading) {
     return (
       <div
-        className="w-full space-y-8"
+        className="space-y-6"
         role="status"
         aria-label="Memuat kartu landing"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div className="space-y-2">
-            <Skeleton variant="light" className="h-8 w-48" />
-            <Skeleton variant="light" className="h-4 w-80 max-w-full" />
-          </div>
-          <Skeleton variant="light" className="h-10 w-32 rounded-xl" />
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-10 w-36" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="rounded-3xl border-2 border-[#2f180a]/10 bg-white p-6 shadow-sm space-y-4"
-            >
-              <Skeleton
-                variant="light"
-                className="aspect-video w-full rounded-2xl"
-              />
-              <Skeleton variant="light" className="h-5 w-32" />
-              <Skeleton variant="light" className="h-4 w-full" />
-              <div className="flex justify-between items-center pt-2">
-                <Skeleton variant="light" className="h-7 w-20 rounded-lg" />
-                <Skeleton variant="light" className="h-7 w-16 rounded-lg" />
-              </div>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <div className="space-y-3 lg:col-span-7">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-24 w-full rounded-2xl" />
+            ))}
+          </div>
+          <Skeleton className="h-96 w-full rounded-2xl lg:col-span-5" />
         </div>
       </div>
     );
@@ -343,126 +327,125 @@ export function LandingCardsManager() {
 
   if (error) {
     return (
-      <div className="p-6 bg-red-50 text-[#c83820] font-bold rounded-2xl border border-red-200">
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-medium text-red-700">
         {error}
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      {/* Top Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div className="space-y-6">
+      <header className="flex flex-col justify-between gap-4 border-b border-zinc-200 pb-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-3xl font-black text-[#2f180a] tracking-tight">
-            Kartu Landing
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+            Kartu Tambahan
           </h1>
-          <p className="text-sm font-medium text-[#542d14] mt-1">
-            Atur kartu konten yang tampil di beranda sesuai urutan
+          <p className="mt-1 text-sm text-zinc-500">
+            Kelola sorotan arena, event, atau informasi tambahan di halaman
+            utama.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#2f180a]/20 bg-white text-xs font-bold uppercase tracking-wider text-[#2f180a] hover:bg-[#faf6ee] shadow-sm transition-all"
+            className={adminButtonClass("secondary", "md")}
           >
-            <ExternalLink className="w-4 h-4 text-[#8c7b6d]" />
+            <ExternalLink className="h-4 w-4 text-zinc-400" />
             <span>Lihat Situs</span>
           </a>
           <button
             type="button"
             onClick={startCreateNew}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#c83820] hover:bg-[#a72d18] text-white text-xs font-black uppercase tracking-wider shadow-md transition-all cursor-pointer"
+            className={adminButtonClass("primary", "md")}
           >
-            <Plus className="w-4 h-4" />
-            <span>+ Tambah Kartu</span>
+            <Plus className="h-4 w-4" />
+            <span>Tambah Kartu</span>
           </button>
         </div>
-      </div>
+      </header>
 
-      <div className="mb-6 p-4 rounded-2xl bg-[#faf6ee] border border-[#2f180a]/15 text-xs text-[#542d14] flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-xs text-zinc-600">
         <span>
-          💡 Ingin mengelola deck jagoan interaktif di seksi &ldquo;Pilih
-          Jagoanmu&rdquo;?
+          Untuk kartu karakter di seksi &ldquo;Pilih Jagoanmu&rdquo;, kelola
+          melalui menu khusus Jagoan.
         </span>
-        <a
+        <Link
           href="/admin/characters"
-          className="font-bold text-[#c83820] hover:underline"
+          className="font-semibold text-zinc-900 hover:underline"
         >
-          Buka Kelola Jagoan →
-        </a>
+          Buka Kelola Jagoan &rarr;
+        </Link>
       </div>
 
-      {/* Master-Detail 2-Column Split Workspace */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Kolom Kiri: Reorderable Card List */}
-        <div className="lg:col-span-7 flex flex-col gap-3.5">
-          <div className="text-xs font-bold uppercase tracking-wider text-[#8c7b6d] px-1 flex items-center justify-between">
-            <span>Daftar Kartu ({items.length})</span>
-            <span className="text-[11px] text-[#542d14]">
-              💡 Geser baris atau gunakan tombol ↑ ↓ untuk mengatur urutan
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        <div className="flex flex-col gap-3 lg:col-span-7">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Daftar Kartu ({items.length})
+            </h2>
+            <span className="hidden text-xs text-zinc-400 sm:inline">
+              Geser atau gunakan tombol panah untuk mengurutkan
             </span>
           </div>
 
           {items.length === 0 ? (
-            <div className="p-8 rounded-3xl bg-white border-2 border-dashed border-[#2f180a]/15 text-center text-[#8c7b6d]">
-              Belum ada kartu konten. Klik tombol{" "}
-              <strong>+ Tambah Kartu</strong>.
+            <div className="rounded-2xl border border-dashed border-zinc-300 bg-white p-8 text-center text-sm text-zinc-500">
+              Belum ada kartu tambahan. Isi formulir di samping untuk membuat
+              kartu baru.
             </div>
           ) : (
             items.map((item, idx) => {
               const isSelected = editingId === item.id;
               const isDragTarget = dragOverIdx === idx;
-
               return (
                 <div
                   key={item.id}
                   draggable
-                  onDragStart={() => handleDragStart(idx)}
-                  onDragOver={(e) => handleDragOver(e, idx)}
-                  onDrop={(e) => handleDrop(e, idx)}
-                  className={`group relative flex items-center gap-3.5 p-3.5 sm:p-4 rounded-2xl bg-white border-2 transition-all cursor-grab active:cursor-grabbing ${
+                  onDragStart={() => setDraggedIdx(idx)}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    if (draggedIdx !== null && draggedIdx !== idx)
+                      setDragOverIdx(idx);
+                  }}
+                  onDrop={(e) => void handleDrop(e, idx)}
+                  onClick={() => selectCardForEdit(item)}
+                  className={`flex cursor-pointer items-center gap-3.5 rounded-2xl border bg-white p-3.5 transition-all ${
                     isSelected
-                      ? "border-[#c83820] ring-2 ring-[#c83820]/30 shadow-md"
-                      : "border-[#2f180a]/12 hover:border-[#2f180a]/30 shadow-sm"
-                  } ${isDragTarget ? "border-t-4 border-t-[#f59e0b] bg-[#fef3c7]/20" : ""}`}
+                      ? "border-zinc-900 ring-2 ring-zinc-900/10"
+                      : "border-zinc-200 hover:border-zinc-300"
+                  } ${isDragTarget ? "border-dashed border-zinc-900" : ""}`}
                 >
-                  {/* Reorder Buttons & Handle */}
-                  <div className="flex flex-col items-center gap-1 text-[#8c7b6d] shrink-0">
+                  <div className="flex shrink-0 flex-col items-center gap-1 text-zinc-400">
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        void handleMoveUp(item.id);
+                        void moveCard(idx, "up");
                       }}
                       disabled={idx === 0}
-                      className="p-1 rounded hover:bg-[#faf6ee] text-[#2f180a] disabled:opacity-30 cursor-pointer"
+                      className="rounded p-0.5 text-zinc-600 hover:bg-zinc-100 disabled:opacity-25"
                       title="Pindah ke atas"
                     >
-                      <ArrowUp className="w-3.5 h-3.5" />
+                      <ArrowUp className="h-3.5 w-3.5" />
                     </button>
-                    <GripVertical className="w-4 h-4 text-[#8c7b6d]/60 group-hover:text-[#2f180a]" />
+                    <GripVertical className="h-4 w-4" />
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        void handleMoveDown(item.id);
+                        void moveCard(idx, "down");
                       }}
                       disabled={idx === items.length - 1}
-                      className="p-1 rounded hover:bg-[#faf6ee] text-[#2f180a] disabled:opacity-30 cursor-pointer"
+                      className="rounded p-0.5 text-zinc-600 hover:bg-zinc-100 disabled:opacity-25"
                       title="Pindah ke bawah"
                     >
-                      <ArrowDown className="w-3.5 h-3.5" />
+                      <ArrowDown className="h-3.5 w-3.5" />
                     </button>
                   </div>
 
-                  {/* Thumbnail */}
-                  <div
-                    onClick={() => selectCardForEdit(item)}
-                    className="relative w-20 h-14 sm:w-24 sm:h-16 rounded-xl overflow-hidden bg-[#2f180a] shrink-0 border border-[#2f180a]/15 cursor-pointer"
-                  >
+                  <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
                     {item.imageUrl ? (
                       <Image
                         src={
@@ -474,66 +457,59 @@ export function LandingCardsManager() {
                         unoptimized
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[10px] text-white/50 uppercase font-bold">
+                      <div className="flex h-full w-full items-center justify-center text-[10px] font-medium text-zinc-400">
                         Tanpa Gambar
                       </div>
                     )}
                   </div>
 
-                  {/* Content & Badges */}
-                  <div
-                    onClick={() => selectCardForEdit(item)}
-                    className="min-w-0 flex-1 cursor-pointer"
-                  >
-                    <h3 className="text-sm sm:text-base font-black text-[#2f180a] truncate leading-tight">
-                      {item.title}
-                    </h3>
-                    <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                      {item.isPublished === 1 ? (
-                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-[#10b981] text-white">
-                          TERBIT
-                        </span>
-                      ) : (
-                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-stone-300 text-stone-700">
-                          DRAF
-                        </span>
-                      )}
-                      <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e]">
-                        {item.tone === "ember"
-                          ? "HANGAT"
-                          : item.tone === "light"
-                            ? "TERANG"
-                            : "GELAP"}
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex flex-wrap items-center gap-1.5">
+                      <span
+                        className={`rounded-md px-2 py-0.5 text-[11px] font-semibold ${
+                          item.isPublished === 1
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-zinc-100 text-zinc-500"
+                        }`}
+                      >
+                        {item.isPublished === 1 ? "Terbit" : "Draf"}
                       </span>
-                      <span className="text-[11px] font-medium text-[#8c7b6d]">
-                        Slot: {item.slot || "Umum"}
+                      <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-600">
+                        {item.slot || "Umum"}
                       </span>
                     </div>
+                    <h3 className="truncate text-sm font-semibold text-zinc-900">
+                      {item.title}
+                    </h3>
+                    {item.body && (
+                      <p className="mt-0.5 line-clamp-1 text-xs text-zinc-500">
+                        {item.body}
+                      </p>
+                    )}
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex shrink-0 items-center gap-1">
                     <button
                       type="button"
-                      onClick={() => selectCardForEdit(item)}
-                      className={`p-2 rounded-xl border border-[#2f180a]/15 transition-all ${
-                        isSelected
-                          ? "bg-[#c83820] text-white border-transparent"
-                          : "bg-white text-[#2f180a] hover:bg-[#faf6ee]"
-                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        selectCardForEdit(item);
+                      }}
+                      className={adminButtonClass("secondary", "icon-sm")}
                       title="Edit kartu"
                     >
-                      <Pencil className="w-4 h-4" />
+                      <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
-                      onClick={() =>
-                        setDeleteTarget({ id: item.id, title: item.title })
-                      }
-                      className="p-2 rounded-xl border border-[#2f180a]/15 bg-white text-[#c83820] hover:bg-red-50 transition-all"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteTarget({ id: item.id, title: item.title });
+                      }}
+                      className={adminButtonClass("danger", "icon-sm")}
                       title="Hapus kartu"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
@@ -542,30 +518,26 @@ export function LandingCardsManager() {
           )}
         </div>
 
-        {/* Kolom Kanan: Inspector Formulir Edit Kartu */}
         <div className="lg:col-span-5">
-          <div className="rounded-3xl bg-white border-2 border-[#2f180a]/15 p-6 sm:p-7 shadow-lg sticky top-24">
-            <div className="flex items-center justify-between pb-4 border-b border-[#2f180a]/10 mb-5">
-              <h2 className="text-xl font-black text-[#2f180a]">
+          <div className="sticky top-6 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
+            <div className="mb-4 flex items-center justify-between border-b border-zinc-100 pb-3.5">
+              <h2 className="text-base font-bold text-zinc-900">
                 {editingId ? "Edit Kartu" : "Tambah Kartu"}
               </h2>
-              {formData.isPublished ? (
-                <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-[#10b981] text-white">
-                  TERBIT
-                </span>
-              ) : (
-                <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-stone-300 text-stone-700">
-                  DRAF
-                </span>
-              )}
+              <span
+                className={`rounded-md px-2.5 py-0.5 text-xs font-semibold ${
+                  formData.isPublished
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "bg-zinc-100 text-zinc-500"
+                }`}
+              >
+                {formData.isPublished ? "Terbit" : "Draf"}
+              </span>
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div>
-                <label
-                  htmlFor="card-title"
-                  className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1.5"
-                >
+                <label htmlFor="card-title" className={adminLabelClass}>
                   Judul Kartu *
                 </label>
                 <input
@@ -576,21 +548,16 @@ export function LandingCardsManager() {
                     setFormData({ ...formData, title: e.target.value })
                   }
                   required
-                  placeholder="Contoh: Rebut benteng bersama tim"
-                  className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3.5 py-2.5 text-sm text-[#2f180a] focus:border-[#c83820] focus:outline-none bg-[#faf6ee]/50 font-medium"
+                  placeholder="Contoh: Jelajahi 3 Arena Kampung"
+                  className={adminInputClass}
                 />
                 {formErrors.title && (
-                  <p className="text-xs font-bold text-[#c83820] mt-1">
-                    {formErrors.title[0]}
-                  </p>
+                  <p className={adminErrorClass}>{formErrors.title[0]}</p>
                 )}
               </div>
 
               <div>
-                <label
-                  htmlFor="card-desc"
-                  className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1.5"
-                >
+                <label htmlFor="card-desc" className={adminLabelClass}>
                   Deskripsi
                 </label>
                 <textarea
@@ -600,46 +567,58 @@ export function LandingCardsManager() {
                     setFormData({ ...formData, body: e.target.value })
                   }
                   rows={3}
-                  placeholder="Deskripsi singkat aksi atau keunggulan kartu..."
-                  className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3.5 py-2.5 text-sm text-[#2f180a] focus:border-[#c83820] focus:outline-none bg-[#faf6ee]/50 font-medium resize-none"
+                  placeholder="Tulis penjelasan singkat mengenai sorotan ini..."
+                  className={adminTextareaClass}
                 />
               </div>
 
-              {/* Upload Gambar Drag & Drop */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1.5">
-                  Gambar
-                </label>
-                <div className="rounded-2xl border-2 border-dashed border-[#2f180a]/20 p-3 bg-[#faf6ee]/40">
-                  {formData.imageUrl ? (
-                    <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-[#2f180a] mb-3">
-                      <Image
-                        src={
-                          resolvePublicAssetUrl(formData.imageUrl) ||
-                          formData.imageUrl
-                        }
-                        alt="Pratinjau"
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
-                    </div>
-                  ) : null}
-                  <AssetUploader
-                    purpose="landing-image"
-                    onUploaded={handleImageUploaded}
-                    disabled={submitting}
-                  />
+                <span className={adminLabelClass}>Gambar Kartu</span>
+                {formData.imageUrl ? (
+                  <div className="relative mb-2.5 aspect-video w-full overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
+                    <Image
+                      src={
+                        resolvePublicAssetUrl(formData.imageUrl) ||
+                        formData.imageUrl
+                      }
+                      alt="Pratinjau kartu"
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+                ) : null}
+                <AssetUploader
+                  purpose="landing-image"
+                  onUploaded={handleImageUploaded}
+                  disabled={submitting}
+                />
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                  <span className="mr-1 text-[11px] font-medium text-zinc-500">
+                    Gambar game:
+                  </span>
+                  {PRESET_CARD_IMAGES.map((preset) => (
+                    <button
+                      key={preset.url}
+                      type="button"
+                      onClick={() =>
+                        setFormData({ ...formData, imageUrl: preset.url })
+                      }
+                      className={`rounded-lg border px-2 py-1 text-[11px] font-medium transition-colors ${
+                        formData.imageUrl === preset.url
+                          ? "border-zinc-900 bg-zinc-900 text-white"
+                          : "border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              {/* Teks Tombol & Tautan */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label
-                    htmlFor="cta-label"
-                    className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1"
-                  >
+                  <label htmlFor="cta-label" className={adminLabelClass}>
                     Teks Tombol
                   </label>
                   <input
@@ -650,14 +629,11 @@ export function LandingCardsManager() {
                       setFormData({ ...formData, ctaLabel: e.target.value })
                     }
                     placeholder="Gabung Wishlist"
-                    className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3 py-2 text-xs text-[#2f180a] bg-[#faf6ee]/50 focus:border-[#c83820] focus:outline-none"
+                    className={adminInputClass}
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="cta-url"
-                    className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1"
-                  >
+                  <label htmlFor="cta-url" className={adminLabelClass}>
                     Tautan Tombol
                   </label>
                   <input
@@ -668,19 +644,15 @@ export function LandingCardsManager() {
                       setFormData({ ...formData, ctaUrl: e.target.value })
                     }
                     placeholder="#wishlist"
-                    className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3 py-2 text-xs text-[#2f180a] bg-[#faf6ee]/50 focus:border-[#c83820] focus:outline-none"
+                    className={adminInputClass}
                   />
                 </div>
               </div>
 
-              {/* Slot & Tone */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label
-                    htmlFor="card-slot"
-                    className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1"
-                  >
-                    Slot
+                  <label htmlFor="card-slot" className={adminLabelClass}>
+                    Kategori / Slot
                   </label>
                   <input
                     id="card-slot"
@@ -689,16 +661,13 @@ export function LandingCardsManager() {
                     onChange={(e) =>
                       setFormData({ ...formData, slot: e.target.value })
                     }
-                    placeholder="Tentang / Karakter / Fitur"
-                    className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3 py-2 text-xs text-[#2f180a] bg-[#faf6ee]/50 focus:border-[#c83820] focus:outline-none"
+                    placeholder="Tentang / Arena / Event"
+                    className={adminInputClass}
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="card-tone"
-                    className="block text-xs font-bold uppercase tracking-wider text-[#2f180a] mb-1"
-                  >
-                    Tema (Tone)
+                  <label htmlFor="card-tone" className={adminLabelClass}>
+                    Tone
                   </label>
                   <select
                     id="card-tone"
@@ -709,46 +678,58 @@ export function LandingCardsManager() {
                         tone: e.target.value as "dark" | "light" | "ember",
                       })
                     }
-                    className="w-full rounded-xl border-2 border-[#2f180a]/15 px-3 py-2 text-xs text-[#2f180a] bg-[#faf6ee]/50 focus:border-[#c83820] focus:outline-none"
+                    className={adminSelectClass}
                   >
-                    <option value="light">Terang (Parchment)</option>
-                    <option value="dark">Gelap (Timber)</option>
-                    <option value="ember">Hangat (Terracotta)</option>
+                    <option value="light">Putih Bersih</option>
+                    <option value="dark">Kontras Gelap</option>
+                    <option value="ember">Aksen Merah BAREN</option>
                   </select>
                 </div>
               </div>
 
-              {/* Toggle Tampilkan di Beranda */}
-              <div className="flex items-center justify-between py-2 border-y border-[#2f180a]/10">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#2f180a]">
+              <div className="flex items-center justify-between rounded-xl border border-zinc-200 bg-zinc-50/70 px-3.5 py-2.5">
+                <span className="text-xs font-semibold text-zinc-700">
                   Tampilkan di beranda
                 </span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.isPublished}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        isPublished: e.target.checked,
-                      })
-                    }
-                    className="sr-only peer"
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={formData.isPublished}
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      isPublished: !formData.isPublished,
+                    })
+                  }
+                  className={`relative h-6 w-11 cursor-pointer rounded-full p-0.5 transition-colors ${
+                    formData.isPublished ? "bg-zinc-900" : "bg-zinc-300"
+                  }`}
+                >
+                  <span
+                    className={`block h-5 w-5 rounded-full bg-white shadow-xs transition-transform ${
+                      formData.isPublished ? "translate-x-5" : "translate-x-0"
+                    }`}
                   />
-                  <div className="w-11 h-6 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#10b981]" />
-                </label>
+                </button>
               </div>
 
-              {/* Form Action */}
-              <div className="pt-2">
+              <div className="flex gap-2 border-t border-zinc-100 pt-3">
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#c83820] hover:bg-[#a72d18] text-white font-black text-sm uppercase tracking-wider shadow-md transition-all cursor-pointer disabled:opacity-50"
+                  className={adminButtonClass("primary", "md", "flex-1")}
                 >
-                  <Check className="w-4 h-4 stroke-[3]" />
-                  <span>{submitting ? "Menyimpan..." : "✓ Simpan"}</span>
+                  {submitting ? "Menyimpan..." : "Simpan"}
                 </button>
+                {editingId && (
+                  <button
+                    type="button"
+                    onClick={startCreateNew}
+                    className={adminButtonClass("secondary", "md")}
+                  >
+                    Batal
+                  </button>
+                )}
               </div>
             </form>
           </div>
@@ -763,14 +744,12 @@ export function LandingCardsManager() {
         onCancel={() => setDeleteTarget(null)}
       />
 
-      {/* Floating Bottom-Right Toast */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-bounce-once">
-          <div className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-[#10b981] text-white font-black text-sm shadow-2xl border-2 border-white">
-            <span>✓</span>
-            <span>{toast.message}</span>
-          </div>
-        </div>
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

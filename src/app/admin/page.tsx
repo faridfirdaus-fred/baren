@@ -1,7 +1,7 @@
 import { count, desc, eq, max } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ExternalLink, Globe } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Globe } from "lucide-react";
 
 import { auth, signOut } from "@/auth";
 import { AdminAccountForm } from "@/components/admin/account-form";
@@ -44,7 +44,6 @@ export default async function AdminDashboardPage() {
 
   const db = getDb();
 
-  // Query counts dan timestamps secara paralel
   const [
     featureCount,
     galleryCount,
@@ -89,7 +88,6 @@ export default async function AdminDashboardPage() {
     db.select({ updatedAt: max(downloadLinks.updatedAt) }).from(downloadLinks),
   ]);
 
-  // Buat store untuk dashboard summary
   const dashboard = readDashboardSummary({
     features: featureCount[0]?.count ?? 0,
     galleryAssets: galleryCount[0]?.count ?? 0,
@@ -116,7 +114,6 @@ export default async function AdminDashboardPage() {
   const metrics = buildDashboardMetrics(dashboard);
   const latestContentUpdatedAt = dashboard.latestContentUpdatedAt;
 
-  // E16-4: satu kueri untuk widget komentar terbaru.
   const recentComments = await db
     .select({
       id: comments.id,
@@ -129,31 +126,45 @@ export default async function AdminDashboardPage() {
     .orderBy(desc(comments.createdAt), desc(comments.id))
     .limit(3);
 
+  const quickLinks = [
+    { href: "/admin/characters", label: "Kelola Jagoan" },
+    { href: "/admin/news", label: "Berita & Foto Event" },
+    { href: "/admin/landing-cards", label: "Kartu Tambahan" },
+    { href: "/admin/hero", label: "Kelola Hero" },
+    { href: "/admin/features", label: "Kelola Fitur" },
+    { href: "/admin/how-to-play", label: "Cara Bermain" },
+    { href: "/admin/gallery", label: "Kelola Galeri" },
+    { href: "/admin/faq", label: "Kelola FAQ" },
+    { href: "/admin/landing", label: "Judul & Teks Seksi" },
+    { href: "/admin/branding", label: "Branding" },
+    { href: "/admin/links", label: "Tautan Sosial" },
+    { href: "/admin/wishlist", label: "Wishlist" },
+    { href: "/admin/comments", label: "Komentar" },
+  ];
+
   return (
     <section className="space-y-8">
-      <header className="flex flex-col gap-4 border-b border-ink-700 pb-6 sm:flex-row sm:items-center sm:justify-between">
+      <header className="flex flex-col gap-4 border-b border-zinc-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="font-display text-4xl uppercase tracking-wide text-sand">
-              Dasbor Admin
-            </h1>
-            <span className="sr-only">Dashboard Admin</span>
-          </div>
-          <p className="mt-2 text-sm text-sand-600">
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+            Dasbor Admin
+          </h1>
+          <span className="sr-only">Dashboard Admin</span>
+          <p className="mt-1 text-sm text-zinc-500">
             Masuk sebagai {(session.user as { email?: string }).email}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <Link
             href="/"
             target="_blank"
             rel="noopener noreferrer"
             className={adminButtonClass("secondary", "md")}
           >
-            <Globe className="h-4 w-4 text-ember" aria-hidden="true" />
+            <Globe className="h-4 w-4 text-zinc-500" aria-hidden="true" />
             <span>Lihat Situs</span>
             <ExternalLink
-              className="h-3.5 w-3.5 text-sand-600"
+              className="h-3.5 w-3.5 text-zinc-400"
               aria-hidden="true"
             />
           </Link>
@@ -161,174 +172,90 @@ export default async function AdminDashboardPage() {
       </header>
 
       <section aria-labelledby="ringkasan-metrik" className="space-y-4">
-        <h2 id="ringkasan-metrik" className="sr-only">
-          Ringkasan metrik
-        </h2>
-        <p className="text-sm text-sand-600">
-          Data diperbarui otomatis secara berkala. Pilih kartu untuk melihat dan
-          mengelola data terkait.
-        </p>
-        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {metrics.map((metric) => (
-            <li key={metric.key}>
-              <Link
-                href={metric.href}
-                data-testid={`metric-${metric.key}`}
-                className="group flex h-full flex-col border border-line bg-ink-800 p-5 transition-colors hover:border-ember hover:bg-ink-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-              >
-                <span className="text-sm text-sand-600">{metric.label}</span>
-                <span
-                  className="mt-2 text-3xl font-bold text-sand"
-                  data-testid={`metric-value-${metric.key}`}
-                >
-                  {metric.value}
-                </span>
-                <span className="mt-1 text-sm text-sand-600">
-                  {metric.description}
-                </span>
-                <span className="mt-auto pt-4 text-xs font-semibold uppercase tracking-wider text-sand-600 group-hover:text-ember">
-                  {metric.actionLabel} <span aria-hidden="true">&rarr;</span>
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        <div className="border border-line bg-ink-800 p-5">
-          <h3 className="text-sm text-sand-600">Pembaruan konten terakhir</h3>
-          <p className="mt-2 text-sm font-medium text-sand">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2
+            id="ringkasan-metrik"
+            className="text-sm font-semibold text-zinc-900"
+          >
+            Ringkasan Konten & Komunitas
+          </h2>
+          <p className="text-xs text-zinc-500">
+            Pembaruan terakhir:{" "}
             {latestContentUpdatedAt ? (
-              <time dateTime={toDateTimeAttribute(latestContentUpdatedAt)}>
+              <time
+                dateTime={toDateTimeAttribute(latestContentUpdatedAt)}
+                className="font-medium text-zinc-700"
+              >
                 {formatDateTimeId(latestContentUpdatedAt)}
               </time>
             ) : (
               "Belum ada pembaruan konten."
             )}
           </p>
-          <p className="mt-2 text-xs text-sand-600">
-            Waktu pembaruan konten terakhir (tidak termasuk data komentar dan
-            wishlist).
-          </p>
         </div>
+
+        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {metrics.map((metric) => (
+            <li key={metric.key}>
+              <Link
+                href={metric.href}
+                data-testid={`metric-${metric.key}`}
+                className="group flex h-full flex-col rounded-2xl border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-zinc-500">
+                    {metric.label}
+                  </span>
+                  <ArrowUpRight
+                    className="h-4 w-4 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-zinc-900"
+                    aria-hidden="true"
+                  />
+                </div>
+                <span
+                  className="mt-2.5 text-3xl font-bold tracking-tight text-zinc-900"
+                  data-testid={`metric-value-${metric.key}`}
+                >
+                  {metric.value}
+                </span>
+                <span className="mt-1 text-xs text-zinc-500">
+                  {metric.description}
+                </span>
+                <span className="mt-auto pt-3 text-xs font-medium text-zinc-600 group-hover:text-zinc-900">
+                  {metric.actionLabel}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <RecentComments comments={recentComments} />
 
-      <nav aria-label="Navigasi Modul Admin">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-sand-600">
-          Modul Konten
-        </h2>
-        <ul className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          <li>
-            <Link
-              href="/admin/landing"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Kelola Konten Landing
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/hero"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Kelola Hero
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/characters"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Kelola Jagoan
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/landing-cards"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Kelola Kartu Landing
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/news"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Kelola Berita
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/how-to-play"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Kelola How to Play
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/features"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Kelola Fitur
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/branding"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Kelola Branding
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/faq"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Kelola FAQ
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/gallery"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Kelola Galeri
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/links"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Kelola Tautan Sosial
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/wishlist"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Wishlist
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/comments"
-              className="block h-full border border-line bg-ink-800 px-4 py-3 text-sm font-semibold text-sand transition-colors hover:border-ember hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-            >
-              Komentar
-            </Link>
-          </li>
+      <nav aria-label="Navigasi Modul Admin" className="space-y-3">
+        <h2 className="text-sm font-semibold text-zinc-900">Akses Cepat</h2>
+        <ul className="grid gap-2.5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {quickLinks.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                className="flex items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+              >
+                <span>{item.label}</span>
+                <ArrowUpRight
+                  className="h-3.5 w-3.5 text-zinc-400"
+                  aria-hidden="true"
+                />
+              </Link>
+            </li>
+          ))}
         </ul>
       </nav>
+
       <AdminAccountForm
         name={session.user.name ?? ""}
         email={(session.user as { email?: string }).email ?? ""}
       />
+
       <form
         action={async () => {
           "use server";

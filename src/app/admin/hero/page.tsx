@@ -16,10 +16,5 @@ export default async function HeroPage() {
   if (!session?.user) redirect("/admin/login");
   if (role !== "admin") redirect("/admin/login?error=AksesDitolak");
 
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Kelola Hero</h1>
-      <HeroManager />
-    </div>
-  );
+  return <HeroManager />;
 }

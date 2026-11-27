@@ -1,33 +1,30 @@
 /**
- * Gaya tombol panel admin (E12-8 — audit konsistensi visual).
- * Satu sumber untuk seluruh aksi admin agar tombol selalu tampil sebagai
- * tombol: permukaan, border, padding, target sentuh ≥44px, serta state
- * hover/focus/disabled yang mengikuti tema ink/sand/ember (DG-02, DG-04).
+ * Gaya tombol panel admin (E19-2 — Putih Modern Minimalis).
+ * Permukaan bersih, sudut membulat modern, target sentuh >=44px, tanpa warna ramai.
  */
 export type AdminButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 
 export type AdminButtonSize = "sm" | "md" | "icon" | "icon-sm";
 
 const baseClass =
-  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-none border font-semibold uppercase leading-none tracking-[0.08em] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border font-semibold leading-none transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-50";
 
 const variantClass: Record<AdminButtonVariant, string> = {
-  // ember-700 + sand = 5.13:1; hover ember-800 + sand = 6.24:1.
   primary:
-    "border-ember-700 bg-ember-700 text-sand hover:border-ember-800 hover:bg-ember-800 active:bg-ember-800",
+    "border-zinc-900 bg-zinc-900 text-white shadow-xs hover:border-zinc-800 hover:bg-zinc-800 active:scale-[0.99]",
   secondary:
-    "border-line bg-ink-800 text-sand hover:border-ember hover:bg-ink-700 hover:text-ember",
+    "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900",
   ghost:
-    "border-transparent bg-transparent text-sand-600 hover:bg-ink-700 hover:text-sand",
+    "border-transparent bg-transparent text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900",
   danger:
-    "border-ember/60 bg-transparent text-ember hover:border-ember hover:bg-ember hover:text-ink",
+    "border-red-200 bg-white text-red-600 hover:border-red-300 hover:bg-red-50",
 };
 
 const sizeClass: Record<AdminButtonSize, string> = {
-  sm: "min-h-11 px-3 py-2 text-xs",
-  md: "min-h-11 px-4 py-2 text-sm",
-  icon: "min-h-11 min-w-11 p-2",
-  "icon-sm": "min-h-11 min-w-11 p-1.5",
+  sm: "min-h-10 px-3.5 py-2 text-xs",
+  md: "min-h-11 px-4 py-2.5 text-sm",
+  icon: "min-h-10 min-w-10 p-2",
+  "icon-sm": "min-h-9 min-w-9 p-1.5",
 };
 
 export function adminButtonClass(

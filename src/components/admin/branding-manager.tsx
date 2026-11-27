@@ -5,9 +5,14 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
-import { adminInputClass, adminLabelClass } from "./form-styles";
+import {
+  adminErrorClass,
+  adminInputClass,
+  adminLabelClass,
+} from "./form-styles";
 
 import { AssetUploader } from "@/components/admin/asset-uploader";
+import { Toast } from "@/components/admin/toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { adminButtonClass } from "@/components/admin/button-styles";
 import {
@@ -20,6 +25,12 @@ import {
 import type { UploadedAsset } from "@/lib/assets-client";
 import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
+const SAFE_BRAND_URL =
+  /^\/(?:art|media|brand|api\/assets|favicon\.ico|icon\.svg)(?:\/(?!.*\.\.)[a-zA-Z0-9._/-]+)?$/;
+
+const isValidBrandUrl = (v: string) =>
+  !v || v.startsWith("https://") || SAFE_BRAND_URL.test(v);
+
 const brandingFormSchema = z.object({
   namaGame: z
     .string()
@@ -31,29 +42,26 @@ const brandingFormSchema = z.object({
     .string()
     .trim()
     .max(2048, "URL logo maksimal 2048 karakter.")
-    .refine(
-      (v) => !v || v.startsWith("https://"),
-      "URL logo harus diawali https://.",
-    ),
+    .refine(isValidBrandUrl, "URL logo harus diawali https://."),
   faviconUrl: z
     .string()
     .trim()
     .max(2048, "URL favicon maksimal 2048 karakter.")
-    .refine(
-      (v) => !v || v.startsWith("https://"),
-      "URL favicon harus diawali https://.",
-    ),
+    .refine(isValidBrandUrl, "URL favicon harus diawali https://."),
 });
 
 const DEFAULT_LOGO = "/brand/baren-mark.svg";
-const DEFAULT_FAVICON = "/favicon.ico";
+const DEFAULT_FAVICON = "/icon.svg";
 
 export function AdminBrandingManager() {
   const router = useRouter();
   const requestVersion = useRef(0);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
 
   const {
     register,
@@ -128,37 +136,20 @@ export function AdminBrandingManager() {
   }, [reset]);
 
   async function onSubmit(values: BrandingFormValues) {
-    setSuccessMessage(null);
     clearErrors("root");
-
     const payload = toBrandingUpdatePayload(values);
     const result = await saveBranding(payload);
 
     if (!result.ok) {
       if (result.error.fields) {
-        if (result.error.fields.namaGame?.[0]) {
-          setError("namaGame", {
-            type: "server",
-            message: result.error.fields.namaGame[0],
-          });
-        }
-        if (result.error.fields.tagline?.[0]) {
-          setError("tagline", {
-            type: "server",
-            message: result.error.fields.tagline[0],
-          });
-        }
-        if (result.error.fields.logoUrl?.[0]) {
-          setError("logoUrl", {
-            type: "server",
-            message: result.error.fields.logoUrl[0],
-          });
-        }
-        if (result.error.fields.faviconUrl?.[0]) {
-          setError("faviconUrl", {
-            type: "server",
-            message: result.error.fields.faviconUrl[0],
-          });
+        for (const key of [
+          "namaGame",
+          "tagline",
+          "logoUrl",
+          "faviconUrl",
+        ] as const) {
+          const msg = result.error.fields[key]?.[0];
+          if (msg) setError(key, { type: "server", message: msg });
         }
       }
       setError("root", { type: "server", message: result.error.message });
@@ -166,7 +157,10 @@ export function AdminBrandingManager() {
     }
 
     reset(toBrandingFormValues(result.data));
-    setSuccessMessage("Pengaturan branding berhasil disimpan.");
+    setToast({
+      message: "Pengaturan branding berhasil disimpan.",
+      type: "success",
+    });
     router.refresh();
   }
 
@@ -175,9 +169,10 @@ export function AdminBrandingManager() {
       shouldDirty: true,
       shouldValidate: true,
     });
-    setSuccessMessage(
-      "Logo baru berhasil diunggah. Klik 'Simpan Branding' untuk menerapkan perubahan.",
-    );
+    setToast({
+      message: "Logo baru diunggah. Klik Simpan Branding untuk menerapkan.",
+      type: "success",
+    });
   };
 
   const handleFaviconUploaded = (asset: UploadedAsset) => {
@@ -185,9 +180,10 @@ export function AdminBrandingManager() {
       shouldDirty: true,
       shouldValidate: true,
     });
-    setSuccessMessage(
-      "Favicon baru berhasil diunggah. Klik 'Simpan Branding' untuk menerapkan perubahan.",
-    );
+    setToast({
+      message: "Favicon baru diunggah. Klik Simpan Branding untuk menerapkan.",
+      type: "success",
+    });
   };
 
   const activeLogoSrc =
@@ -196,47 +192,31 @@ export function AdminBrandingManager() {
     resolvePublicAssetUrl(watchedFaviconUrl?.trim()) || DEFAULT_FAVICON;
 
   return (
-    <div className="grid max-w-4xl gap-8">
-      <header className="border-b border-line pb-4">
-        <h1 className="font-display text-3xl font-bold uppercase tracking-wider text-sand">
+    <div className="space-y-6">
+      <header className="border-b border-zinc-200 pb-4">
+        <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
           Kelola Branding
         </h1>
-        <p className="mt-1 text-sm text-sand-600">
-          Ubah nama game, slogan, logo, dan favicon situs.
+        <p className="mt-1 text-sm text-zinc-500">
+          Ubah nama game, slogan utama, logo situs, dan ikon tab peramban.
         </p>
       </header>
 
-      {loading ? (
+      {loading && (
         <div
-          className="border border-line bg-ink-800 p-6 space-y-6"
+          className="grid gap-6 lg:grid-cols-12"
           role="status"
           aria-label="Memuat pengaturan branding"
         >
-          <div className="space-y-4">
-            <Skeleton variant="admin" className="h-6 w-36" />
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Skeleton variant="admin" className="h-4 w-24" />
-                <Skeleton variant="admin" className="h-10 w-full" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton variant="admin" className="h-4 w-24" />
-                <Skeleton variant="admin" className="h-10 w-full" />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <Skeleton variant="admin" className="h-6 w-28" />
-            <Skeleton variant="admin" className="h-32 w-full" />
-          </div>
-          <Skeleton variant="admin" className="h-10 w-36" />
+          <Skeleton className="h-64 w-full rounded-2xl lg:col-span-5" />
+          <Skeleton className="h-80 w-full rounded-2xl lg:col-span-7" />
         </div>
-      ) : null}
+      )}
 
-      {loadError ? (
+      {loadError && (
         <div
           role="alert"
-          className="border border-ember/30 bg-ember/10 p-4 text-sm text-ember"
+          className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
         >
           <p className="font-semibold">{loadError}</p>
           <button
@@ -247,288 +227,202 @@ export function AdminBrandingManager() {
             Coba Lagi
           </button>
         </div>
-      ) : null}
+      )}
 
-      {!loading && !loadError ? (
+      {!loading && !loadError && (
         <form
           onSubmit={handleSubmit(onSubmit)}
           noValidate
-          className="grid gap-8"
+          className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12"
         >
-          {successMessage ? (
-            <div
-              role="status"
-              className="border border-green-500/30 bg-green-500/10 p-4 text-sm text-green-300"
-            >
-              {successMessage}
-            </div>
-          ) : null}
-
-          {errors.root ? (
-            <div
-              role="alert"
-              className="border border-ember/30 bg-ember/10 p-4 text-sm text-ember"
-            >
-              {errors.root.message}
-            </div>
-          ) : null}
-
-          {/* Bagian Identitas Teks */}
-          <section className="border border-line bg-ink-800 p-6">
-            <h2 className="font-display text-xl font-bold uppercase tracking-wider text-sand">
-              Identitas Nama & Tagline
+          {/* Identitas Teks */}
+          <section className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 lg:col-span-5">
+            <h2 className="border-b border-zinc-100 pb-3 text-base font-bold text-zinc-900">
+              Identitas Game
             </h2>
 
-            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div>
-                <label htmlFor="namaGame" className={adminLabelClass}>
-                  Nama Game <span className="text-ember">*</span>
-                </label>
-                <input
-                  id="namaGame"
-                  type="text"
-                  {...register("namaGame")}
-                  aria-invalid={Boolean(errors.namaGame)}
-                  className={adminInputClass}
-                  placeholder="Contoh: BAREN"
-                />
-                {errors.namaGame ? (
-                  <p
-                    id="namaGame-error"
-                    role="alert"
-                    className="mt-1 text-xs text-ember"
-                  >
-                    {errors.namaGame.message}
-                  </p>
-                ) : null}
-              </div>
+            {errors.root && (
+              <p role="alert" className={adminErrorClass}>
+                {errors.root.message}
+              </p>
+            )}
 
-              <div>
-                <label htmlFor="tagline" className={adminLabelClass}>
-                  Tagline Game
-                </label>
-                <input
-                  id="tagline"
-                  type="text"
-                  {...register("tagline")}
-                  aria-invalid={Boolean(errors.tagline)}
-                  className={adminInputClass}
-                  placeholder="Contoh: Rebut benteng. Kuasai arena."
-                />
-                {errors.tagline ? (
-                  <p
-                    id="tagline-error"
-                    role="alert"
-                    className="mt-1 text-xs text-ember"
-                  >
-                    {errors.tagline.message}
-                  </p>
-                ) : null}
-              </div>
+            <div>
+              <label htmlFor="namaGame" className={adminLabelClass}>
+                Nama Game *
+              </label>
+              <input
+                id="namaGame"
+                type="text"
+                {...register("namaGame")}
+                aria-invalid={Boolean(errors.namaGame)}
+                className={adminInputClass}
+                placeholder="Contoh: BAREN"
+              />
+              {errors.namaGame && (
+                <p role="alert" className={adminErrorClass}>
+                  {errors.namaGame.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="tagline" className={adminLabelClass}>
+                Slogan / Tagline
+              </label>
+              <input
+                id="tagline"
+                type="text"
+                {...register("tagline")}
+                aria-invalid={Boolean(errors.tagline)}
+                className={adminInputClass}
+                placeholder="Contoh: Lari, sembunyi, dan rebut benteng lawan!"
+              />
+              {errors.tagline && (
+                <p role="alert" className={adminErrorClass}>
+                  {errors.tagline.message}
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 border-t border-zinc-100 pt-3">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={adminButtonClass("primary", "md")}
+              >
+                {isSubmitting ? "Menyimpan..." : "Simpan Branding"}
+              </button>
+              {isDirty && (
+                <span className="text-xs text-zinc-500">Belum disimpan</span>
+              )}
             </div>
           </section>
 
-          {/* Bagian Logo */}
-          <section className="grid gap-6 border border-line bg-ink-800 p-6">
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="font-display text-xl font-bold uppercase tracking-wider text-sand">
-                  Logo Game
-                </h2>
-                <p className="text-xs text-sand-600">
-                  Format didukung: JPG, PNG, WebP, SVG (maks. 5 MB).
-                </p>
+          {/* Logo & Favicon */}
+          <div className="space-y-6 lg:col-span-7">
+            <section className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-base font-bold text-zinc-900">
+                    Logo Situs
+                  </h2>
+                  <p className="text-xs text-zinc-500">
+                    Format PNG, SVG, JPG, atau WebP (maks. 5 MB).
+                  </p>
+                </div>
+                {watchedLogoUrl ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setValue("logoUrl", "", {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                    }
+                    className={adminButtonClass("secondary", "sm")}
+                  >
+                    Pakai Bawaan
+                  </button>
+                ) : null}
               </div>
-              {watchedLogoUrl ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    setValue("logoUrl", "", {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    })
-                  }
-                  className={adminButtonClass("secondary", "sm", "self-start")}
-                >
-                  Kembalikan ke Default
-                </button>
-              ) : null}
-            </div>
 
-            {/* Preview Logo */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center border border-dashed border-line bg-ink p-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={activeLogoSrc}
-                  alt={`Preview logo ${watchedNamaGame || "BAREN"}`}
-                  className="max-h-full max-w-full object-contain"
-                />
+              <div className="flex items-center gap-4 rounded-xl border border-zinc-100 bg-zinc-50 p-3.5">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white p-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={activeLogoSrc}
+                    alt={`Pratinjau logo ${watchedNamaGame || "BAREN"}`}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
+                <div className="min-w-0 text-xs text-zinc-500">
+                  <p className="font-semibold text-zinc-800">Logo Aktif</p>
+                  <p className="mt-0.5 truncate">
+                    {watchedLogoUrl?.trim() || "Logo bawaan BAREN"}
+                  </p>
+                </div>
               </div>
-              <div className="text-xs text-sand-600">
-                <p className="font-semibold text-sand">Pratinjau Logo Aktif:</p>
-                <p className="mt-0.5 break-all">
-                  {watchedLogoUrl?.trim()
-                    ? watchedLogoUrl
-                    : `Default (${DEFAULT_LOGO})`}
-                </p>
-              </div>
-            </div>
 
-            {/* Input URL Logo */}
-            <div>
-              <label htmlFor="logoUrl" className={adminLabelClass}>
-                URL Logo (HTTPS)
-              </label>
-              <input
-                id="logoUrl"
-                type="url"
-                {...register("logoUrl")}
-                aria-invalid={Boolean(errors.logoUrl)}
-                aria-describedby={
-                  errors.logoUrl ? "logoUrl-error" : "logoUrl-help"
-                }
-                className={adminInputClass}
-                placeholder="https://..."
-              />
-              <p id="logoUrl-help" className="mt-1 text-xs text-sand-600">
-                Terisi otomatis saat mengunggah berkas di bawah, atau masukkan
-                tautan langsung.
-              </p>
-              {errors.logoUrl ? (
-                <p
-                  id="logoUrl-error"
-                  role="alert"
-                  className="mt-1 text-xs text-ember"
-                >
-                  {errors.logoUrl.message}
-                </p>
-              ) : null}
-            </div>
-
-            {/* Uploader R2 Logo */}
-            <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-sand-600">
-                Unggah Berkas Logo Baru
-              </p>
+              <input type="hidden" {...register("logoUrl")} />
               <AssetUploader
                 purpose="logo"
                 onUploaded={handleLogoUploaded}
                 disabled={isSubmitting}
               />
-            </div>
-          </section>
-
-          {/* Bagian Favicon */}
-          <section className="grid gap-6 border border-line bg-ink-800 p-6">
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="font-display text-xl font-bold uppercase tracking-wider text-sand">
-                  Favicon Game
-                </h2>
-                <p className="text-xs text-sand-600">
-                  Format didukung: PNG, SVG (maks. 5 MB).
+              {errors.logoUrl && (
+                <p role="alert" className={adminErrorClass}>
+                  {errors.logoUrl.message}
                 </p>
+              )}
+            </section>
+
+            <section className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-base font-bold text-zinc-900">
+                    Favicon (Ikon Tab Browser)
+                  </h2>
+                  <p className="text-xs text-zinc-500">
+                    Format PNG atau SVG persegi (maks. 5 MB).
+                  </p>
+                </div>
+                {watchedFaviconUrl ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setValue("faviconUrl", "", {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                    }
+                    className={adminButtonClass("secondary", "sm")}
+                  >
+                    Pakai Bawaan
+                  </button>
+                ) : null}
               </div>
-              {watchedFaviconUrl ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    setValue("faviconUrl", "", {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    })
-                  }
-                  className={adminButtonClass("secondary", "sm", "self-start")}
-                >
-                  Kembalikan ke Default
-                </button>
-              ) : null}
-            </div>
 
-            {/* Preview Favicon */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center border border-dashed border-line bg-ink p-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={activeFaviconSrc}
-                  alt={`Preview favicon ${watchedNamaGame || "BAREN"}`}
-                  className="max-h-full max-w-full object-contain"
-                />
+              <div className="flex items-center gap-4 rounded-xl border border-zinc-100 bg-zinc-50 p-3.5">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white p-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={activeFaviconSrc}
+                    alt={`Pratinjau favicon ${watchedNamaGame || "BAREN"}`}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
+                <div className="min-w-0 text-xs text-zinc-500">
+                  <p className="font-semibold text-zinc-800">Favicon Aktif</p>
+                  <p className="mt-0.5 truncate">
+                    {watchedFaviconUrl?.trim() || "Favicon bawaan BAREN"}
+                  </p>
+                </div>
               </div>
-              <div className="text-xs text-sand-600">
-                <p className="font-semibold text-sand">
-                  Pratinjau Favicon Aktif:
-                </p>
-                <p className="mt-0.5 break-all">
-                  {watchedFaviconUrl?.trim()
-                    ? watchedFaviconUrl
-                    : `Default (${DEFAULT_FAVICON})`}
-                </p>
-              </div>
-            </div>
 
-            {/* Input URL Favicon */}
-            <div>
-              <label htmlFor="faviconUrl" className={adminLabelClass}>
-                URL Favicon (HTTPS)
-              </label>
-              <input
-                id="faviconUrl"
-                type="url"
-                {...register("faviconUrl")}
-                aria-invalid={Boolean(errors.faviconUrl)}
-                aria-describedby={
-                  errors.faviconUrl ? "faviconUrl-error" : "faviconUrl-help"
-                }
-                className={adminInputClass}
-                placeholder="https://..."
-              />
-              <p id="faviconUrl-help" className="mt-1 text-xs text-sand-600">
-                Terisi otomatis saat mengunggah berkas di bawah, atau masukkan
-                tautan langsung.
-              </p>
-              {errors.faviconUrl ? (
-                <p
-                  id="faviconUrl-error"
-                  role="alert"
-                  className="mt-1 text-xs text-ember"
-                >
-                  {errors.faviconUrl.message}
-                </p>
-              ) : null}
-            </div>
-
-            {/* Uploader R2 Favicon */}
-            <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-sand-600">
-                Unggah Berkas Favicon Baru
-              </p>
+              <input type="hidden" {...register("faviconUrl")} />
               <AssetUploader
                 purpose="favicon"
                 onUploaded={handleFaviconUploaded}
                 disabled={isSubmitting}
               />
-            </div>
-          </section>
-
-          {/* Tombol Simpan */}
-          <div className="flex items-center gap-4">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className={adminButtonClass("primary", "md")}
-            >
-              {isSubmitting ? "Menyimpan Branding…" : "Simpan Branding"}
-            </button>
-            {isDirty ? (
-              <span className="text-xs text-sand-600">
-                Ada perubahan yang belum disimpan.
-              </span>
-            ) : null}
+              {errors.faviconUrl && (
+                <p role="alert" className={adminErrorClass}>
+                  {errors.faviconUrl.message}
+                </p>
+              )}
+            </section>
           </div>
         </form>
-      ) : null}
+      )}
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

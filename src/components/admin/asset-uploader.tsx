@@ -291,20 +291,17 @@ export function AssetUploader({
           setDragActive(false);
           addFiles(event.dataTransfer.files);
         }}
-        className={`flex w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded border-2 border-dashed px-4 py-6 text-center transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember ${
+        className={`flex w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed px-4 py-5 text-center transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 ${
           dragActive
-            ? "border-ember bg-ember/10"
-            : "border-sand/25 bg-ink hover:border-ember/70 hover:bg-ink-700/40"
+            ? "border-zinc-900 bg-zinc-100"
+            : "border-zinc-300 bg-zinc-50/70 hover:border-zinc-400 hover:bg-zinc-100/70"
         }`}
       >
-        <p
-          id={inputId}
-          className="font-display text-base uppercase tracking-wide text-sand"
-        >
-          Seret & letakkan berkas di sini
+        <p id={inputId} className="text-sm font-semibold text-zinc-800">
+          Seret berkas ke sini atau klik untuk memilih
         </p>
-        <p id={helpId} className="text-xs text-sand/70">
-          atau klik untuk memilih berkas ({acceptedLabel(purpose)})
+        <p id={helpId} className="text-xs text-zinc-500">
+          Format didukung: {acceptedLabel(purpose)}
         </p>
         <input
           ref={inputRef}
@@ -320,16 +317,20 @@ export function AssetUploader({
       </div>
 
       {error ? (
-        <p id={errorId} role="alert" className="mt-3 text-sm text-ember">
+        <p
+          id={errorId}
+          role="alert"
+          className="mt-2.5 text-xs font-medium text-red-600"
+        >
           {error}
         </p>
       ) : null}
 
       {files.length > 0 ? (
-        <div className="mt-4">
+        <div className="mt-3">
           <div className="flex items-center justify-between gap-4">
-            <p className="text-xs text-sand/70">
-              {files.length} berkas siap. Jangan lupa klik Simpan di formulir.
+            <p className="text-xs text-zinc-500">
+              {files.length} berkas diunggah. Jangan lupa klik Simpan.
             </p>
             <button
               type="button"
@@ -339,32 +340,32 @@ export function AssetUploader({
               Bersihkan
             </button>
           </div>
-          <ul className="mt-3 space-y-3">
+          <ul className="mt-2.5 space-y-2">
             {files.map((file) => (
               <li
                 key={file.id}
-                className="flex items-center gap-3 rounded border border-sand/15 p-3"
+                className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-2.5"
               >
                 {file.previewUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={file.previewUrl}
                     alt={`Pratinjau ${file.name}`}
-                    className="h-12 w-12 shrink-0 rounded object-cover"
+                    className="h-11 w-11 shrink-0 rounded-lg object-cover border border-zinc-100"
                   />
                 ) : (
                   <span
                     aria-hidden
-                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-sand/10 text-xs text-sand/60"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-xs font-semibold text-zinc-600"
                   >
                     MP4
                   </span>
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-sand">
+                  <p className="truncate text-xs font-semibold text-zinc-900">
                     {file.name}
                   </p>
-                  <p className="text-xs text-sand/60">
+                  <p className="text-[11px] text-zinc-500">
                     {formatBytes(file.size)} · {file.status}
                     {file.message ? ` · ${file.message}` : ""}
                   </p>
@@ -374,10 +375,10 @@ export function AssetUploader({
                     aria-valuemax={100}
                     aria-valuenow={file.progress}
                     aria-label={`Progress ${file.name}`}
-                    className="mt-1 h-1.5 w-full overflow-hidden rounded bg-sand/15"
+                    className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100"
                   >
                     <div
-                      className="h-full bg-ember transition-all"
+                      className="h-full bg-zinc-900 transition-all"
                       style={{ width: `${file.progress}%` }}
                     />
                   </div>

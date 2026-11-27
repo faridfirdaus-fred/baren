@@ -16,17 +16,5 @@ export default async function AdminLinksPage() {
   if (!session?.user) redirect("/admin/login");
   if (role !== "admin") redirect("/admin/login?error=AksesDitolak");
 
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold uppercase tracking-wider text-sand">
-          Kelola Tautan Sosial
-        </h1>
-        <p className="mt-2 text-sand-600">
-          Kelola daftar tautan media sosial resmi game BAREN.
-        </p>
-      </div>
-      <LinksManager />
-    </div>
-  );
+  return <LinksManager />;
 }

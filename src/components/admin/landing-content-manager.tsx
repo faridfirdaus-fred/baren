@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import { ExternalLink } from "lucide-react";
+import { AssetUploader } from "./asset-uploader";
 import { adminButtonClass } from "./button-styles";
 import {
   adminInputClass,
@@ -10,74 +13,105 @@ import {
 } from "./form-styles";
 import { Toast } from "./toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { UploadedAsset } from "@/lib/assets-client";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
+
+type SectionKey =
+  "about" | "features" | "howToPlay" | "gallery" | "news" | "faqComments";
+
+interface AboutState {
+  title: string;
+  body: string;
+  imageUrl: string;
+}
 
 interface LandingSettingsState {
   featuresEyebrow: string;
   featuresTitle: string;
-  featuresEmptyMessage: string;
   howToPlayTitle: string;
   galleryEyebrow: string;
   galleryTitle: string;
   galleryDescription: string;
-  galleryEmptyTitle: string;
-  galleryEmptyMessage: string;
   newsTitle: string;
   newsCtaLabel: string;
   faqEyebrow: string;
   faqTitle: string;
   commentsTitle: string;
-  commentsLoginPrompt: string;
-  commentsEmptyMessage: string;
-  commentsSubmitLabel: string;
-  commentsSubmitError: string;
-  contactEyebrow: string;
-  contactTitle: string;
-  contactDescription: string;
-  contactEmailLabel: string;
   emailKontak: string;
-  contactSocialTitle: string;
-  contactSocialEmptyMessage: string;
 }
 
-const defaultState: LandingSettingsState = {
+const defaultSettings: LandingSettingsState = {
   featuresEyebrow: "",
   featuresTitle: "",
-  featuresEmptyMessage: "",
   howToPlayTitle: "",
   galleryEyebrow: "",
   galleryTitle: "",
   galleryDescription: "",
-  galleryEmptyTitle: "",
-  galleryEmptyMessage: "",
   newsTitle: "",
   newsCtaLabel: "",
   faqEyebrow: "",
   faqTitle: "",
   commentsTitle: "",
-  commentsLoginPrompt: "",
-  commentsEmptyMessage: "",
-  commentsSubmitLabel: "",
-  commentsSubmitError: "",
-  contactEyebrow: "",
-  contactTitle: "",
-  contactDescription: "",
-  contactEmailLabel: "",
   emailKontak: "",
-  contactSocialTitle: "",
-  contactSocialEmptyMessage: "",
+};
+
+const defaultAbout: AboutState = {
+  title: "Permainan kampung, rasa pesta modern",
+  body: "BAREN terinspirasi dari permainan tradisional Baren atau Bebentengan. Dua tim beranggotakan dua pemain berlomba menjaga markas sendiri sambil menyusup ke wilayah lawan dalam satu layar bersama.",
+  imageUrl: "/art/about-art.jpg",
 };
 
 interface ApiResponse {
   ok: boolean;
-  data?: Record<string, string | null>;
+  data?: Record<string, unknown>;
   message?: string;
   fields?: Record<string, string[]>;
 }
 
+const SECTIONS: Array<{
+  key: SectionKey;
+  title: string;
+  desc: string;
+}> = [
+  {
+    key: "about",
+    title: "Tentang Game",
+    desc: "Judul, cerita konsep permainan, dan gambar seksi Tentang Game",
+  },
+  {
+    key: "features",
+    title: "Seksi Fitur",
+    desc: "Label atas dan judul seksi Fitur Game",
+  },
+  {
+    key: "howToPlay",
+    title: "Seksi Cara Bermain",
+    desc: "Judul pengantar seksi panduan bermain",
+  },
+  {
+    key: "gallery",
+    title: "Seksi Galeri",
+    desc: "Label, judul, dan pengantar singkat Galeri",
+  },
+  {
+    key: "news",
+    title: "Seksi Berita & Event",
+    desc: "Judul seksi berita dan teks tombol lihat semua",
+  },
+  {
+    key: "faqComments",
+    title: "FAQ, Komentar & Kontak",
+    desc: "Judul FAQ, judul komentar, serta email kontak footer",
+  },
+];
+
 export function LandingContentManager() {
+  const [activeSection, setActiveSection] = useState<SectionKey>("about");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<LandingSettingsState>(defaultState);
+  const [aboutData, setAboutData] = useState<AboutState>(defaultAbout);
+  const [formData, setFormData] =
+    useState<LandingSettingsState>(defaultSettings);
   const [formErrors, setFormErrors] = useState<Record<string, string[]>>({});
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState<{
@@ -85,48 +119,47 @@ export function LandingContentManager() {
     type: "success" | "error";
   } | null>(null);
 
-  const loadSettings = async () => {
+  const loadAll = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/settings");
-      const json = (await res.json()) as ApiResponse;
-      if (!json.ok) {
-        setError(json.message || "Gagal memuat pengaturan landing");
+      const [settingsRes, aboutRes] = await Promise.all([
+        fetch("/api/settings"),
+        fetch("/api/about"),
+      ]);
+      const settingsJson = (await settingsRes.json()) as ApiResponse;
+      const aboutJson = (await aboutRes.json()) as ApiResponse;
+
+      if (!settingsJson.ok) {
+        setError(settingsJson.message || "Gagal memuat pengaturan seksi");
         return;
       }
-      if (json.data) {
-        const d = json.data;
-        setFormData({
-          featuresEyebrow: d.featuresEyebrow || "",
-          featuresTitle: d.featuresTitle || "",
-          featuresEmptyMessage: d.featuresEmptyMessage || "",
-          howToPlayTitle: d.howToPlayTitle || "",
-          galleryEyebrow: d.galleryEyebrow || "",
-          galleryTitle: d.galleryTitle || "",
-          galleryDescription: d.galleryDescription || "",
-          galleryEmptyTitle: d.galleryEmptyTitle || "",
-          galleryEmptyMessage: d.galleryEmptyMessage || "",
-          newsTitle: d.newsTitle || "",
-          newsCtaLabel: d.newsCtaLabel || "",
-          faqEyebrow: d.faqEyebrow || "",
-          faqTitle: d.faqTitle || "",
-          commentsTitle: d.commentsTitle || "",
-          commentsLoginPrompt: d.commentsLoginPrompt || "",
-          commentsEmptyMessage: d.commentsEmptyMessage || "",
-          commentsSubmitLabel: d.commentsSubmitLabel || "",
-          commentsSubmitError: d.commentsSubmitError || "",
-          contactEyebrow: d.contactEyebrow || "",
-          contactTitle: d.contactTitle || "",
-          contactDescription: d.contactDescription || "",
-          contactEmailLabel: d.contactEmailLabel || "",
-          emailKontak: d.emailKontak || "",
-          contactSocialTitle: d.contactSocialTitle || "",
-          contactSocialEmptyMessage: d.contactSocialEmptyMessage || "",
+      const d = (settingsJson.data || {}) as Record<string, string | null>;
+      setFormData({
+        featuresEyebrow: d.featuresEyebrow || "",
+        featuresTitle: d.featuresTitle || "",
+        howToPlayTitle: d.howToPlayTitle || "",
+        galleryEyebrow: d.galleryEyebrow || "",
+        galleryTitle: d.galleryTitle || "",
+        galleryDescription: d.galleryDescription || "",
+        newsTitle: d.newsTitle || "",
+        newsCtaLabel: d.newsCtaLabel || "",
+        faqEyebrow: d.faqEyebrow || "",
+        faqTitle: d.faqTitle || "",
+        commentsTitle: d.commentsTitle || "",
+        emailKontak: d.emailKontak || "",
+      });
+
+      const a = (aboutJson.data?.about || null) as Partial<AboutState> | null;
+      if (a && a.title) {
+        setAboutData({
+          title: a.title,
+          body: a.body || defaultAbout.body,
+          imageUrl: a.imageUrl || defaultAbout.imageUrl,
         });
       }
     } catch (err) {
-      setError("Gagal memuat pengaturan landing");
+      setError("Gagal memuat pengaturan seksi");
       console.error(err);
     } finally {
       setLoading(false);
@@ -135,38 +168,84 @@ export function LandingContentManager() {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    void loadSettings();
+    void loadAll();
   }, []);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (formErrors[name]) {
-      setFormErrors((prev) => {
-        const next = { ...prev };
-        delete next[name];
-        return next;
-      });
-    }
+  const handleAboutImageUploaded = (asset: UploadedAsset) => {
+    setAboutData((prev) => ({ ...prev, imageUrl: asset.publicUrl }));
+    setToast({
+      message: "Gambar Tentang Game diunggah. Klik Simpan untuk menerapkan.",
+      type: "success",
+    });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSaveAbout = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setFormErrors({});
     try {
-      const res = await fetch("/api/settings", {
+      const res = await fetch("/api/about", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          title: aboutData.title.trim(),
+          body: aboutData.body.trim(),
+          imageUrl: aboutData.imageUrl.trim() || "/art/about-art.jpg",
+        }),
       });
       const json = (await res.json()) as ApiResponse;
       if (!json.ok) {
-        if (json.fields) {
-          setFormErrors(json.fields);
-        }
+        if (json.fields) setFormErrors(json.fields);
+        setToast({
+          message: json.message || "Gagal menyimpan seksi Tentang Game",
+          type: "error",
+        });
+        return;
+      }
+      setToast({
+        message: "Seksi Tentang Game berhasil disimpan",
+        type: "success",
+      });
+    } catch {
+      setToast({ message: "Terjadi kesalahan jaringan", type: "error" });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setFormErrors({});
+
+    // Hanya kirim field wajib bila tidak kosong, atau fallback rapi
+    const payload: Record<string, string> = {
+      featuresEyebrow: formData.featuresEyebrow,
+      featuresTitle:
+        formData.featuresTitle.trim() || "Kenapa BAREN seru dimainkan?",
+      howToPlayTitle:
+        formData.howToPlayTitle.trim() || "Mudah dipelajari dalam semenit",
+      galleryEyebrow: formData.galleryEyebrow,
+      galleryTitle:
+        formData.galleryTitle.trim() || "Intip serunya kampung BAREN",
+      galleryDescription: formData.galleryDescription,
+      newsTitle: formData.newsTitle.trim() || "Kabar & Event BAREN",
+      newsCtaLabel: formData.newsCtaLabel.trim() || "Semua Berita",
+      faqEyebrow: formData.faqEyebrow,
+      faqTitle: formData.faqTitle.trim() || "Pertanyaan yang sering muncul",
+      commentsTitle: formData.commentsTitle.trim() || "Bagaimana pendapatmu?",
+      emailKontak: formData.emailKontak.trim(),
+    };
+
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const json = (await res.json()) as ApiResponse;
+      if (!json.ok) {
+        if (json.fields) setFormErrors(json.fields);
         setToast({
           message: json.message || "Gagal menyimpan perubahan",
           type: "error",
@@ -174,15 +253,11 @@ export function LandingContentManager() {
         return;
       }
       setToast({
-        message: "Pengaturan konten landing berhasil disimpan",
+        message: "Judul & teks seksi berhasil disimpan",
         type: "success",
       });
-    } catch (err) {
-      setToast({
-        message: "Terjadi kesalahan jaringan",
-        type: "error",
-      });
-      console.error(err);
+    } catch {
+      setToast({ message: "Terjadi kesalahan jaringan", type: "error" });
     } finally {
       setSubmitting(false);
     }
@@ -195,40 +270,26 @@ export function LandingContentManager() {
         role="status"
         aria-label="Memuat konten landing"
       >
-        {[1, 2, 3].map((section) => (
-          <div
-            key={section}
-            className="rounded-lg border border-line bg-ink-800 p-5 space-y-4"
-          >
-            <Skeleton variant="admin" className="h-6 w-48" />
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Skeleton variant="admin" className="h-4 w-24" />
-                <Skeleton variant="admin" className="h-10 w-full" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton variant="admin" className="h-4 w-24" />
-                <Skeleton variant="admin" className="h-10 w-full" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Skeleton variant="admin" className="h-4 w-20" />
-              <Skeleton variant="admin" className="h-20 w-full" />
-            </div>
+        <Skeleton className="h-8 w-56" />
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <div className="space-y-2.5 lg:col-span-5">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton key={i} className="h-16 w-full rounded-2xl" />
+            ))}
           </div>
-        ))}
-        <Skeleton variant="admin" className="h-10 w-40" />
+          <Skeleton className="h-96 w-full rounded-2xl lg:col-span-7" />
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-8 text-center text-ember">
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-sm text-red-700">
         <p>{error}</p>
         <button
           type="button"
-          onClick={loadSettings}
+          onClick={() => void loadAll()}
           className={adminButtonClass("secondary", "md", "mt-4")}
         >
           Coba Lagi
@@ -238,7 +299,424 @@ export function LandingContentManager() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      <header className="flex flex-col justify-between gap-4 border-b border-zinc-200 pb-4 sm:flex-row sm:items-center">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+            Kelola Konten Landing
+          </h1>
+          <p className="mt-1 text-sm text-zinc-500">
+            Pilih seksi di sebelah kiri untuk mengubah judul atau pengantarnya
+            dengan cepat.
+          </p>
+        </div>
+        <a
+          href="/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={adminButtonClass("secondary", "md")}
+        >
+          <ExternalLink className="h-4 w-4 text-zinc-400" />
+          <span>Lihat Beranda</span>
+        </a>
+      </header>
+
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        {/* Pemilih Seksi */}
+        <nav
+          aria-label="Daftar seksi beranda"
+          className="flex flex-col gap-2.5 lg:col-span-5"
+        >
+          {SECTIONS.map((sec) => {
+            const isSelected = activeSection === sec.key;
+            return (
+              <button
+                key={sec.key}
+                type="button"
+                onClick={() => {
+                  setActiveSection(sec.key);
+                  setFormErrors({});
+                }}
+                className={`flex cursor-pointer flex-col items-start rounded-2xl border bg-white p-4 text-left transition-all ${
+                  isSelected
+                    ? "border-zinc-900 ring-2 ring-zinc-900/10"
+                    : "border-zinc-200 hover:border-zinc-300"
+                }`}
+              >
+                <span className="text-sm font-semibold text-zinc-900">
+                  {sec.title}
+                </span>
+                <span className="mt-0.5 text-xs text-zinc-500">{sec.desc}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Form Seksi Terpilih */}
+        <div className="lg:col-span-7">
+          {activeSection === "about" ? (
+            <form
+              onSubmit={handleSaveAbout}
+              className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6"
+            >
+              <h2 className="border-b border-zinc-100 pb-3 text-base font-bold text-zinc-900">
+                Tentang Game
+              </h2>
+              <div>
+                <label htmlFor="about-title" className={adminLabelClass}>
+                  Judul Seksi *
+                </label>
+                <input
+                  id="about-title"
+                  type="text"
+                  required
+                  value={aboutData.title}
+                  onChange={(e) =>
+                    setAboutData({ ...aboutData, title: e.target.value })
+                  }
+                  placeholder="Permainan kampung, rasa pesta modern"
+                  className={adminInputClass}
+                />
+                {formErrors.title && (
+                  <p className={adminErrorClass}>{formErrors.title[0]}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="about-body" className={adminLabelClass}>
+                  Cerita / Konsep Permainan *
+                </label>
+                <textarea
+                  id="about-body"
+                  rows={4}
+                  required
+                  value={aboutData.body}
+                  onChange={(e) =>
+                    setAboutData({ ...aboutData, body: e.target.value })
+                  }
+                  placeholder="Jelaskan konsep 2 vs 2 benteng-bentengan BAREN..."
+                  className={adminTextareaClass}
+                />
+                {formErrors.body && (
+                  <p className={adminErrorClass}>{formErrors.body[0]}</p>
+                )}
+              </div>
+
+              <div>
+                <span className={adminLabelClass}>Gambar Gameplay</span>
+                {aboutData.imageUrl && (
+                  <div className="relative mb-2.5 aspect-video w-full overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
+                    <Image
+                      src={
+                        resolvePublicAssetUrl(aboutData.imageUrl) ||
+                        aboutData.imageUrl
+                      }
+                      alt="Pratinjau Tentang Game"
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+                )}
+                <AssetUploader
+                  purpose="landing-image"
+                  onUploaded={handleAboutImageUploaded}
+                  disabled={submitting}
+                />
+              </div>
+
+              <div className="border-t border-zinc-100 pt-3">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className={adminButtonClass("primary", "md")}
+                >
+                  {submitting ? "Menyimpan..." : "Simpan Tentang Game"}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <form
+              onSubmit={handleSaveSettings}
+              className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6"
+            >
+              {activeSection === "features" && (
+                <>
+                  <h2 className="border-b border-zinc-100 pb-3 text-base font-bold text-zinc-900">
+                    Judul Seksi Fitur
+                  </h2>
+                  <div>
+                    <label
+                      htmlFor="featuresEyebrow"
+                      className={adminLabelClass}
+                    >
+                      Label Kecil di Atas Judul
+                    </label>
+                    <input
+                      id="featuresEyebrow"
+                      type="text"
+                      value={formData.featuresEyebrow}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          featuresEyebrow: e.target.value,
+                        })
+                      }
+                      placeholder="FITUR GAME"
+                      className={adminInputClass}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="featuresTitle" className={adminLabelClass}>
+                      Judul Seksi Fitur
+                    </label>
+                    <input
+                      id="featuresTitle"
+                      type="text"
+                      value={formData.featuresTitle}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          featuresTitle: e.target.value,
+                        })
+                      }
+                      placeholder="Kenapa BAREN seru dimainkan?"
+                      className={adminInputClass}
+                    />
+                  </div>
+                </>
+              )}
+
+              {activeSection === "howToPlay" && (
+                <>
+                  <h2 className="border-b border-zinc-100 pb-3 text-base font-bold text-zinc-900">
+                    Judul Seksi Cara Bermain
+                  </h2>
+                  <div>
+                    <label htmlFor="howToPlayTitle" className={adminLabelClass}>
+                      Judul Seksi Cara Bermain
+                    </label>
+                    <input
+                      id="howToPlayTitle"
+                      type="text"
+                      value={formData.howToPlayTitle}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          howToPlayTitle: e.target.value,
+                        })
+                      }
+                      placeholder="Mudah dipelajari dalam semenit"
+                      className={adminInputClass}
+                    />
+                  </div>
+                </>
+              )}
+
+              {activeSection === "gallery" && (
+                <>
+                  <h2 className="border-b border-zinc-100 pb-3 text-base font-bold text-zinc-900">
+                    Judul & Pengantar Galeri
+                  </h2>
+                  <div>
+                    <label htmlFor="galleryEyebrow" className={adminLabelClass}>
+                      Label Kecil Galeri
+                    </label>
+                    <input
+                      id="galleryEyebrow"
+                      type="text"
+                      value={formData.galleryEyebrow}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          galleryEyebrow: e.target.value,
+                        })
+                      }
+                      placeholder="GALERI"
+                      className={adminInputClass}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="galleryTitle" className={adminLabelClass}>
+                      Judul Seksi Galeri
+                    </label>
+                    <input
+                      id="galleryTitle"
+                      type="text"
+                      value={formData.galleryTitle}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          galleryTitle: e.target.value,
+                        })
+                      }
+                      placeholder="Intip serunya kampung BAREN"
+                      className={adminInputClass}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="galleryDescription"
+                      className={adminLabelClass}
+                    >
+                      Deskripsi Pengantar Galeri
+                    </label>
+                    <textarea
+                      id="galleryDescription"
+                      rows={3}
+                      value={formData.galleryDescription}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          galleryDescription: e.target.value,
+                        })
+                      }
+                      placeholder="Tangkapan layar langsung dari arena permainan dan dokumentasi event BAREN."
+                      className={adminTextareaClass}
+                    />
+                  </div>
+                </>
+              )}
+
+              {activeSection === "news" && (
+                <>
+                  <h2 className="border-b border-zinc-100 pb-3 text-base font-bold text-zinc-900">
+                    Judul Seksi Berita & Event
+                  </h2>
+                  <div>
+                    <label htmlFor="newsTitle" className={adminLabelClass}>
+                      Judul Seksi Berita
+                    </label>
+                    <input
+                      id="newsTitle"
+                      type="text"
+                      value={formData.newsTitle}
+                      onChange={(e) =>
+                        setFormData({ ...formData, newsTitle: e.target.value })
+                      }
+                      placeholder="Kabar & Event BAREN"
+                      className={adminInputClass}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="newsCtaLabel" className={adminLabelClass}>
+                      Teks Tombol Lihat Semua
+                    </label>
+                    <input
+                      id="newsCtaLabel"
+                      type="text"
+                      value={formData.newsCtaLabel}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          newsCtaLabel: e.target.value,
+                        })
+                      }
+                      placeholder="Semua Berita"
+                      className={adminInputClass}
+                    />
+                  </div>
+                </>
+              )}
+
+              {activeSection === "faqComments" && (
+                <>
+                  <h2 className="border-b border-zinc-100 pb-3 text-base font-bold text-zinc-900">
+                    FAQ, Komentar & Email Kontak
+                  </h2>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="faqEyebrow" className={adminLabelClass}>
+                        Label Kecil FAQ
+                      </label>
+                      <input
+                        id="faqEyebrow"
+                        type="text"
+                        value={formData.faqEyebrow}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            faqEyebrow: e.target.value,
+                          })
+                        }
+                        placeholder="FAQ"
+                        className={adminInputClass}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="faqTitle" className={adminLabelClass}>
+                        Judul Seksi FAQ
+                      </label>
+                      <input
+                        id="faqTitle"
+                        type="text"
+                        value={formData.faqTitle}
+                        onChange={(e) =>
+                          setFormData({ ...formData, faqTitle: e.target.value })
+                        }
+                        placeholder="Pertanyaan yang sering muncul"
+                        className={adminInputClass}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="commentsTitle" className={adminLabelClass}>
+                      Judul Seksi Komentar
+                    </label>
+                    <input
+                      id="commentsTitle"
+                      type="text"
+                      value={formData.commentsTitle}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          commentsTitle: e.target.value,
+                        })
+                      }
+                      placeholder="Bagaimana pendapatmu?"
+                      className={adminInputClass}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="emailKontak" className={adminLabelClass}>
+                      Email Kontak Resmi (tampil di Footer)
+                    </label>
+                    <input
+                      id="emailKontak"
+                      type="email"
+                      value={formData.emailKontak}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          emailKontak: e.target.value,
+                        })
+                      }
+                      placeholder="halo@baren.game"
+                      className={adminInputClass}
+                    />
+                    {formErrors.emailKontak && (
+                      <p className={adminErrorClass}>
+                        {formErrors.emailKontak[0]}
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+
+              <div className="border-t border-zinc-100 pt-3">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className={adminButtonClass("primary", "md")}
+                >
+                  {submitting ? "Menyimpan..." : "Simpan Perubahan"}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+
       {toast && (
         <Toast
           message={toast.message}
@@ -246,586 +724,6 @@ export function LandingContentManager() {
           onClose={() => setToast(null)}
         />
       )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Seksi Fitur Utama */}
-        <section className="rounded-lg border border-line bg-ink-800 p-5">
-          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
-            Seksi Fitur Utama
-          </h2>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="featuresEyebrow" className={adminLabelClass}>
-                Label Atas Fitur
-              </label>
-              <input
-                id="featuresEyebrow"
-                name="featuresEyebrow"
-                type="text"
-                value={formData.featuresEyebrow}
-                onChange={handleChange}
-                maxLength={100}
-                className={adminInputClass}
-                placeholder="KEUNGGULAN"
-              />
-              {formErrors.featuresEyebrow && (
-                <p className={adminErrorClass}>
-                  {formErrors.featuresEyebrow[0]}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="featuresTitle" className={adminLabelClass}>
-                Judul Seksi Fitur *
-              </label>
-              <input
-                id="featuresTitle"
-                name="featuresTitle"
-                type="text"
-                required
-                value={formData.featuresTitle}
-                onChange={handleChange}
-                maxLength={200}
-                className={adminInputClass}
-                placeholder="FITUR UTAMA"
-              />
-              {formErrors.featuresTitle && (
-                <p className={adminErrorClass}>{formErrors.featuresTitle[0]}</p>
-              )}
-            </div>
-          </div>
-
-          <details className="mt-4 border-t border-line/40 pt-2 text-xs text-sand-500">
-            <summary className="cursor-pointer font-medium hover:text-ember">
-              + Opsi teks lanjutan (pesan kosong)
-            </summary>
-            <div className="mt-3">
-              <label htmlFor="featuresEmptyMessage" className={adminLabelClass}>
-                Pesan Kosong (bila belum ada fitur)
-              </label>
-              <input
-                id="featuresEmptyMessage"
-                name="featuresEmptyMessage"
-                type="text"
-                value={formData.featuresEmptyMessage}
-                onChange={handleChange}
-                maxLength={500}
-                className={adminInputClass}
-                placeholder="Fitur belum tersedia."
-              />
-              {formErrors.featuresEmptyMessage && (
-                <p className={adminErrorClass}>
-                  {formErrors.featuresEmptyMessage[0]}
-                </p>
-              )}
-            </div>
-          </details>
-        </section>
-
-        {/* Seksi Cara Bermain */}
-        <section className="rounded-lg border border-line bg-ink-800 p-5">
-          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
-            Seksi Cara Bermain
-          </h2>
-          <div className="mt-4">
-            <label htmlFor="howToPlayTitle" className={adminLabelClass}>
-              Judul Seksi Cara Bermain *
-            </label>
-            <input
-              id="howToPlayTitle"
-              name="howToPlayTitle"
-              type="text"
-              required
-              value={formData.howToPlayTitle}
-              onChange={handleChange}
-              maxLength={200}
-              className={adminInputClass}
-              placeholder="CARA BERMAIN"
-            />
-            {formErrors.howToPlayTitle && (
-              <p className={adminErrorClass}>{formErrors.howToPlayTitle[0]}</p>
-            )}
-          </div>
-        </section>
-
-        {/* Seksi Galeri */}
-        <section className="rounded-lg border border-line bg-ink-800 p-5">
-          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
-            Seksi Galeri Permainan
-          </h2>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="galleryEyebrow" className={adminLabelClass}>
-                Label Atas Galeri
-              </label>
-              <input
-                id="galleryEyebrow"
-                name="galleryEyebrow"
-                type="text"
-                value={formData.galleryEyebrow}
-                onChange={handleChange}
-                maxLength={100}
-                className={adminInputClass}
-                placeholder="MEDIA RESMI"
-              />
-              {formErrors.galleryEyebrow && (
-                <p className={adminErrorClass}>
-                  {formErrors.galleryEyebrow[0]}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="galleryTitle" className={adminLabelClass}>
-                Judul Galeri *
-              </label>
-              <input
-                id="galleryTitle"
-                name="galleryTitle"
-                type="text"
-                required
-                value={formData.galleryTitle}
-                onChange={handleChange}
-                maxLength={200}
-                className={adminInputClass}
-                placeholder="GALERI & AKSI"
-              />
-              {formErrors.galleryTitle && (
-                <p className={adminErrorClass}>{formErrors.galleryTitle[0]}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <label htmlFor="galleryDescription" className={adminLabelClass}>
-              Deskripsi Galeri
-            </label>
-            <textarea
-              id="galleryDescription"
-              name="galleryDescription"
-              rows={2}
-              value={formData.galleryDescription}
-              onChange={handleChange}
-              maxLength={500}
-              className={adminTextareaClass}
-              placeholder="Tangkapan layar, ilustrasi konsep, dan video cuplikan arena pertempuran..."
-            />
-            {formErrors.galleryDescription && (
-              <p className={adminErrorClass}>
-                {formErrors.galleryDescription[0]}
-              </p>
-            )}
-          </div>
-
-          <details className="mt-4 border-t border-line/40 pt-2 text-xs text-sand-500">
-            <summary className="cursor-pointer font-medium hover:text-ember">
-              + Opsi teks lanjutan (pesan kosong)
-            </summary>
-            <div className="mt-3 grid gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="galleryEmptyTitle" className={adminLabelClass}>
-                  Judul Kosong Galeri
-                </label>
-                <input
-                  id="galleryEmptyTitle"
-                  name="galleryEmptyTitle"
-                  type="text"
-                  value={formData.galleryEmptyTitle}
-                  onChange={handleChange}
-                  maxLength={200}
-                  className={adminInputClass}
-                  placeholder="Segera Hadir"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="galleryEmptyMessage"
-                  className={adminLabelClass}
-                >
-                  Pesan Kosong Galeri
-                </label>
-                <input
-                  id="galleryEmptyMessage"
-                  name="galleryEmptyMessage"
-                  type="text"
-                  value={formData.galleryEmptyMessage}
-                  onChange={handleChange}
-                  maxLength={500}
-                  className={adminInputClass}
-                  placeholder="Media resmi BAREN sedang disiapkan..."
-                />
-              </div>
-            </div>
-          </details>
-        </section>
-
-        {/* Seksi Berita & Artikel */}
-        <section className="rounded-lg border border-line bg-ink-800 p-5">
-          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
-            Seksi Artikel / Berita
-          </h2>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="newsTitle" className={adminLabelClass}>
-                Judul Seksi Artikel *
-              </label>
-              <input
-                id="newsTitle"
-                name="newsTitle"
-                type="text"
-                required
-                value={formData.newsTitle}
-                onChange={handleChange}
-                maxLength={200}
-                className={adminInputClass}
-                placeholder="ARTIKEL TERBARU"
-              />
-              {formErrors.newsTitle && (
-                <p className={adminErrorClass}>{formErrors.newsTitle[0]}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="newsCtaLabel" className={adminLabelClass}>
-                Label Tombol Semua Berita *
-              </label>
-              <input
-                id="newsCtaLabel"
-                name="newsCtaLabel"
-                type="text"
-                required
-                value={formData.newsCtaLabel}
-                onChange={handleChange}
-                maxLength={100}
-                className={adminInputClass}
-                placeholder="LIHAT SEMUA BERITA"
-              />
-              {formErrors.newsCtaLabel && (
-                <p className={adminErrorClass}>{formErrors.newsCtaLabel[0]}</p>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* Seksi FAQ */}
-        <section className="rounded-lg border border-line bg-ink-800 p-5">
-          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
-            Seksi FAQ
-          </h2>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="faqEyebrow" className={adminLabelClass}>
-                Label Atas FAQ
-              </label>
-              <input
-                id="faqEyebrow"
-                name="faqEyebrow"
-                type="text"
-                value={formData.faqEyebrow}
-                onChange={handleChange}
-                maxLength={100}
-                className={adminInputClass}
-                placeholder="PERTANYAAN UMUM"
-              />
-              {formErrors.faqEyebrow && (
-                <p className={adminErrorClass}>{formErrors.faqEyebrow[0]}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="faqTitle" className={adminLabelClass}>
-                Judul Seksi FAQ *
-              </label>
-              <input
-                id="faqTitle"
-                name="faqTitle"
-                type="text"
-                required
-                value={formData.faqTitle}
-                onChange={handleChange}
-                maxLength={200}
-                className={adminInputClass}
-                placeholder="SEMUA YANG PERLU KAMU KETAHUI"
-              />
-              {formErrors.faqTitle && (
-                <p className={adminErrorClass}>{formErrors.faqTitle[0]}</p>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* Seksi Komentar */}
-        <section className="rounded-lg border border-line bg-ink-800 p-5">
-          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
-            Seksi Komentar Komunitas
-          </h2>
-          <div className="mt-4">
-            <label htmlFor="commentsTitle" className={adminLabelClass}>
-              Judul Seksi Komentar *
-            </label>
-            <input
-              id="commentsTitle"
-              name="commentsTitle"
-              type="text"
-              required
-              value={formData.commentsTitle}
-              onChange={handleChange}
-              maxLength={200}
-              className={adminInputClass}
-              placeholder="KOMENTAR KOMUNITAS"
-            />
-            {formErrors.commentsTitle && (
-              <p className={adminErrorClass}>{formErrors.commentsTitle[0]}</p>
-            )}
-          </div>
-
-          <details className="mt-4 border-t border-line/40 pt-2 text-xs text-sand-500">
-            <summary className="cursor-pointer font-medium hover:text-ember">
-              + Opsi teks lanjutan (prompt, tombol & pesan kirim)
-            </summary>
-            <div className="mt-3 space-y-3">
-              <div>
-                <label
-                  htmlFor="commentsLoginPrompt"
-                  className={adminLabelClass}
-                >
-                  Teks Ajakan Masuk *
-                </label>
-                <input
-                  id="commentsLoginPrompt"
-                  name="commentsLoginPrompt"
-                  type="text"
-                  required
-                  value={formData.commentsLoginPrompt}
-                  onChange={handleChange}
-                  maxLength={500}
-                  className={adminInputClass}
-                  placeholder="Masuk dengan akun Google untuk meninggalkan komentar..."
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="commentsEmptyMessage"
-                  className={adminLabelClass}
-                >
-                  Pesan Belum Ada Komentar
-                </label>
-                <input
-                  id="commentsEmptyMessage"
-                  name="commentsEmptyMessage"
-                  type="text"
-                  value={formData.commentsEmptyMessage}
-                  onChange={handleChange}
-                  maxLength={500}
-                  className={adminInputClass}
-                  placeholder="Belum ada komentar."
-                />
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label
-                    htmlFor="commentsSubmitLabel"
-                    className={adminLabelClass}
-                  >
-                    Label Tombol Kirim *
-                  </label>
-                  <input
-                    id="commentsSubmitLabel"
-                    name="commentsSubmitLabel"
-                    type="text"
-                    required
-                    value={formData.commentsSubmitLabel}
-                    onChange={handleChange}
-                    maxLength={100}
-                    className={adminInputClass}
-                    placeholder="KIRIM KOMENTAR"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="commentsSubmitError"
-                    className={adminLabelClass}
-                  >
-                    Pesan Gagal Kirim
-                  </label>
-                  <input
-                    id="commentsSubmitError"
-                    name="commentsSubmitError"
-                    type="text"
-                    value={formData.commentsSubmitError}
-                    onChange={handleChange}
-                    maxLength={500}
-                    className={adminInputClass}
-                    placeholder="Gagal mengirim komentar."
-                  />
-                </div>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        {/* Seksi Kontak & Media Sosial */}
-        <section className="rounded-lg border border-line bg-ink-800 p-5">
-          <h2 className="text-lg font-bold uppercase tracking-wider text-sand">
-            Seksi Kontak & Informasi
-          </h2>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="contactEyebrow" className={adminLabelClass}>
-                Label Atas Kontak
-              </label>
-              <input
-                id="contactEyebrow"
-                name="contactEyebrow"
-                type="text"
-                value={formData.contactEyebrow}
-                onChange={handleChange}
-                maxLength={100}
-                className={adminInputClass}
-                placeholder="HUBUNGI KAMI"
-              />
-              {formErrors.contactEyebrow && (
-                <p className={adminErrorClass}>
-                  {formErrors.contactEyebrow[0]}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="contactTitle" className={adminLabelClass}>
-                Judul Seksi Kontak *
-              </label>
-              <input
-                id="contactTitle"
-                name="contactTitle"
-                type="text"
-                required
-                value={formData.contactTitle}
-                onChange={handleChange}
-                maxLength={200}
-                className={adminInputClass}
-                placeholder="TETAP TERHUBUNG"
-              />
-              {formErrors.contactTitle && (
-                <p className={adminErrorClass}>{formErrors.contactTitle[0]}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <label htmlFor="contactDescription" className={adminLabelClass}>
-              Deskripsi Kontak
-            </label>
-            <textarea
-              id="contactDescription"
-              name="contactDescription"
-              rows={2}
-              value={formData.contactDescription}
-              onChange={handleChange}
-              maxLength={500}
-              className={adminTextareaClass}
-              placeholder="Punya pertanyaan seputar game, kemitraan, atau ingin bergabung..."
-            />
-            {formErrors.contactDescription && (
-              <p className={adminErrorClass}>
-                {formErrors.contactDescription[0]}
-              </p>
-            )}
-          </div>
-
-          <div className="mt-4">
-            <label htmlFor="emailKontak" className={adminLabelClass}>
-              Alamat Email Kontak Resmi
-            </label>
-            <input
-              id="emailKontak"
-              name="emailKontak"
-              type="email"
-              value={formData.emailKontak}
-              onChange={handleChange}
-              maxLength={320}
-              className={adminInputClass}
-              placeholder="halo@baren.game"
-            />
-            {formErrors.emailKontak && (
-              <p className={adminErrorClass}>{formErrors.emailKontak[0]}</p>
-            )}
-          </div>
-
-          <details className="mt-4 border-t border-line/40 pt-2 text-xs text-sand-500">
-            <summary className="cursor-pointer font-medium hover:text-ember">
-              + Opsi teks lanjutan (label email & medsos)
-            </summary>
-            <div className="mt-3 grid gap-4 sm:grid-cols-3">
-              <div>
-                <label htmlFor="contactEmailLabel" className={adminLabelClass}>
-                  Label Email Kontak
-                </label>
-                <input
-                  id="contactEmailLabel"
-                  name="contactEmailLabel"
-                  type="text"
-                  value={formData.contactEmailLabel}
-                  onChange={handleChange}
-                  maxLength={100}
-                  className={adminInputClass}
-                  placeholder="EMAIL RESMI"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="contactSocialTitle" className={adminLabelClass}>
-                  Judul Media Sosial
-                </label>
-                <input
-                  id="contactSocialTitle"
-                  name="contactSocialTitle"
-                  type="text"
-                  value={formData.contactSocialTitle}
-                  onChange={handleChange}
-                  maxLength={200}
-                  className={adminInputClass}
-                  placeholder="IKUTI MEDIA SOSIAL"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="contactSocialEmptyMessage"
-                  className={adminLabelClass}
-                >
-                  Pesan Medsos Kosong
-                </label>
-                <input
-                  id="contactSocialEmptyMessage"
-                  name="contactSocialEmptyMessage"
-                  type="text"
-                  value={formData.contactSocialEmptyMessage}
-                  onChange={handleChange}
-                  maxLength={500}
-                  className={adminInputClass}
-                  placeholder="Segera diumumkan."
-                />
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <div className="flex justify-end gap-4 border-t border-line pt-6">
-          <button
-            type="submit"
-            disabled={submitting}
-            className={adminButtonClass("primary", "md")}
-          >
-            {submitting ? "Menyimpan..." : "Simpan Semua Konten Beranda"}
-          </button>
-        </div>
-      </form>
     </div>
   );
 }

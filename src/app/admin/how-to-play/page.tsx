@@ -18,7 +18,7 @@ export default async function HowToPlayPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Kelola How to Play</h1>
+      <span className="sr-only">Kelola How to Play</span>
       <HowToPlayManager />
     </div>
   );

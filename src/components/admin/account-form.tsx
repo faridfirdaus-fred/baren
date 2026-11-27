@@ -12,7 +12,6 @@ import {
 import { adminButtonClass } from "./button-styles";
 import {
   adminErrorClass,
-  adminHelpClass,
   adminInputClass,
   adminLabelClass,
 } from "./form-styles";
@@ -55,9 +54,17 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
   }
 
   return (
-    <div className="grid max-w-2xl gap-8">
-      <section aria-labelledby="profil-heading">
-        <h2 id="profil-heading">Profil akun</h2>
+    <div className="grid gap-6 md:grid-cols-2">
+      <section
+        aria-labelledby="profil-heading"
+        className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6"
+      >
+        <h2 id="profil-heading" className="text-sm font-semibold text-zinc-900">
+          Profil Akun
+        </h2>
+        <p className="mt-1 text-xs text-zinc-500">
+          Perbarui nama tampilan dan alamat email administrator.
+        </p>
         <form
           className="mt-4 grid gap-4"
           noValidate
@@ -70,6 +77,7 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
             <input
               id="admin-name"
               autoComplete="name"
+              placeholder="Contoh: Tim Cikara Studio"
               className={adminInputClass}
               {...profileForm.register("name")}
               aria-invalid={Boolean(profileForm.formState.errors.name)}
@@ -88,6 +96,7 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
               id="admin-email"
               type="email"
               autoComplete="email"
+              placeholder="admin@baren.game"
               className={adminInputClass}
               {...profileForm.register("email")}
               aria-invalid={Boolean(profileForm.formState.errors.email)}
@@ -102,7 +111,7 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
             <p
               className={
                 profileMessage.startsWith("Profil berhasil")
-                  ? adminHelpClass
+                  ? "text-xs font-medium text-emerald-700"
                   : adminErrorClass
               }
               role={
@@ -126,8 +135,19 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
         </form>
       </section>
 
-      <section aria-labelledby="password-heading">
-        <h2 id="password-heading">Ubah kata sandi</h2>
+      <section
+        aria-labelledby="password-heading"
+        className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6"
+      >
+        <h2
+          id="password-heading"
+          className="text-sm font-semibold text-zinc-900"
+        >
+          Ubah Kata Sandi
+        </h2>
+        <p className="mt-1 text-xs text-zinc-500">
+          Gunakan minimal 8 karakter yang berbeda dari kata sandi sebelumnya.
+        </p>
         <form
           className="mt-4 grid gap-4"
           noValidate
@@ -141,6 +161,7 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
               id="current-password"
               type="password"
               autoComplete="current-password"
+              placeholder="Masukkan kata sandi lama"
               className={adminInputClass}
               {...passwordForm.register("currentPassword")}
               aria-invalid={Boolean(
@@ -161,6 +182,7 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
               id="new-password"
               type="password"
               autoComplete="new-password"
+              placeholder="Minimal 8 karakter"
               className={adminInputClass}
               {...passwordForm.register("newPassword")}
               aria-invalid={Boolean(passwordForm.formState.errors.newPassword)}
@@ -175,7 +197,7 @@ export function AdminAccountForm({ name, email }: AdminAccountFormProps) {
             <p
               className={
                 passwordMessage.startsWith("Kata sandi berhasil")
-                  ? adminHelpClass
+                  ? "text-xs font-medium text-emerald-700"
                   : adminErrorClass
               }
               role={

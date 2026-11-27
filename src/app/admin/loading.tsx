@@ -8,69 +8,46 @@ export default function AdminLoading() {
       aria-live="polite"
       className="space-y-8"
     >
-      {/* Header Skeleton */}
-      <header className="flex flex-col gap-4 border-b border-ink-700 pb-6 sm:flex-row sm:items-center sm:justify-between">
+      <header className="flex flex-col gap-4 border-b border-zinc-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-2">
-          <Skeleton variant="admin" className="h-10 w-64" />
-          <Skeleton variant="admin" className="h-4 w-48" />
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-56" />
         </div>
-        <Skeleton variant="admin" className="h-10 w-36" />
+        <Skeleton className="h-10 w-32" />
       </header>
 
-      {/* Ringkasan Metrik Skeleton */}
       <section className="space-y-4">
-        <Skeleton variant="admin" className="h-4 w-96 max-w-full" />
+        <div className="flex justify-between">
+          <Skeleton className="h-4 w-48" />
+          <Skeleton className="h-4 w-40" />
+        </div>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="flex flex-col border border-line bg-ink-800 p-5 space-y-3"
+              className="flex flex-col space-y-3 rounded-2xl border border-zinc-200 bg-white p-5"
             >
-              <Skeleton variant="admin" className="h-4 w-28" />
-              <Skeleton variant="admin" className="h-9 w-16" />
-              <Skeleton variant="admin" className="h-4 w-40" />
-              <Skeleton variant="admin" className="mt-auto pt-4 h-3 w-24" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-8 w-16" />
+              <Skeleton className="h-3 w-40" />
             </div>
           ))}
-        </div>
-
-        {/* Pembaruan Terakhir Skeleton */}
-        <div className="border border-line bg-ink-800 p-5 space-y-2">
-          <Skeleton variant="admin" className="h-4 w-44" />
-          <Skeleton variant="admin" className="h-5 w-60" />
-          <Skeleton variant="admin" className="h-3 w-80 max-w-full" />
         </div>
       </section>
 
-      {/* Komentar Terbaru Skeleton */}
-      <div className="border border-line bg-ink-800 p-5 space-y-4">
-        <div className="flex justify-between items-center">
-          <Skeleton variant="admin" className="h-5 w-36" />
-          <Skeleton variant="admin" className="h-4 w-28" />
+      <div className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-5">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-5 w-36" />
+          <Skeleton className="h-4 w-28" />
         </div>
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="border border-line bg-ink p-4 space-y-2">
-              <div className="flex justify-between">
-                <Skeleton variant="admin" className="h-4 w-24" />
-                <Skeleton variant="admin" className="h-3 w-28" />
-              </div>
-              <Skeleton variant="admin" className="h-4 w-full" />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Modul Konten Skeleton */}
-      <div className="space-y-3">
-        <Skeleton variant="admin" className="h-4 w-32" />
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {Array.from({ length: 12 }).map((_, i) => (
             <div
               key={i}
-              className="border border-line bg-ink-800 px-4 py-3 h-12 flex items-center"
+              className="space-y-2 rounded-xl border border-zinc-100 bg-zinc-50 p-4"
             >
-              <Skeleton variant="admin" className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-full" />
             </div>
           ))}
         </div>

@@ -21,7 +21,7 @@ export function DeleteConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/80 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 p-4 backdrop-blur-xs"
       onClick={onCancel}
       onKeyDown={(e) => {
         if (e.key === "Escape") onCancel();
@@ -31,16 +31,18 @@ export function DeleteConfirmDialog({
       aria-labelledby="dialog-title"
     >
       <div
-        className="w-full max-w-md border border-line bg-ink-800 p-6 shadow-xl"
+        className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <h2
           id="dialog-title"
-          className="font-display text-xl uppercase tracking-wide text-sand"
+          className="text-lg font-bold tracking-tight text-zinc-900"
         >
           {title}
         </h2>
-        <p className="mb-6 mt-2 text-sm text-sand-600">{message}</p>
+        <p className="mb-6 mt-2 text-sm leading-relaxed text-zinc-600">
+          {message}
+        </p>
         <div className="flex flex-wrap justify-end gap-2">
           <button
             type="button"

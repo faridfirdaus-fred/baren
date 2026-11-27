@@ -16,18 +16,5 @@ export default async function AdminLandingPage() {
   if (!session?.user) redirect("/admin/login");
   if (role !== "admin") redirect("/admin/login?error=AksesDitolak");
 
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold uppercase tracking-wider text-sand">
-          Kelola Konten Landing
-        </h1>
-        <p className="mt-2 text-sand-600">
-          Ubah judul, eyebrow, deskripsi seksi, dan pesan kosong halaman utama
-          tanpa deployment.
-        </p>
-      </div>
-      <LandingContentManager />
-    </div>
-  );
+  return <LandingContentManager />;
 }

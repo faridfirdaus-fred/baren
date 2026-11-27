@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Trash2 } from "lucide-react";
 import { adminButtonClass } from "./button-styles";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";
@@ -81,45 +82,31 @@ export function CommentsManager() {
   if (loading) {
     return (
       <div className="space-y-4" role="status" aria-label="Memuat komentar">
-        <Skeleton variant="admin" className="h-5 w-48 mb-4" />
+        <Skeleton className="h-5 w-40" />
         <div className="space-y-3">
-          {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="flex gap-3 border border-line bg-ink-800 p-4"
-            >
-              <Skeleton
-                variant="admin"
-                className="h-9 w-9 rounded-full shrink-0"
-              />
-              <div className="flex-1 space-y-2">
-                <div className="flex justify-between items-center">
-                  <Skeleton variant="admin" className="h-4 w-28" />
-                  <Skeleton variant="admin" className="h-4 w-20" />
-                </div>
-                <Skeleton variant="admin" className="h-4 w-full" />
-                <Skeleton variant="admin" className="h-4 w-3/4" />
-              </div>
-            </div>
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-24 w-full rounded-2xl" />
           ))}
         </div>
       </div>
     );
   }
-  if (error)
+
+  if (error) {
     return (
       <p
         role="alert"
-        className="border border-ember/40 bg-ember/10 p-4 text-sm text-ember"
+        className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
       >
         {error}
       </p>
     );
+  }
 
   return (
     <div>
       <p
-        className="mb-4 text-sm text-sand-600"
+        className="mb-4 text-sm text-zinc-500"
         data-testid="admin-comments-total"
       >
         Total {total} komentar.
@@ -129,55 +116,62 @@ export function CommentsManager() {
       </p>
 
       {comments.length === 0 ? (
-        <p className="text-sand-600">Belum ada komentar.</p>
+        <div className="rounded-2xl border border-dashed border-zinc-300 bg-white py-12 text-center text-sm text-zinc-500">
+          Belum ada komentar.
+        </div>
       ) : (
-        <ul className="space-y-4">
+        <ul className="space-y-3">
           {comments.map((comment) => (
             <li
               key={comment.id}
               id={`komentar-${comment.id}`}
-              className="flex scroll-mt-24 gap-3 border border-line bg-ink-800 p-4"
+              className="flex scroll-mt-24 items-start justify-between gap-4 rounded-2xl border border-zinc-200 bg-white p-4"
             >
-              {comment.userPhotoUrl ? (
-                <Image
-                  src={comment.userPhotoUrl}
-                  width={36}
-                  height={36}
-                  alt=""
-                  unoptimized
-                  className="h-9 w-9 rounded-full object-cover"
-                />
-              ) : (
-                <div
-                  aria-hidden="true"
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sand/10 text-sm font-bold text-sand"
-                  data-testid="comment-avatar-fallback"
-                >
-                  {comment.userName.charAt(0).toUpperCase()}
+              <div className="flex min-w-0 flex-1 gap-3.5">
+                {comment.userPhotoUrl ? (
+                  <Image
+                    src={comment.userPhotoUrl}
+                    width={36}
+                    height={36}
+                    alt=""
+                    unoptimized
+                    className="h-9 w-9 shrink-0 rounded-full object-cover"
+                  />
+                ) : (
+                  <div
+                    aria-hidden="true"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-sm font-bold text-zinc-700"
+                    data-testid="comment-avatar-fallback"
+                  >
+                    {comment.userName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm leading-relaxed text-zinc-900">
+                    {comment.body}
+                  </p>
+                  <p className="mt-1.5 text-xs text-zinc-500">
+                    Oleh: {comment.userName} ·{" "}
+                    <time dateTime={comment.createdAt}>
+                      {formatDateTimeId(comment.createdAt) ??
+                        "Waktu tidak tersedia"}
+                    </time>
+                  </p>
                 </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <p className="mb-2 text-sm text-sand">{comment.body}</p>
-                <p className="mb-2 text-xs text-sand-600">
-                  Oleh: {comment.userName} |{" "}
-                  <time dateTime={comment.createdAt}>
-                    {formatDateTimeId(comment.createdAt) ??
-                      "Waktu tidak tersedia"}
-                  </time>
-                </p>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setDeleteTarget({
-                      id: comment.id,
-                      preview: comment.body.slice(0, 50),
-                    })
-                  }
-                  className={adminButtonClass("danger", "sm")}
-                >
-                  Hapus
-                </button>
               </div>
+              <button
+                type="button"
+                onClick={() =>
+                  setDeleteTarget({
+                    id: comment.id,
+                    preview: comment.body.slice(0, 50),
+                  })
+                }
+                className={adminButtonClass("danger", "sm", "shrink-0")}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>Hapus</span>
+              </button>
             </li>
           ))}
         </ul>

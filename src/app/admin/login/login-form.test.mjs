@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 
-describe("Admin Login Page & Form (Impeccable Craft)", async () => {
+describe("Admin Login Page & Form (Putih Modern Minimalis)", async () => {
   const pageSource = await readFile("src/app/admin/login/page.tsx", "utf8");
   const formSource = await readFile(
     "src/components/admin/login-form.tsx",
@@ -10,19 +10,12 @@ describe("Admin Login Page & Form (Impeccable Craft)", async () => {
   );
 
   it("menjaga kontrak input dan label untuk Playwright", () => {
-    // Label Email dan Kata sandi exact untuk page.getByLabel(...)
     assert.match(formSource, /htmlFor="email"/);
     assert.match(formSource, />\s*Email\s*<\/label>/);
     assert.match(formSource, /htmlFor="password"/);
     assert.match(formSource, />\s*Kata sandi\s*<\/label>/);
-
-    // Tombol submit Masuk exact untuk page.getByRole("button", { name: "Masuk" })
     assert.match(formSource, /"Masuk"/);
-
-    // Form aria-label
     assert.match(formSource, /aria-label="Formulir masuk admin"/);
-
-    // Error kredensial exact
     assert.match(formSource, /"Email atau kata sandi salah\."/);
   });
 
@@ -40,11 +33,10 @@ describe("Admin Login Page & Form (Impeccable Craft)", async () => {
     assert.match(formSource, /accessDenied/);
   });
 
-  it("menerapkan desain taktikal BAREN (backdrop, branding, HUD topbar/footer)", () => {
+  it("menerapkan desain putih minimalis dengan logo proporsional", () => {
     assert.match(pageSource, /Kembali ke Situs/);
     assert.match(pageSource, /baren-mark\.svg/);
-    assert.doesNotMatch(pageSource, /ADM-PORTAL|TERMINAL/);
-    assert.doesNotMatch(pageSource, /Guard E2-4/);
-    assert.match(pageSource, /border-ember/);
+    assert.doesNotMatch(pageSource, /baren-village-keyart/);
+    assert.match(pageSource, /bg-white/);
   });
 });

@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Eye, EyeOff, Loader2, ShieldAlert } from "lucide-react";
 import {
+  adminErrorClass,
   adminInputClass,
   adminInputWithActionClass,
   adminLabelClass,
@@ -53,17 +54,15 @@ export function AdminLoginForm({
       {accessDenied && !dismissAccessDenied && !serverError ? (
         <div
           role="alert"
-          className="flex items-start gap-2.5 border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-sand"
+          className="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900"
         >
           <ShieldAlert
-            className="mt-0.5 h-4 w-4 shrink-0 text-amber-500"
+            className="mt-0.5 h-4 w-4 shrink-0 text-amber-600"
             aria-hidden="true"
           />
           <div>
-            <p className="font-semibold uppercase tracking-wider text-amber-400">
-              Akses Ditolak
-            </p>
-            <p className="mt-0.5 text-sand-600">
+            <p className="font-semibold text-amber-900">Akses Ditolak</p>
+            <p className="mt-0.5 text-amber-800">
               Akun Anda tidak memiliki izin administrator. Silakan masuk
               menggunakan akun admin.
             </p>
@@ -74,17 +73,17 @@ export function AdminLoginForm({
       {serverError ? (
         <div
           role="alert"
-          className="flex items-center gap-2 border border-ember/50 bg-ember/15 p-3 text-xs font-medium text-sand"
+          className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-medium text-red-700"
         >
           <AlertCircle
-            className="h-4 w-4 shrink-0 text-ember"
+            className="h-4 w-4 shrink-0 text-red-600"
             aria-hidden="true"
           />
           <span>{serverError}</span>
         </div>
       ) : null}
 
-      <div className="space-y-1.5">
+      <div>
         <label htmlFor="email" className={adminLabelClass}>
           Email
         </label>
@@ -92,19 +91,19 @@ export function AdminLoginForm({
           id="email"
           type="email"
           autoComplete="email"
-          placeholder="admin@baren.id"
+          placeholder="admin@baren.game"
           {...register("email")}
           aria-invalid={Boolean(errors.email)}
           className={adminInputClass}
         />
         {errors.email ? (
-          <p role="alert" className="text-xs text-ember">
+          <p role="alert" className={adminErrorClass}>
             {errors.email.message}
           </p>
         ) : null}
       </div>
 
-      <div className="space-y-1.5">
+      <div>
         <label htmlFor="password" className={adminLabelClass}>
           Kata sandi
         </label>
@@ -113,7 +112,7 @@ export function AdminLoginForm({
             id="password"
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
-            placeholder="••••••••"
+            placeholder="Masukkan kata sandi"
             {...register("password")}
             aria-invalid={Boolean(errors.password)}
             className={adminInputWithActionClass}
@@ -125,7 +124,7 @@ export function AdminLoginForm({
               showPassword ? "Sembunyikan sandi" : "Perlihatkan sandi"
             }
             aria-pressed={showPassword}
-            className="absolute right-2 flex h-7 w-7 items-center justify-center text-sand-600 transition-colors hover:bg-ink-700 hover:text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            className="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
           >
             {showPassword ? (
               <EyeOff className="h-4 w-4" aria-hidden="true" />
@@ -135,7 +134,7 @@ export function AdminLoginForm({
           </button>
         </div>
         {errors.password ? (
-          <p role="alert" className="text-xs text-ember">
+          <p role="alert" className={adminErrorClass}>
             {errors.password.message}
           </p>
         ) : null}
@@ -145,7 +144,7 @@ export function AdminLoginForm({
         type="submit"
         disabled={isSubmitting}
         aria-busy={isSubmitting}
-        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#c83820] hover:bg-[#a72d18] px-6 py-3.5 text-sm font-black uppercase tracking-[0.1em] text-white shadow-lg transition-all duration-150 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+        className="flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-zinc-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
       >
         {isSubmitting ? (
           <>

@@ -1,12 +1,11 @@
 /**
- * Gaya kontrol formulir panel admin (E12-8 — audit visual).
+ * Gaya kontrol formulir panel admin (E19-2 — Putih Modern Minimalis).
  * Satu sumber untuk input, textarea, select, label, bantuan, dan pesan galat
- * agar seluruh formulir CMS tampil sebagai kontrol bertema ink/sand/ember,
- * bukan kontrol bawaan peramban (DG-02, DG-04, NFR-ACC-01).
+ * agar seluruh formulir CMS bersih, terang, dan mudah dibaca.
  */
 
 const fieldBase =
-  "w-full rounded-none border border-line bg-ink py-2.5 text-sm text-sand transition-colors [color-scheme:dark] placeholder:text-sand/30 hover:border-sand/30 focus:border-ember focus:outline-none focus:ring-1 focus:ring-ember disabled:cursor-not-allowed disabled:opacity-60";
+  "w-full rounded-xl border border-zinc-200 bg-white py-2.5 text-sm text-zinc-900 transition-all [color-scheme:light] placeholder:text-zinc-400 hover:border-zinc-300 focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 disabled:cursor-not-allowed disabled:bg-zinc-50 disabled:opacity-60";
 
 /** Input teks, email, URL, angka, pencarian, tanggal, dan sejenisnya. */
 export const adminInputClass = `${fieldBase} min-h-11 px-3.5`;
@@ -20,16 +19,16 @@ export const adminTextareaClass = `${fieldBase} min-h-24 resize-y px-3.5`;
 /** Select dengan chevron kustom (lihat .admin-select di globals.css). */
 export const adminSelectClass = `${fieldBase} admin-select min-h-11 cursor-pointer appearance-none pl-3.5 pr-11`;
 
-/** Label formulir yang konsisten di seluruh CMS. */
+/** Label formulir yang konsisten dan mudah dipindai di seluruh CMS. */
 export const adminLabelClass =
-  "mb-1.5 block text-xs font-semibold uppercase tracking-[0.08em] text-sand-600";
+  "mb-1.5 block text-xs font-semibold text-zinc-700";
 
 /** Teks bantuan di bawah kontrol. */
-export const adminHelpClass = "mt-1.5 text-xs text-sand-600";
+export const adminHelpClass = "mt-1.5 text-xs text-zinc-500";
 
 /** Pesan galat validasi. */
-export const adminErrorClass = "mt-1.5 text-sm text-ember";
+export const adminErrorClass = "mt-1.5 text-xs font-medium text-red-600";
 
-/** Checkbox/radio dengan aksen ember. */
+/** Checkbox/radio bersih. */
 export const adminCheckboxClass =
-  "admin-checkbox h-5 w-5 shrink-0 cursor-pointer appearance-none rounded-none border border-sand/40 bg-ink transition-colors checked:border-ember checked:bg-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember";
+  "admin-checkbox h-5 w-5 shrink-0 cursor-pointer appearance-none rounded-md border border-zinc-300 bg-white transition-colors checked:border-zinc-900 checked:bg-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900";

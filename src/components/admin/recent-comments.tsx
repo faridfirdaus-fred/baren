@@ -9,10 +9,6 @@ export type RecentCommentItem = {
   createdAt: Date;
 };
 
-/**
- * E16-4: bukti sumber data metrik Komentar. Maksimal tiga item dikirim
- * server component (satu kueri), tanpa fetch per item.
- */
 export function RecentComments({
   comments,
 }: {
@@ -21,48 +17,48 @@ export function RecentComments({
   return (
     <section
       aria-labelledby="komentar-terbaru"
-      className="border border-line bg-ink-800 p-5"
+      className="rounded-2xl border border-zinc-200 bg-white p-5"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <h2
           id="komentar-terbaru"
-          className="text-sm font-semibold uppercase tracking-wider text-sand-600"
+          className="text-sm font-semibold text-zinc-900"
         >
           Komentar Terbaru
         </h2>
         <Link
           href="/admin/comments"
-          className="text-sm font-semibold text-sand underline decoration-ember underline-offset-4 transition-colors hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+          className="text-xs font-semibold text-zinc-600 hover:text-zinc-900 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
         >
-          Lihat semua komentar
+          Lihat semua komentar &rarr;
         </Link>
       </div>
 
       {comments.length === 0 ? (
-        <p className="mt-4 text-sm text-sand-600">
+        <p className="mt-4 text-sm text-zinc-500">
           Belum ada komentar. Komentar pengunjung akan muncul di sini.
         </p>
       ) : (
-        <ul className="mt-4 space-y-3">
+        <ul className="mt-4 space-y-2.5">
           {comments.map((comment) => (
             <li key={comment.id}>
               <Link
                 href={`/admin/comments#komentar-${comment.id}`}
-                className="block border border-line bg-ink p-4 transition-colors hover:border-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                className="block rounded-xl border border-zinc-100 bg-zinc-50/70 p-3.5 transition-colors hover:border-zinc-200 hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
               >
                 <span className="flex flex-wrap items-baseline justify-between gap-2">
-                  <span className="text-sm font-semibold text-sand">
+                  <span className="text-sm font-semibold text-zinc-900">
                     {comment.userName ?? "Anonim"}
                   </span>
                   <time
                     dateTime={toDateTimeAttribute(comment.createdAt)}
-                    className="text-xs text-sand-600"
+                    className="text-xs text-zinc-400"
                   >
                     {formatDateTimeId(comment.createdAt) ??
                       "Waktu tidak tersedia"}
                   </time>
                 </span>
-                <span className="mt-2 line-clamp-2 block text-sm text-sand-600">
+                <span className="mt-1.5 line-clamp-2 block text-sm text-zinc-600">
                   {comment.body}
                 </span>
               </Link>

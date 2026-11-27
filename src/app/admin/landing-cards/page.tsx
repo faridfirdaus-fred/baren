@@ -18,7 +18,7 @@ export default async function LandingCardsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Kelola Kartu Landing</h1>
+      <span className="sr-only">Kelola Kartu Landing</span>
       <LandingCardsManager />
     </div>
   );

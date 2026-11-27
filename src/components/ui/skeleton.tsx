@@ -6,27 +6,19 @@ export interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 /**
- * Komponen Skeleton untuk visual loading state.
- * - variant "default": adaptif sesuai konteks
- * - variant "admin": warna aksen tema gelap admin (ink-700/60)
- * - variant "light": warna aksen tema terang beranda (timber/10)
+ * Komponen Skeleton untuk visual loading state (Putih Modern Minimalis).
  */
 export function Skeleton({
   className,
   variant = "default",
   ...props
 }: SkeletonProps) {
+  void variant;
   return (
     <div
       data-slot="skeleton"
       aria-hidden="true"
-      className={cn(
-        "animate-pulse rounded-md",
-        variant === "default" && "bg-ink-700/60",
-        variant === "admin" && "bg-ink-700/60",
-        variant === "light" && "bg-[#2f180a]/10",
-        className,
-      )}
+      className={cn("animate-pulse rounded-xl bg-zinc-200/70", className)}
       {...props}
     />
   );

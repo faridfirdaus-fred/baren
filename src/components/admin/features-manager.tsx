@@ -1,11 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import {
+  ArrowDown,
+  ArrowUp,
+  ExternalLink,
+  Pencil,
+  Plus,
+  Sparkles,
+  Trash2,
+} from "lucide-react";
 
 import { AssetUploader } from "./asset-uploader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { adminButtonClass } from "./button-styles";
 import {
+  adminErrorClass,
   adminInputClass,
   adminTextareaClass,
   adminLabelClass,
@@ -30,9 +41,36 @@ type FeatureFormData = {
 const EMPTY_FORM: FeatureFormData = {
   title: "",
   description: "",
-  iconUrl: "",
+  iconUrl: "/art/feature-1.jpg",
   sortOrder: 0,
 };
+
+const PRESET_FEATURE_IMAGES = [
+  { label: "Arena 2 vs 2", url: "/art/feature-1.jpg" },
+  { label: "Rebut & Rescue", url: "/art/feature-2.jpg" },
+  { label: "Pasar Ramai", url: "/art/feature-3.jpg" },
+];
+
+const DEFAULT_FEATURE_SEEDS = [
+  {
+    title: "Duel Tim 2 vs 2",
+    description:
+      "Kompak bersama partner dalam satu layar, atur taktik pancingan, dan kejar lawan sebelum mereka menyentuh bentengmu.",
+    iconUrl: "/art/feature-1.jpg",
+  },
+  {
+    title: "Tag, Tahanan & Rescue",
+    description:
+      "Sentuh markas untuk mendapat status FRESH, tangkap lawan ke zona tahanan, atau selamatkan kawan untuk membalikkan keadaan.",
+    iconUrl: "/art/feature-2.jpg",
+  },
+  {
+    title: "Arena Kampung Variatif",
+    description:
+      "Bertanding di Lapang Kampung, Pasar Ramai penuh gerobak, hingga Alun-Alun Hujan yang licin dan menantang.",
+    iconUrl: "/art/feature-3.jpg",
+  },
+];
 
 export function FeaturesManager() {
   const [items, setItems] = useState<AdminFeature[]>([]);
@@ -51,8 +89,8 @@ export function FeaturesManager() {
     type: "success" | "error";
   } | null>(null);
 
-  const resetForm = () => {
-    setFormData(EMPTY_FORM);
+  const resetForm = (nextOrder = items.length) => {
+    setFormData({ ...EMPTY_FORM, sortOrder: nextOrder });
     setEditingId(null);
     setFormErrors({});
   };
@@ -67,7 +105,10 @@ export function FeaturesManager() {
         setError(parsed.message);
         return;
       }
-      setItems(parsed.data);
+      const sorted = [...parsed.data].sort(
+        (a, b) => a.sortOrder - b.sortOrder || a.id - b.id,
+      );
+      setItems(sorted);
     } catch (err) {
       setError("Gagal memuat fitur");
       console.error(err);
@@ -84,8 +125,7 @@ export function FeaturesManager() {
   const handleIconUploaded = (asset: UploadedAsset) => {
     setFormData((prev) => ({ ...prev, iconUrl: asset.publicUrl }));
     setToast({
-      message:
-        "Ikon berhasil diunggah. Klik 'Simpan' untuk menerapkan perubahan.",
+      message: "Gambar fitur diunggah. Klik Simpan untuk menerapkan.",
       type: "success",
     });
   };
@@ -102,7 +142,12 @@ export function FeaturesManager() {
         {
           method: isEditing ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            ...formData,
+            sortOrder: isEditing
+              ? formData.sortOrder
+              : formData.sortOrder || items.length,
+          }),
         },
       );
       const parsed = parseApiEnvelope<AdminFeature>(await res.json());
@@ -123,7 +168,7 @@ export function FeaturesManager() {
         message: isEditing ? "Fitur diperbarui" : "Fitur ditambahkan",
         type: "success",
       });
-      resetForm();
+      resetForm(items.length + (isEditing ? 0 : 1));
       await loadFeatures();
     } catch (err) {
       setToast({ message: "Gagal menyimpan fitur", type: "error" });
@@ -142,6 +187,51 @@ export function FeaturesManager() {
     });
     setEditingId(item.id);
     setFormErrors({});
+  };
+
+  const moveItem = async (idx: number, dir: "up" | "down") => {
+    const target = dir === "up" ? idx - 1 : idx + 1;
+    if (target < 0 || target >= items.length) return;
+    const next = [...items];
+    [next[idx], next[target]] = [next[target], next[idx]];
+    setItems(next);
+    try {
+      await Promise.all(
+        next.map((f, i) =>
+          fetch(`/api/features/${f.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sortOrder: i }),
+          }),
+        ),
+      );
+      setToast({ message: "Urutan fitur diperbarui", type: "success" });
+      await loadFeatures();
+    } catch {
+      setToast({ message: "Gagal memperbarui urutan", type: "error" });
+    }
+  };
+
+  const handleSeedDefaults = async () => {
+    setSubmitting(true);
+    try {
+      for (const [idx, seed] of DEFAULT_FEATURE_SEEDS.entries()) {
+        await fetch("/api/features", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...seed, sortOrder: idx }),
+        });
+      }
+      setToast({
+        message: "3 Fitur bawaan berhasil ditambahkan.",
+        type: "success",
+      });
+      await loadFeatures();
+    } catch {
+      setToast({ message: "Gagal menyalin fitur bawaan", type: "error" });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -171,264 +261,349 @@ export function FeaturesManager() {
 
   if (loading) {
     return (
-      <div className="space-y-8" role="status" aria-label="Memuat fitur">
-        <div className="border border-line bg-ink-800 p-6 space-y-4">
-          <Skeleton variant="admin" className="h-6 w-36" />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-            <div className="sm:col-span-3 space-y-2">
-              <Skeleton variant="admin" className="h-4 w-20" />
-              <Skeleton variant="admin" className="h-10 w-full" />
-            </div>
-            <div className="space-y-2">
-              <Skeleton variant="admin" className="h-4 w-16" />
-              <Skeleton variant="admin" className="h-10 w-full" />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Skeleton variant="admin" className="h-4 w-24" />
-            <Skeleton variant="admin" className="h-24 w-full" />
-          </div>
-          <Skeleton variant="admin" className="h-10 w-32" />
+      <div className="space-y-6" role="status" aria-label="Memuat fitur">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-10 w-36" />
         </div>
-        <div className="space-y-4">
-          <Skeleton variant="admin" className="h-6 w-32" />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <div className="space-y-3 lg:col-span-7">
             {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="border border-line bg-ink-800 p-5 space-y-3"
-              >
-                <Skeleton variant="admin" className="h-12 w-12 rounded-lg" />
-                <Skeleton variant="admin" className="h-5 w-3/4" />
-                <Skeleton variant="admin" className="h-4 w-full" />
-                <Skeleton variant="admin" className="h-4 w-2/3" />
-                <div className="flex gap-2 pt-2">
-                  <Skeleton variant="admin" className="h-7 w-14" />
-                  <Skeleton variant="admin" className="h-7 w-14" />
-                </div>
-              </div>
+              <Skeleton key={i} className="h-24 w-full rounded-2xl" />
             ))}
           </div>
+          <Skeleton className="h-96 w-full rounded-2xl lg:col-span-5" />
         </div>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="space-y-6">
+      <header className="flex flex-col justify-between gap-4 border-b border-zinc-200 pb-4 sm:flex-row sm:items-center">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+            Kelola Fitur
+          </h1>
+          <p className="mt-1 text-sm text-zinc-500">
+            Atur kartu keunggulan permainan di seksi Fitur Game pada beranda.
+          </p>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <a
+            href="/#fitur"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={adminButtonClass("secondary", "md")}
+          >
+            <ExternalLink className="h-4 w-4 text-zinc-400" />
+            <span>Lihat di Beranda</span>
+          </a>
+          <button
+            type="button"
+            onClick={() => resetForm()}
+            className={adminButtonClass("primary", "md")}
+          >
+            <Plus className="h-4 w-4" />
+            <span>Fitur Baru</span>
+          </button>
+        </div>
+      </header>
+
       {error && (
         <p
           role="alert"
-          className="mb-6 border border-ember/40 bg-ember/10 p-4 text-sm text-ember"
+          className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
         >
           {error}
         </p>
       )}
 
-      <form
-        onSubmit={handleSubmit}
-        className="mb-8 border border-line bg-ink-800 p-6"
-      >
-        <h2 className="mb-4 font-display text-xl font-bold uppercase tracking-wider text-sand">
-          {editingId ? "Edit Fitur" : "Tambah Fitur"}
-        </h2>
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        {/* Daftar Fitur */}
+        <div className="flex flex-col gap-3 lg:col-span-7">
+          <h2 className="px-1 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            Daftar Fitur ({items.length})
+          </h2>
 
-        <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-4">
-          <div className="sm:col-span-3">
-            <label htmlFor="feature-title" className={adminLabelClass}>
-              Judul *
-            </label>
-            <input
-              id="feature-title"
-              type="text"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, title: e.target.value }))
-              }
-              disabled={submitting}
-              required
-              className={adminInputClass}
-              placeholder="Contoh: Arena Taktikal 5v5"
-            />
-            {formErrors.title && (
-              <p className="mt-1 text-sm text-ember">{formErrors.title[0]}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="feature-sort-order" className={adminLabelClass}>
-              Urutan
-            </label>
-            <input
-              id="feature-sort-order"
-              type="number"
-              min={0}
-              value={formData.sortOrder}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  sortOrder: parseInt(e.target.value, 10) || 0,
-                }))
-              }
-              disabled={submitting}
-              className={adminInputClass}
-            />
-            {formErrors.sortOrder && (
-              <p className="mt-1 text-sm text-ember">
-                {formErrors.sortOrder[0]}
+          {items.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-300 bg-white p-8 text-center">
+              <Sparkles className="mb-3 h-7 w-7 text-zinc-400" />
+              <h3 className="text-base font-semibold text-zinc-900">
+                Belum ada fitur tersimpan
+              </h3>
+              <p className="mt-1 mb-5 max-w-md text-sm text-zinc-500">
+                Salin 3 fitur bawaan game BAREN agar langsung bisa diedit, atau
+                tambahkan fitur baru melalui formulir di samping.
               </p>
-            )}
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="feature-description" className={adminLabelClass}>
-            Deskripsi
-          </label>
-          <textarea
-            id="feature-description"
-            value={formData.description}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                description: e.target.value,
-              }))
-            }
-            disabled={submitting}
-            rows={3}
-            className={adminTextareaClass}
-            placeholder="Deskripsi singkat mengenai keunggulan fitur game ini..."
-          />
-          {formErrors.description && (
-            <p className="mt-1 text-sm text-ember">
-              {formErrors.description[0]}
-            </p>
-          )}
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="feature-icon-url" className={adminLabelClass}>
-            Ikon Fitur
-          </label>
-          <input
-            id="feature-icon-url"
-            type="url"
-            value={formData.iconUrl}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, iconUrl: e.target.value }))
-            }
-            disabled={submitting}
-            placeholder="https://... (atau unggah berkas di bawah)"
-            className={adminInputClass}
-          />
-          {formErrors.iconUrl && (
-            <p className="mt-1 text-sm text-ember">{formErrors.iconUrl[0]}</p>
-          )}
-          {formData.iconUrl.trim() ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={resolvePublicAssetUrl(formData.iconUrl) || formData.iconUrl}
-              alt="Pratinjau ikon fitur"
-              className="mt-2 h-14 w-14 rounded border border-line bg-ink object-contain p-1"
-            />
-          ) : null}
-          <div className="mt-2">
-            <AssetUploader
-              purpose="ikon"
-              onUploaded={handleIconUploaded}
-              disabled={submitting}
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="submit"
-            disabled={submitting}
-            className={adminButtonClass("primary", "md")}
-          >
-            {submitting
-              ? "Menyimpan..."
-              : editingId
-                ? "Simpan Perubahan"
-                : "Tambah Fitur"}
-          </button>
-          {editingId !== null && (
-            <button
-              type="button"
-              onClick={resetForm}
-              disabled={submitting}
-              className={adminButtonClass("secondary", "md")}
-            >
-              Batal
-            </button>
-          )}
-        </div>
-      </form>
-
-      <h2 className="mb-4 font-bold text-sand">Daftar Fitur</h2>
-      {items.length === 0 ? (
-        <p className="text-sand-600">
-          Belum ada fitur. Tambahkan fitur pertama.
-        </p>
-      ) : (
-        <ul className="space-y-4">
-          {items.map((item) => (
-            <li
-              key={item.id}
-              data-testid="feature-item"
-              className="flex gap-3 border border-line bg-ink-800 p-4"
-            >
-              {item.iconUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={resolvePublicAssetUrl(item.iconUrl) || item.iconUrl}
-                  alt=""
-                  className="h-12 w-12 shrink-0 rounded bg-ink object-contain p-1"
-                />
-              ) : (
-                <div
-                  aria-hidden="true"
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-sand/10 text-xs text-sand-600"
-                >
-                  Ikon
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <p className="text-xs uppercase tracking-wider text-sand-600">
-                  Urutan {item.sortOrder}
-                </p>
-                <h3 className="font-bold text-sand">{item.title}</h3>
-                {item.description ? (
-                  <p className="mt-1 text-sm text-sand-600">
-                    {item.description}
-                  </p>
-                ) : null}
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <button
-                    type="button"
+              <button
+                type="button"
+                onClick={handleSeedDefaults}
+                disabled={submitting}
+                className={adminButtonClass("primary", "md")}
+              >
+                <Sparkles className="h-4 w-4" />
+                <span>Salin 3 Fitur Bawaan</span>
+              </button>
+            </div>
+          ) : (
+            <ul className="space-y-3">
+              {items.map((item, idx) => {
+                const isSelected = editingId === item.id;
+                return (
+                  <li
+                    key={item.id}
+                    data-testid="feature-item"
                     onClick={() => handleEdit(item)}
-                    aria-label={`Edit fitur ${item.title}`}
-                    className={adminButtonClass("secondary", "sm")}
+                    className={`flex cursor-pointer items-center gap-3.5 rounded-2xl border bg-white p-3.5 transition-all ${
+                      isSelected
+                        ? "border-zinc-900 ring-2 ring-zinc-900/10"
+                        : "border-zinc-200 hover:border-zinc-300"
+                    }`}
                   >
-                    Edit
-                  </button>
+                    <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
+                      {item.iconUrl ? (
+                        <Image
+                          src={
+                            resolvePublicAssetUrl(item.iconUrl) || item.iconUrl
+                          }
+                          alt=""
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-zinc-400">
+                          0{idx + 1}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[11px] font-medium text-zinc-400">
+                        Fitur #{idx + 1}
+                      </span>
+                      <h3 className="truncate text-sm font-semibold text-zinc-900">
+                        {item.title}
+                      </h3>
+                      {item.description && (
+                        <p className="mt-0.5 line-clamp-2 text-xs text-zinc-500">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex shrink-0 flex-col gap-1">
+                      <button
+                        type="button"
+                        disabled={idx === 0}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void moveItem(idx, "up");
+                        }}
+                        className="rounded-lg border border-zinc-200 p-1 text-zinc-600 hover:bg-zinc-50 disabled:opacity-25"
+                        title="Naikkan urutan"
+                      >
+                        <ArrowUp className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={idx === items.length - 1}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void moveItem(idx, "down");
+                        }}
+                        className="rounded-lg border border-zinc-200 p-1 text-zinc-600 hover:bg-zinc-50 disabled:opacity-25"
+                        title="Turunkan urutan"
+                      >
+                        <ArrowDown className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(item);
+                        }}
+                        aria-label={`Edit fitur ${item.title}`}
+                        className={adminButtonClass("secondary", "sm")}
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                        <span className="sr-only sm:not-sr-only">Edit</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteTarget({ id: item.id, title: item.title });
+                        }}
+                        aria-label={`Hapus fitur ${item.title}`}
+                        className={adminButtonClass("danger", "sm")}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        <span className="sr-only sm:not-sr-only">Hapus</span>
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+
+        {/* Form Inspector */}
+        <div className="lg:col-span-5">
+          <form
+            onSubmit={handleSubmit}
+            className="sticky top-6 space-y-4 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6"
+          >
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3.5">
+              <h2 className="text-base font-bold text-zinc-900">
+                {editingId ? "Edit Fitur" : "Tambah Fitur"}
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
+              <div className="sm:col-span-3">
+                <label htmlFor="feature-title" className={adminLabelClass}>
+                  Judul *
+                </label>
+                <input
+                  id="feature-title"
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, title: e.target.value }))
+                  }
+                  disabled={submitting}
+                  required
+                  className={adminInputClass}
+                  placeholder="Contoh: Duel Tim 2 vs 2"
+                />
+                {formErrors.title && (
+                  <p className={adminErrorClass}>{formErrors.title[0]}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="feature-sort-order" className={adminLabelClass}>
+                  Urutan
+                </label>
+                <input
+                  id="feature-sort-order"
+                  type="number"
+                  min={0}
+                  value={formData.sortOrder}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      sortOrder: parseInt(e.target.value, 10) || 0,
+                    }))
+                  }
+                  disabled={submitting}
+                  className={adminInputClass}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="feature-description" className={adminLabelClass}>
+                Deskripsi
+              </label>
+              <textarea
+                id="feature-description"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+                disabled={submitting}
+                rows={3}
+                className={adminTextareaClass}
+                placeholder="Contoh: Kompak bersama rekan satu tim dalam satu layar untuk merebut benteng lawan."
+              />
+              {formErrors.description && (
+                <p className={adminErrorClass}>{formErrors.description[0]}</p>
+              )}
+            </div>
+
+            <div>
+              <span className={adminLabelClass}>Gambar / Visual Fitur</span>
+              {formData.iconUrl.trim() ? (
+                <div className="relative mb-2.5 aspect-video w-full overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
+                  <Image
+                    src={
+                      resolvePublicAssetUrl(formData.iconUrl) ||
+                      formData.iconUrl
+                    }
+                    alt="Pratinjau visual fitur"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+              ) : null}
+              <AssetUploader
+                purpose="landing-image"
+                onUploaded={handleIconUploaded}
+                disabled={submitting}
+              />
+              {formErrors.iconUrl && (
+                <p className={adminErrorClass}>{formErrors.iconUrl[0]}</p>
+              )}
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                <span className="mr-1 text-[11px] font-medium text-zinc-500">
+                  Gambar game:
+                </span>
+                {PRESET_FEATURE_IMAGES.map((preset) => (
                   <button
+                    key={preset.url}
                     type="button"
                     onClick={() =>
-                      setDeleteTarget({ id: item.id, title: item.title })
+                      setFormData((prev) => ({ ...prev, iconUrl: preset.url }))
                     }
-                    aria-label={`Hapus fitur ${item.title}`}
-                    className={adminButtonClass("danger", "sm")}
+                    className={`rounded-lg border px-2 py-1 text-[11px] font-medium transition-colors ${
+                      formData.iconUrl === preset.url
+                        ? "border-zinc-900 bg-zinc-900 text-white"
+                        : "border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
+                    }`}
                   >
-                    Hapus
+                    {preset.label}
                   </button>
-                </div>
+                ))}
               </div>
-            </li>
-          ))}
-        </ul>
-      )}
+            </div>
+
+            <div className="flex flex-wrap gap-2 border-t border-zinc-100 pt-3">
+              <button
+                type="submit"
+                disabled={submitting}
+                className={adminButtonClass("primary", "md", "flex-1")}
+              >
+                {submitting
+                  ? "Menyimpan..."
+                  : editingId
+                    ? "Simpan Perubahan"
+                    : "Tambah Fitur"}
+              </button>
+              {editingId !== null && (
+                <button
+                  type="button"
+                  onClick={() => resetForm()}
+                  disabled={submitting}
+                  className={adminButtonClass("secondary", "md")}
+                >
+                  Batal
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
 
       <DeleteConfirmDialog
         open={!!deleteTarget}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import NextImage from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -28,14 +29,6 @@ import {
 import { adminButtonClass } from "@/components/admin/button-styles";
 import { adminSignOutAction } from "./account-actions";
 
-/**
- * E5-6 & E18 — Kerangka panel admin.
- * - Sidebar terorganisir per kategori (Utama, Konten Landing, Komunitas, Pengaturan).
- * - Akses langsung ke Homepage biasa dari header sidebar & footer navigasi.
- * - Navigasi aktif ditandai secara visual dengan aksen ember.
- * - Layar kecil: drawer dialog (<md) dengan kontrol keyboard & sentuh (Escape, trap/scroll-lock).
- */
-
 interface NavItem {
   href: string;
   label: string;
@@ -57,13 +50,13 @@ const navGroups: NavGroup[] = [
   {
     title: "Konten Landing",
     items: [
-      { href: "/admin/landing", label: "Konten Landing", icon: FileText },
+      { href: "/admin/landing", label: "Judul Seksi", icon: FileText },
       { href: "/admin/hero", label: "Hero", icon: Sparkles },
       { href: "/admin/characters", label: "Jagoan", icon: Users },
       { href: "/admin/features", label: "Fitur", icon: Gamepad2 },
       { href: "/admin/how-to-play", label: "Cara Bermain", icon: PlaySquare },
       { href: "/admin/gallery", label: "Galeri", icon: Image },
-      { href: "/admin/news", label: "Berita", icon: Newspaper },
+      { href: "/admin/news", label: "Berita & Event", icon: Newspaper },
       { href: "/admin/faq", label: "FAQ", icon: HelpCircle },
       { href: "/admin/landing-cards", label: "Kartu Tambahan", icon: Layers },
     ],
@@ -117,11 +110,11 @@ export default function AdminLayout({
   if (pathname === "/admin/login") return children;
 
   const navItems = (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       {navGroups.map((group, groupIdx) => (
         <div key={group.title ?? `group-${groupIdx}`} className="flex flex-col">
           {group.title && (
-            <div className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-sand-600/70">
+            <div className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
               {group.title}
             </div>
           )}
@@ -135,17 +128,17 @@ export default function AdminLayout({
                     href={link.href}
                     onClick={closeNav}
                     aria-current={isActive ? "page" : undefined}
-                    className={`group flex min-h-11 items-center gap-3 px-3.5 py-2.5 text-xs font-bold uppercase tracking-[0.08em] rounded-xl transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b] ${
+                    className={`group flex min-h-10 items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 ${
                       isActive
-                        ? "bg-[#f59e0b] text-[#2f180a] shadow-md font-black"
-                        : "text-[#faf6ee]/80 hover:bg-white/10 hover:text-[#faf6ee]"
+                        ? "bg-zinc-100 font-semibold text-zinc-950"
+                        : "font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
                     }`}
                   >
                     <Icon
                       className={`h-4 w-4 shrink-0 transition-colors ${
                         isActive
-                          ? "text-[#2f180a]"
-                          : "text-[#8c7b6d] group-hover:text-[#faf6ee]"
+                          ? "text-zinc-900"
+                          : "text-zinc-400 group-hover:text-zinc-700"
                       }`}
                       aria-hidden="true"
                     />
@@ -161,30 +154,30 @@ export default function AdminLayout({
   );
 
   const navFooterActions = (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1.5">
       <Link
         href="/"
         onClick={closeNav}
         target="_blank"
         rel="noopener noreferrer"
-        className="group flex min-h-11 items-center justify-between border border-line bg-ink-900/60 px-3.5 py-2.5 text-xs font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:border-ember hover:bg-ink-700 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+        className="group flex min-h-10 items-center justify-between rounded-xl border border-zinc-200 bg-zinc-50/70 px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
       >
-        <span className="flex items-center gap-2.5">
-          <Globe className="h-4 w-4 text-ember" aria-hidden="true" />
+        <span className="flex items-center gap-2">
+          <Globe className="h-4 w-4 text-zinc-500" aria-hidden="true" />
           <span>Lihat Situs</span>
         </span>
         <ExternalLink
-          className="h-3.5 w-3.5 text-sand-600 transition-colors group-hover:text-ember"
+          className="h-3.5 w-3.5 text-zinc-400 transition-colors group-hover:text-zinc-700"
           aria-hidden="true"
         />
       </Link>
       <form action={adminSignOutAction}>
         <button
           type="submit"
-          className="group flex min-h-11 w-full items-center gap-2.5 border border-transparent px-3.5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.08em] text-sand-600 transition-colors hover:bg-ember/10 hover:text-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+          className="group flex min-h-10 w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-semibold text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
         >
           <LogOut
-            className="h-4 w-4 text-sand-600 transition-colors group-hover:text-ember"
+            className="h-4 w-4 text-zinc-400 transition-colors group-hover:text-red-600"
             aria-hidden="true"
           />
           <span>Keluar</span>
@@ -194,67 +187,83 @@ export default function AdminLayout({
   );
 
   return (
-    <div className="flex min-h-dvh flex-col overflow-x-clip bg-[#faf6ee] text-[#2f180a] md:flex-row">
+    <div className="flex min-h-dvh flex-col overflow-x-clip bg-zinc-50/70 text-zinc-900 md:flex-row">
       <a
         href="#konten-admin"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-none focus:bg-[#2f180a] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:outline-2 focus:outline-offset-2 focus:outline-[#f59e0b]"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-xl focus:bg-zinc-900 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:outline-2 focus:outline-offset-2 focus:outline-zinc-900"
       >
         Lewati ke konten admin
       </a>
 
       {/* Topbar seluler */}
-      <header className="flex h-16 items-center justify-between gap-4 border-b border-[#422310] bg-[#2f180a] px-4 md:hidden text-white">
+      <header className="flex h-14 items-center justify-between gap-4 border-b border-zinc-200 bg-white px-4 md:hidden">
         <button
           ref={toggleRef}
           type="button"
           onClick={() => setNavOpen((v) => !v)}
           aria-expanded={navOpen}
           aria-controls="navigasi-admin-drawer"
-          className="text-[#faf6ee] p-2 hover:bg-white/10 rounded-xl"
+          className="rounded-lg p-2 text-zinc-700 hover:bg-zinc-100"
         >
           <span className="sr-only">
             {navOpen ? "Tutup menu navigasi admin" : "Buka menu navigasi admin"}
           </span>
-          <Menu className="h-6 w-6" aria-hidden="true" />
+          <Menu className="h-5 w-5" aria-hidden="true" />
         </button>
-        <span className="font-black text-lg uppercase tracking-wider text-[#faf6ee]">
-          BAREN PANEL ADMIN
-        </span>
+        <div className="flex items-center gap-2">
+          <NextImage
+            src="/brand/baren-mark.svg"
+            alt=""
+            width={24}
+            height={24}
+            className="h-6 w-6 rounded-md"
+          />
+          <span className="text-sm font-bold tracking-tight text-zinc-900">
+            BAREN Admin
+          </span>
+        </div>
         <Link
           href="/"
           target="_blank"
           rel="noopener noreferrer"
           title="Buka Website Utama"
           aria-label="Buka Website Utama"
-          className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-[#f59e0b] hover:bg-white/20"
+          className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
         >
-          <Globe className="h-5 w-5" aria-hidden="true" />
+          <Globe className="h-4 w-4" aria-hidden="true" />
         </Link>
       </header>
 
-      {/* Sidebar desktop — menempel saat halaman digulir, nav bergulir sendiri */}
+      {/* Sidebar desktop putih bersih */}
       <aside
         id="navigasi-admin"
         aria-label="Navigasi admin"
-        className="hidden w-64 shrink-0 flex-col border-r border-[#422310] bg-[#2f180a] text-white md:sticky md:top-0 md:flex md:h-dvh md:self-start"
+        className="hidden w-60 shrink-0 flex-col border-r border-zinc-200 bg-white md:sticky md:top-0 md:flex md:h-dvh md:self-start"
       >
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#422310] px-5">
+        <div className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-100 px-4">
           <Link
             href="/admin"
-            className="flex items-center gap-2 font-black text-lg uppercase tracking-wider text-[#f59e0b] hover:text-white transition-colors"
+            className="flex items-center gap-2.5 text-sm font-bold tracking-tight text-zinc-900"
           >
-            <span>● BAREN</span>
-            <span className="text-[10px] text-white/60 font-bold tracking-normal">
-              PANEL
+            <NextImage
+              src="/brand/baren-mark.svg"
+              alt=""
+              width={26}
+              height={26}
+              className="h-6.5 w-6.5 rounded-md"
+            />
+            <span>BAREN</span>
+            <span className="rounded-md bg-zinc-100 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-500">
+              Admin
             </span>
           </Link>
           <Link
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            title="Lihat Website Utama (Buka di Tab Baru)"
+            title="Lihat Website Utama"
             aria-label="Lihat Website Utama"
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-[#f59e0b] hover:bg-white/20 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
           >
             <ExternalLink className="h-4 w-4" aria-hidden="true" />
           </Link>
@@ -265,12 +274,12 @@ export default function AdminLayout({
         >
           {navItems}
         </nav>
-        <div className="shrink-0 border-t border-ink-700 p-3">
+        <div className="shrink-0 border-t border-zinc-100 p-3">
           {navFooterActions}
         </div>
       </aside>
 
-      {/* Drawer seluler */}
+      {/* Drawer seluler putih */}
       {navOpen && (
         <div
           id="navigasi-admin-drawer"
@@ -280,26 +289,35 @@ export default function AdminLayout({
           className="fixed inset-0 z-50 flex md:hidden"
         >
           <div
-            className="fixed inset-0 bg-ink/80 transition-opacity"
+            className="fixed inset-0 bg-zinc-950/30 backdrop-blur-xs transition-opacity"
             onClick={closeNav}
             aria-hidden="true"
           />
           <div
             ref={drawerRef}
             tabIndex={-1}
-            className="relative flex w-full max-w-xs flex-1 flex-col bg-ink-800 shadow-xl focus:outline-none"
+            className="relative flex w-full max-w-xs flex-1 flex-col bg-white shadow-xl focus:outline-none"
           >
-            <div className="flex h-16 shrink-0 items-center justify-between border-b border-ink-700 px-5">
-              <span className="font-display text-lg uppercase tracking-wider text-sand">
-                Admin BAREN
-              </span>
+            <div className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-100 px-4">
+              <div className="flex items-center gap-2">
+                <NextImage
+                  src="/brand/baren-mark.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                  className="h-6 w-6 rounded-md"
+                />
+                <span className="text-sm font-bold text-zinc-900">
+                  BAREN Admin
+                </span>
+              </div>
               <button
                 type="button"
                 onClick={closeNav}
-                className={adminButtonClass("ghost", "icon")}
+                className={adminButtonClass("ghost", "icon-sm")}
               >
                 <span className="sr-only">Tutup menu admin</span>
-                <X className="h-6 w-6" aria-hidden="true" />
+                <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
             <nav
@@ -308,7 +326,7 @@ export default function AdminLayout({
             >
               {navItems}
             </nav>
-            <div className="shrink-0 border-t border-ink-700 p-3">
+            <div className="shrink-0 border-t border-zinc-100 p-3">
               {navFooterActions}
             </div>
           </div>
@@ -319,7 +337,7 @@ export default function AdminLayout({
       <main
         id="konten-admin"
         tabIndex={-1}
-        className="flex min-w-0 flex-1 flex-col p-6 outline-none md:p-8"
+        className="mx-auto flex w-full max-w-6xl min-w-0 flex-1 flex-col p-5 outline-none sm:p-7 lg:p-8"
       >
         {children}
       </main>

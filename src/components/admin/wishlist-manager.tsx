@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Download, Search } from "lucide-react";
 import { adminInputClass } from "./form-styles";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -113,50 +114,52 @@ export function AdminWishlistManager() {
   const totalPages = data?.totalPages ?? 1;
 
   return (
-    <div className="grid max-w-5xl gap-8">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-6">
+      <header className="flex flex-col gap-4 border-b border-zinc-200 pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-2xl uppercase tracking-wide">
-            Manajemen Wishlist
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+            Daftar Wishlist
           </h1>
-          <p className="mt-1 text-sm text-sand/70">
+          <p className="mt-1 text-sm text-zinc-500">
             Total Pendaftar:{" "}
-            <span className="font-semibold text-sand">{total}</span>
+            <span className="font-semibold text-zinc-900">{total}</span>
           </p>
         </div>
-        <div>
-          <a
-            href={exportUrl}
-            download
-            className={adminButtonClass("primary", "md")}
-          >
-            {search
-              ? `Ekspor CSV (${total} Hasil Filter)`
-              : `Ekspor CSV (${total} Pendaftar)`}
-          </a>
-        </div>
+        <a
+          href={exportUrl}
+          download
+          className={adminButtonClass("primary", "md")}
+        >
+          <Download className="h-4 w-4" />
+          <span>
+            {search ? `Ekspor CSV (${total} Hasil)` : `Ekspor CSV (${total})`}
+          </span>
+        </a>
       </header>
 
-      {/* Filter dan Pencarian */}
       <section aria-labelledby="wishlist-filter-heading">
         <h2 id="wishlist-filter-heading" className="sr-only">
           Pencarian Wishlist
         </h2>
         <form
           onSubmit={handleSearchSubmit}
-          className="flex flex-col gap-3 sm:flex-row sm:items-center"
+          className="flex flex-col gap-2.5 sm:flex-row sm:items-center"
         >
-          <div className="flex-1">
+          <div className="relative flex-1">
             <label htmlFor="wishlist-search" className="sr-only">
               Cari email atau nama
             </label>
+            <Search
+              className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-zinc-400"
+              aria-hidden="true"
+            />
             <input
               id="wishlist-search"
               type="search"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Cari email atau nama pendaftar..."
-              className={adminInputClass}
+              className={`${adminInputClass} pl-10`}
             />
           </div>
           <div className="flex gap-2">
@@ -172,7 +175,7 @@ export function AdminWishlistManager() {
                 type="button"
                 onClick={handleResetSearch}
                 disabled={loading}
-                className={adminButtonClass("ghost", "md")}
+                className={adminButtonClass("secondary", "md")}
               >
                 Reset
               </button>
@@ -181,16 +184,15 @@ export function AdminWishlistManager() {
         </form>
       </section>
 
-      {/* Konten Tabel dan Status */}
       <section aria-labelledby="wishlist-table-heading">
         <h2 id="wishlist-table-heading" className="sr-only">
           Daftar Pendaftar
         </h2>
 
-        {error ? (
+        {error && (
           <div
             role="alert"
-            className="flex items-center justify-between border border-ember/40 bg-ember/10 p-4 text-sm text-ember"
+            className="flex items-center justify-between rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
           >
             <p>{error}</p>
             <button
@@ -201,34 +203,32 @@ export function AdminWishlistManager() {
               Coba lagi
             </button>
           </div>
-        ) : null}
+        )}
 
-        {loading && !data ? (
+        {loading && !data && (
           <div
-            className="overflow-x-auto border border-ink-700 bg-ink-800/30 p-4 space-y-3"
+            className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-5"
             role="status"
             aria-label="Memuat data wishlist..."
           >
-            <Skeleton variant="admin" className="h-8 w-full" />
-            <Skeleton variant="admin" className="h-10 w-full" />
-            <Skeleton variant="admin" className="h-10 w-full" />
-            <Skeleton variant="admin" className="h-10 w-full" />
-            <Skeleton variant="admin" className="h-10 w-full" />
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-10 w-full" />
+            ))}
           </div>
-        ) : null}
+        )}
 
-        {data && data.items.length === 0 && !error ? (
-          <div className="border border-ink-700 bg-ink-800/40 py-12 text-center text-sm text-sand/60">
+        {data && data.items.length === 0 && !error && (
+          <div className="rounded-2xl border border-dashed border-zinc-300 bg-white py-12 text-center text-sm text-zinc-500">
             {search
-              ? `Tidak ditemukan pendaftar yang cocok dengan kata kunci "${search}".`
+              ? `Tidak ditemukan pendaftar yang cocok dengan "${search}".`
               : "Belum ada pendaftar wishlist."}
           </div>
-        ) : null}
+        )}
 
-        {data && data.items.length > 0 ? (
-          <div className="overflow-x-auto border border-ink-700 bg-ink-800/30">
-            <table className="w-full text-left text-sm text-sand">
-              <thead className="border-b border-ink-700 bg-ink-800/80 text-xs uppercase tracking-wider text-sand/60">
+        {data && data.items.length > 0 && (
+          <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white">
+            <table className="w-full text-left text-sm text-zinc-900">
+              <thead className="border-b border-zinc-200 bg-zinc-50 text-xs font-semibold text-zinc-500">
                 <tr>
                   <th scope="col" className="px-4 py-3">
                     ID
@@ -244,22 +244,22 @@ export function AdminWishlistManager() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-ink-700/60">
+              <tbody className="divide-y divide-zinc-100">
                 {data.items.map((item) => (
                   <tr
                     key={item.id}
-                    className="transition-colors hover:bg-ink-700/40"
+                    className="transition-colors hover:bg-zinc-50/70"
                   >
-                    <td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-sand/50">
-                      {item.id}
+                    <td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-zinc-400">
+                      #{item.id}
                     </td>
-                    <td className="px-4 py-3 font-medium text-sand">
+                    <td className="px-4 py-3 font-medium text-zinc-900">
                       {item.email}
                     </td>
-                    <td className="px-4 py-3 text-sand/80">
-                      {item.name || "-"}
+                    <td className="px-4 py-3 text-zinc-600">
+                      {item.name || "—"}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-xs text-sand/60">
+                    <td className="whitespace-nowrap px-4 py-3 text-xs text-zinc-500">
                       {formatRegistrationDate(item.createdAt)}
                     </td>
                   </tr>
@@ -267,17 +267,17 @@ export function AdminWishlistManager() {
               </tbody>
             </table>
           </div>
-        ) : null}
+        )}
 
-        {/* Kontrol Paginasi */}
-        {data && totalPages > 1 ? (
+        {data && totalPages > 1 && (
           <nav
             aria-label="Navigasi halaman wishlist"
-            className="mt-4 flex flex-col items-center justify-between gap-4 border-t border-ink-700 pt-4 sm:flex-row"
+            className="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row"
           >
-            <p className="text-xs text-sand/60">
-              Halaman <span className="font-semibold text-sand">{page}</span>{" "}
-              dari <span className="font-semibold text-sand">{totalPages}</span>{" "}
+            <p className="text-xs text-zinc-500">
+              Halaman{" "}
+              <span className="font-semibold text-zinc-900">{page}</span> dari{" "}
+              <span className="font-semibold text-zinc-900">{totalPages}</span>{" "}
               (Menampilkan {(page - 1) * 25 + 1}–{Math.min(page * 25, total)}{" "}
               dari {total})
             </p>
@@ -300,7 +300,7 @@ export function AdminWishlistManager() {
               </button>
             </div>
           </nav>
-        ) : null}
+        )}
       </section>
     </div>
   );
