@@ -74,6 +74,13 @@ export function buildR2ImageUrl({
     !trimmed.startsWith("http://") && !trimmed.startsWith("https://");
   if (isRelative) {
     if (
+      trimmed.startsWith("/art/") ||
+      trimmed.startsWith("/media/") ||
+      trimmed.startsWith("/brand/")
+    ) {
+      return `${url.pathname}?w=${safeWidth}&q=${safeQuality}`;
+    }
+    if (
       !trimmed.startsWith("/assets/") &&
       !trimmed.startsWith("assets/") &&
       !trimmed.startsWith("/api/assets/")

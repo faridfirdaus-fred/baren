@@ -10,6 +10,18 @@ function emptyToNull(v: unknown): unknown {
   return v === "" ? null : v;
 }
 
+const LOCAL_ASSET_RE =
+  /^\/(?:art|media|brand|api\/assets)\/(?!.*\.\.)[a-zA-Z0-9._/-]+$/;
+
+function isHttpsOrLocalAsset(v: string): boolean {
+  if (LOCAL_ASSET_RE.test(v)) return true;
+  try {
+    return new URL(v).protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 function httpsUrl(label: string) {
   return z.preprocess(
     emptyToNull,
@@ -17,13 +29,7 @@ function httpsUrl(label: string) {
       .string()
       .trim()
       .max(URL_MAX, `${label} maksimal ${URL_MAX} karakter.`)
-      .refine((v) => {
-        try {
-          return new URL(v).protocol === "https:";
-        } catch {
-          return false;
-        }
-      }, `${label} harus diawali https://.`)
+      .refine(isHttpsOrLocalAsset, `${label} harus diawali https://.`)
       .nullable()
       .optional(),
   );
@@ -139,13 +145,7 @@ export const videoUpdateSchema = z
       .trim()
       .min(1, "URL video wajib diisi.")
       .max(URL_MAX, `URL video maksimal ${URL_MAX} karakter.`)
-      .refine((v) => {
-        try {
-          return new URL(v).protocol === "https:";
-        } catch {
-          return false;
-        }
-      }, "URL video harus diawali https://."),
+      .refine(isHttpsOrLocalAsset, "URL video harus diawali https://."),
   })
   .strict();
 

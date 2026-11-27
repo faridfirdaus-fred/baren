@@ -16,6 +16,9 @@ export const galleryKinds = [
 
 export type GalleryKind = (typeof galleryKinds)[number];
 
+const LOCAL_ASSET_RE =
+  /^\/(?:art|media|brand|api\/assets)\/(?!.*\.\.)[a-zA-Z0-9._/-]+$/;
+
 function httpsUrl(label: string) {
   return z
     .string()
@@ -23,6 +26,7 @@ function httpsUrl(label: string) {
     .min(1, `${label} wajib diisi.`)
     .max(URL_MAX, `${label} maksimal ${URL_MAX} karakter.`)
     .refine((v) => {
+      if (LOCAL_ASSET_RE.test(v)) return true;
       try {
         return new URL(v).protocol === "https:";
       } catch {

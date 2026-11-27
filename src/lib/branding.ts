@@ -29,8 +29,12 @@ const FALLBACK_BRANDING: SiteBranding = {
   contactEmail: site.email,
 };
 
+const LOCAL_BRAND_RE =
+  /^\/(?:art|media|brand|api\/assets|favicon\.ico|icon\.svg)(?:\/(?!.*\.\.)[a-zA-Z0-9._/-]+)?$/;
+
 function isHttpsUrl(value: string | null): value is string {
   if (!value) return false;
+  if (LOCAL_BRAND_RE.test(value)) return true;
   try {
     return new URL(value).protocol === "https:";
   } catch {

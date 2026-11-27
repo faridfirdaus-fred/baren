@@ -14,6 +14,9 @@ function emptyToNull(v: unknown): unknown {
   return v === "" ? null : v;
 }
 
+const LOCAL_ASSET_RE =
+  /^\/(?:art|media|brand|api\/assets|favicon\.ico|icon\.svg)(?:\/(?!.*\.\.)[a-zA-Z0-9._/-]+)?$/;
+
 function httpsUrl(label: string) {
   return z.preprocess(
     emptyToNull,
@@ -22,6 +25,7 @@ function httpsUrl(label: string) {
       .trim()
       .max(URL_MAX, `${label} maksimal ${URL_MAX} karakter.`)
       .refine((v) => {
+        if (LOCAL_ASSET_RE.test(v)) return true;
         try {
           return new URL(v).protocol === "https:";
         } catch {
