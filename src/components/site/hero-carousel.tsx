@@ -10,16 +10,6 @@ import { IconChevronLeft, IconChevronRight } from "./icon";
 
 const PUTAR_OTOMATIS_MS = 6000;
 
-/**
- * E6-2 — Carousel banner hero (FR-PUB-03).
- * - 0 banner → tidak render apa pun (hero video saja).
- * - 1 banner → gambar statis tanpa kontrol (tetap ada alt).
- * - >1 banner → carousel: tombol Sebelumnya/Berikutnya + titik,
- *   keyboard panah, jeda saat hover/fokus/jeda eksplisit, dan tanpa
- *   putar otomatis bila `prefers-reduced-motion`.
- * Gambar di bawah fold → selalu lazy agar LCP hero (wordmark/poster)
- * tidak terganggu.
- */
 export function HeroCarousel({ banners }: { banners: HeroBannerItem[] }) {
   const total = banners.length;
   const geser = shouldShowCarousel(total);
@@ -54,9 +44,6 @@ export function HeroCarousel({ banners }: { banners: HeroBannerItem[] }) {
     return () => mq.removeEventListener("change", ubah);
   }, []);
 
-  // `kini` dimodulo agar indeks basi (mis. daftar menyusut) tak pernah
-  // keluar batas tanpa effect reset.
-
   const putarOtomatis = geser && !jeda && !interaksi && !kurangiGerak;
   useEffect(() => {
     if (!putarOtomatis) return;
@@ -72,8 +59,8 @@ export function HeroCarousel({ banners }: { banners: HeroBannerItem[] }) {
 
   if (!geser) {
     return (
-      <figure className="mt-10 w-full max-w-5xl">
-        <div className="relative aspect-video overflow-hidden bg-ink-700">
+      <figure className="mx-auto mt-10 w-full max-w-5xl">
+        <div className="relative aspect-video overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
           <R2Image
             src={banners[0].imageUrl}
             alt={altBanner(0)}
@@ -108,12 +95,12 @@ export function HeroCarousel({ banners }: { banners: HeroBannerItem[] }) {
           sebelumnya();
         }
       }}
-      className="mt-10 w-full max-w-5xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember"
+      className="mx-auto mt-10 w-full max-w-5xl"
     >
       <p className="sr-only">
         Gunakan tombol panah kiri dan kanan untuk berpindah banner.
       </p>
-      <div className="relative aspect-video overflow-hidden bg-ink-700">
+      <div className="relative aspect-video overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
         <R2Image
           key={item.id}
           src={item.imageUrl}
@@ -123,28 +110,28 @@ export function HeroCarousel({ banners }: { banners: HeroBannerItem[] }) {
           sizes="(min-width:1024px) 1024px, 100vw"
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-y-0 left-0 flex items-center p-2">
+        <div className="absolute inset-y-0 left-0 flex items-center p-3">
           <button
             type="button"
             onClick={sebelumnya}
             aria-label="Tampilkan banner sebelumnya"
-            className="bg-ink/70 p-3 text-sand transition-colors hover:bg-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            className="rounded-full border border-zinc-200 bg-white/90 p-2.5 text-zinc-800 shadow-sm transition-colors hover:bg-white"
           >
             <IconChevronLeft className="h-5 w-5" />
           </button>
         </div>
-        <div className="absolute inset-y-0 right-0 flex items-center p-2">
+        <div className="absolute inset-y-0 right-0 flex items-center p-3">
           <button
             type="button"
             onClick={berikutnya}
             aria-label="Tampilkan banner berikutnya"
-            className="bg-ink/70 p-3 text-sand transition-colors hover:bg-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            className="rounded-full border border-zinc-200 bg-white/90 p-2.5 text-zinc-800 shadow-sm transition-colors hover:bg-white"
           >
             <IconChevronRight className="h-5 w-5" />
           </button>
         </div>
       </div>
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
         <div
           role="group"
           aria-label="Pilih banner"
@@ -157,13 +144,15 @@ export function HeroCarousel({ banners }: { banners: HeroBannerItem[] }) {
               onClick={() => keBanner(i)}
               aria-label={`Tampilkan banner ${i + 1} dari ${total}`}
               aria-current={i === kini}
-              className={`h-2.5 min-h-[10px] w-8 min-w-[32px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember ${
-                i === kini ? "bg-ember" : "bg-sand/30 hover:bg-sand/60"
+              className={`h-2 rounded-full transition-all ${
+                i === kini
+                  ? "w-8 bg-[#c83820]"
+                  : "w-2.5 bg-zinc-300 hover:bg-zinc-400"
               }`}
             />
           ))}
         </div>
-        <p aria-live="polite" className="text-sm text-sand/70">
+        <p aria-live="polite" className="text-xs text-zinc-500">
           Banner {kini + 1} dari {total}
         </p>
         {kurangiGerak ? null : (
@@ -173,7 +162,7 @@ export function HeroCarousel({ banners }: { banners: HeroBannerItem[] }) {
             aria-label={
               jeda ? "Putar otomatis banner" : "Jeda putar otomatis banner"
             }
-            className="border border-sand/30 px-4 py-2 text-sm uppercase tracking-wide text-sand/80 transition-colors hover:border-sand hover:text-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-50"
           >
             {jeda ? "Putar" : "Jeda"}
           </button>

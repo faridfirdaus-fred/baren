@@ -1,10 +1,6 @@
 import { auth, signOut } from "@/auth";
 import { joinWishlistAction } from "./actions";
 
-// E11-4: tombol wishlist + menu akun pengunjung untuk slot header.
-// Anonim → form POST login Google (Auth.js v5: GET /signin/:provider tidak
-// didukung — harus POST via signIn); login → email + tombol keluar.
-// Dua varian responsif karena slot dipakai di header desktop dan menu mobil.
 export async function WishlistMenu() {
   let email: string | null = null;
   try {
@@ -14,7 +10,7 @@ export async function WishlistMenu() {
   }
 
   const buttonCls =
-    "rounded-none bg-ember-700 px-5 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ember-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember";
+    "cursor-pointer rounded-full bg-[#c83820] px-4 py-2 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#a72d18] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c83820]";
 
   if (!email) {
     return (
@@ -27,7 +23,7 @@ export async function WishlistMenu() {
         <form action={joinWishlistAction} className="md:hidden">
           <button
             type="submit"
-            className={`inline-flex w-full items-center justify-center ${buttonCls}`}
+            className={`inline-flex w-full items-center justify-center py-2.5 text-sm ${buttonCls}`}
           >
             Gabung Wishlist
           </button>
@@ -38,27 +34,9 @@ export async function WishlistMenu() {
 
   return (
     <>
-      <div className="hidden min-w-0 items-center gap-3 md:flex">
-        <span className="max-w-44 truncate text-sm text-sand/80" title={email}>
-          {email}
-        </span>
-        <form
-          action={async () => {
-            "use server";
-            await signOut({ redirectTo: "/" });
-          }}
-        >
-          <button
-            type="submit"
-            className="rounded-none bg-ember-700 px-5 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ember-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
-          >
-            Keluar
-          </button>
-        </form>
-      </div>
-      <div className="flex w-full flex-col gap-3 md:hidden">
+      <div className="hidden min-w-0 items-center gap-2.5 md:flex">
         <span
-          className="max-w-full truncate text-sm text-sand/80"
+          className="max-w-40 truncate text-xs font-medium text-zinc-600"
           title={email}
         >
           {email}
@@ -71,7 +49,28 @@ export async function WishlistMenu() {
         >
           <button
             type="submit"
-            className="inline-flex w-full items-center justify-center rounded-none bg-ember-700 px-5 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-sand transition-colors hover:bg-ember-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+            className="cursor-pointer rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-900"
+          >
+            Keluar
+          </button>
+        </form>
+      </div>
+      <div className="flex w-full flex-col gap-2.5 md:hidden">
+        <span
+          className="max-w-full truncate text-xs font-medium text-zinc-600"
+          title={email}
+        >
+          {email}
+        </span>
+        <form
+          action={async () => {
+            "use server";
+            await signOut({ redirectTo: "/" });
+          }}
+        >
+          <button
+            type="submit"
+            className="inline-flex w-full cursor-pointer items-center justify-center rounded-full border border-zinc-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50"
           >
             Keluar
           </button>

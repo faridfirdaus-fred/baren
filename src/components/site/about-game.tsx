@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
 interface AboutGameProps {
   eyebrow?: string;
@@ -14,76 +15,72 @@ export function AboutGame({
   screenshotUrl = "/art/about-art.jpg",
 }: AboutGameProps) {
   const defaultDesc =
-    "BAREN terinspirasi dari permainan tradisional Baren atau Bebentengan. Dua tim berlomba menjaga benteng sendiri sambil menyusup ke wilayah lawan. Sekali tersentuh, kamu tertangkap! Dimainkan satu layar bersama teman dan keluarga. Aturannya mudah dipelajari, tapi serunya sulit berhenti.";
+    "BAREN terinspirasi dari permainan tradisional Baren atau Bebentengan. Dua tim berlomba menjaga benteng sendiri sambil menyusup ke wilayah lawan dalam satu layar bersama teman dan keluarga. Aturannya cepat dipahami, namun penuh strategi kejutan di setiap ronde.";
 
-  const content = description || defaultDesc;
+  const content = description?.trim() || defaultDesc;
+  const resolvedTitle = title?.trim() || "Permainan kampung, rasa pesta modern";
+  const resolvedImage =
+    resolvePublicAssetUrl(screenshotUrl) ||
+    screenshotUrl ||
+    "/art/about-art.jpg";
 
   return (
     <section
       id="tentang"
-      className="relative w-full py-16 sm:py-24 bg-[#faf6ee] text-[#2f180a] overflow-hidden"
+      className="w-full border-y border-zinc-100 bg-zinc-50/70 py-16 sm:py-24"
     >
       <div className="container-baren">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* Kolom Kiri: Cerita & Info */}
-          <div className="lg:col-span-7 flex flex-col items-start gap-6">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
+          <div className="flex flex-col items-start gap-5 lg:col-span-6">
             <span className="pill-eyebrow">{eyebrow}</span>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-[#2f180a]">
-              {title}
+            <h2 className="text-3xl leading-tight font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
+              {resolvedTitle}
             </h2>
 
-            <p className="text-base sm:text-lg leading-relaxed text-[#542d14] max-w-2xl">
+            <p className="max-w-2xl text-base leading-relaxed text-zinc-600 sm:text-lg">
               {content}
             </p>
 
-            {/* 3 Pill Badges */}
-            <div className="grid grid-cols-3 gap-3 sm:gap-4 w-full max-w-lg pt-4">
-              <div className="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-2xl bg-white border-2 border-[#2f180a]/15 shadow-sm text-center">
-                <span className="text-lg sm:text-2xl font-black text-[#c83820]">
+            <div className="grid w-full max-w-lg grid-cols-3 gap-3 pt-2">
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 text-center shadow-2xs">
+                <span className="block text-xl font-extrabold text-zinc-950 sm:text-2xl">
                   2 vs 2
                 </span>
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#8c7b6d] mt-1">
-                  TIM SERU
+                <span className="mt-1 block text-[11px] font-semibold text-zinc-500">
+                  Tim Kompetitif
                 </span>
               </div>
-              <div className="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-2xl bg-white border-2 border-[#2f180a]/15 shadow-sm text-center">
-                <span className="text-lg sm:text-2xl font-black text-[#2f180a]">
-                  Lokal
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 text-center shadow-2xs">
+                <span className="block text-xl font-extrabold text-zinc-950 sm:text-2xl">
+                  3 Menit
                 </span>
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#8c7b6d] mt-1">
-                  MAIN BARENG
+                <span className="mt-1 block text-[11px] font-semibold text-zinc-500">
+                  Cepat & Seru
                 </span>
               </div>
-              <div className="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-2xl bg-white border-2 border-[#2f180a]/15 shadow-sm text-center">
-                <span className="text-lg sm:text-2xl font-black text-[#f59e0b]">
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 text-center shadow-2xs">
+                <span className="block text-xl font-extrabold text-[#c83820] sm:text-2xl">
                   Steam
                 </span>
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#8c7b6d] mt-1">
-                  SEGERA HADIR
+                <span className="mt-1 block text-[11px] font-semibold text-zinc-500">
+                  Segera Hadir
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Kolom Kanan: Framed Screenshot */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative rounded-3xl p-3 bg-[#422310] border-4 border-[#542d14] shadow-2xl overflow-hidden group">
-              <div className="relative aspect-video sm:aspect-4/3 w-full rounded-2xl overflow-hidden bg-[#2f180a]">
+          <div className="lg:col-span-6">
+            <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white p-2 shadow-lg shadow-zinc-900/5">
+              <div className="relative aspect-16/10 w-full overflow-hidden rounded-2xl bg-zinc-100">
                 <Image
-                  src={screenshotUrl}
-                  alt="Gameplay BAREN di kampung Nusantara"
+                  src={resolvedImage}
+                  alt="Gameplay BAREN di halaman kampung"
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  unoptimized
                 />
-              </div>
-
-              {/* Tilted badge "Dari Nusantara!" */}
-              <div className="absolute -bottom-1 -left-1 sm:bottom-4 sm:left-4 z-10">
-                <span className="inline-block bg-[#c83820] text-white text-xs sm:text-sm font-black uppercase px-4 py-1.5 rounded-full shadow-lg border-2 border-white -rotate-3">
-                  Dari Nusantara!
-                </span>
               </div>
             </div>
           </div>

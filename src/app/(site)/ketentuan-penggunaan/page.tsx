@@ -9,63 +9,64 @@ export const metadata: Metadata = {
 
 export default function TermsOfUsePage() {
   return (
-    <div className="container-baren py-16 lg:py-24">
-      <div className="mx-auto max-w-3xl">
+    <div className="bg-white pt-24 pb-20 sm:pt-28">
+      <div className="container-baren max-w-3xl">
         <Link
           href="/"
-          className="text-sm font-semibold uppercase tracking-wider text-ember hover:underline"
+          className="text-xs font-semibold text-zinc-500 transition-colors hover:text-zinc-900"
         >
-          ← Kembali ke Beranda
+          &larr; Kembali ke Beranda
         </Link>
-        <h1 className="display-xl mt-4 text-sand">KETENTUAN PENGGUNAAN</h1>
-        <p className="mt-2 text-sm text-sand/60">
-          Terakhir diperbarui: 20 Oktober 2026
+        <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
+          Ketentuan Penggunaan
+        </h1>
+        <p className="mt-2 text-xs text-zinc-400">
+          Terakhir diperbarui: 27 November 2026
         </p>
 
-        <div className="mt-10 space-y-8 text-base leading-relaxed text-sand/80">
+        <div className="mt-8 space-y-8 text-sm leading-relaxed text-zinc-600 sm:text-base">
           <section>
-            <h2 className="font-display text-xl uppercase tracking-wide text-sand">
+            <h2 className="text-lg font-bold text-zinc-950">
               1. Penerimaan Ketentuan
             </h2>
-            <p className="mt-3">
+            <p className="mt-2">
               Dengan mengakses situs web ini dan mendaftar pada program wishlist
               BAREN, Anda menyetujui untuk terikat oleh Ketentuan Penggunaan ini
-              serta semua peraturan perundang-undangan yang berlaku.
+              serta peraturan perundang-undangan yang berlaku.
             </p>
           </section>
 
           <section>
-            <h2 className="font-display text-xl uppercase tracking-wide text-sand">
+            <h2 className="text-lg font-bold text-zinc-950">
               2. Hak Kekayaan Intelektual
             </h2>
-            <p className="mt-3">
-              Seluruh materi pada situs ini, termasuk namun tidak terbatas pada
-              nama BAREN, logo, ilustrasi seni, video, teks, dan kode program,
-              adalah hak milik eksklusif pengembang BAREN dan dilindungi oleh
-              hukum hak cipta.
+            <p className="mt-2">
+              Seluruh materi pada situs ini, termasuk nama BAREN, logo,
+              ilustrasi seni, dokumentasi acara, video, teks, dan kode program,
+              adalah hak milik pengembang BAREN dan dilindungi hukum hak cipta.
             </p>
           </section>
 
           <section>
-            <h2 className="font-display text-xl uppercase tracking-wide text-sand">
+            <h2 className="text-lg font-bold text-zinc-950">
               3. Perilaku Komunitas
             </h2>
-            <p className="mt-3">
-              Saat menggunakan fitur interaktif seperti komentar komunitas, Anda
-              dilarang mengunggah konten yang bersifat memfitnah, melecehkan,
-              mengandung ujaran kebencian, spam, atau melanggar hak pihak lain.
-              Pengelola berhak menghapus komentar yang melanggar ketentuan ini.
+            <p className="mt-2">
+              Saat menggunakan fitur komentar komunitas, Anda dilarang
+              mengunggah konten yang bersifat memfitnah, melecehkan, mengandung
+              ujaran kebencian, atau spam. Pengelola berhak menghapus komentar
+              yang melanggar ketentuan ini.
             </p>
           </section>
 
           <section>
-            <h2 className="font-display text-xl uppercase tracking-wide text-sand">
+            <h2 className="text-lg font-bold text-zinc-950">
               4. Batasan Tanggung Jawab
             </h2>
-            <p className="mt-3">
-              Layanan dan informasi pada situs ini disediakan &quot;sebagaimana
-              adanya&quot;. Game BAREN sedang dalam tahap pengembangan aktif dan
-              fitur dapat berubah sewaktu-waktu sebelum peluncuran resmi.
+            <p className="mt-2">
+              Layanan dan informasi pada situs ini disediakan sebagaimana
+              adanya. Game BAREN sedang dalam tahap pengembangan aktif dan fitur
+              dapat diperbarui sebelum peluncuran resmi.
             </p>
           </section>
         </div>

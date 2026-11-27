@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Play } from "lucide-react";
 import { ScrollRevealWrapper } from "@/components/site/scroll-reveal-wrapper";
 import type {
   HowToPlayContent,
@@ -12,37 +11,40 @@ type Props = {
   title?: string | null;
 };
 
-// Default fallback 4 langkah sesuai mockup BAREN-1
 const DEFAULT_STEPS: HowToPlayStep[] = [
   {
     id: 1,
     step: 1,
-    title: "Bentuk dua tim",
-    description: "Pilih karakter, lalu bagi menjadi tim oranye dan biru.",
+    title: "Sentuh Benteng & Ambil Status FRESH",
+    description:
+      "Mulai dari markas timmu untuk mengisi energi FRESH agar bisa mengejar dan menangkap lawan.",
     mediaUrl: "",
     sortOrder: 1,
   },
   {
     id: 2,
     step: 2,
-    title: "Jaga benteng sendiri",
-    description: "Hadang lawan agar tidak menyentuh benteng timmu.",
+    title: "Kejar & Tangkap Lawan ke Tahanan",
+    description:
+      "Kejar pemain lawan di arena, tekan tombol Tag untuk memasukkannya ke Zona Tahanan.",
     mediaUrl: "",
     sortOrder: 2,
   },
   {
     id: 3,
     step: 3,
-    title: "Sentuh untuk menangkap",
-    description: "Kejar lawan di wilayahmu dan tahan mereka di penjara.",
+    title: "Selamatkan Rekan Satu Tim",
+    description:
+      "Sentuh rantai kawan yang tertahan untuk membebaskannya lalu lari kembali ke benteng sendiri.",
     mediaUrl: "",
     sortOrder: 3,
   },
   {
     id: 4,
     step: 4,
-    title: "Rebut benteng lawan",
-    description: "Tim pertama yang menyentuh benteng lawan menang.",
+    title: "Rebut Benteng Lawan (BAREN!)",
+    description:
+      "Kuasai benteng lawan atau tahan seluruh anggota tim lawan untuk memenangkan ronde!",
     mediaUrl: "",
     sortOrder: 4,
   },
@@ -50,34 +52,30 @@ const DEFAULT_STEPS: HowToPlayStep[] = [
 
 export function HowToPlay({ content, title }: Props) {
   const resolvedTitle = title?.trim() || "Mudah dipelajari dalam semenit";
-
   const stepsToDisplay =
     content.steps.length > 0 ? content.steps : DEFAULT_STEPS;
 
   return (
     <ScrollRevealWrapper>
-      <section
-        id="cara-main"
-        className="relative w-full py-16 sm:py-24 bg-[#faf6ee] text-[#2f180a] overflow-hidden"
-      >
+      <section id="cara-main" className="w-full bg-white py-16 sm:py-24">
         <div className="container-baren">
-          <div className="flex flex-col items-center text-center gap-3 mb-12 sm:mb-16">
-            <span className="pill-eyebrow">CARA MAIN</span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#2f180a]">
+          <div className="mb-12 flex flex-col items-center gap-3 text-center sm:mb-14">
+            <span className="pill-eyebrow">CARA BERMAIN</span>
+            <h2 className="text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
               {resolvedTitle}
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            {/* Kolom Kiri: Video Demo Gameplay */}
-            <div className="lg:col-span-6 relative">
-              <div className="relative rounded-3xl p-3 bg-[#422310] border-4 border-[#542d14] shadow-2xl overflow-hidden group">
-                <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-[#2f180a]">
+          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
+            {/* Showcase Video / Visual Mekanisme */}
+            <div className="lg:col-span-6">
+              <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-50 p-2 shadow-lg shadow-zinc-900/5">
+                <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-zinc-900">
                   {content.videoUrl ? (
                     <video
                       className="h-full w-full object-cover"
                       controls
-                      poster="/media/baren-village-keyart.jpg"
+                      poster="/art/feature-2.jpg"
                     >
                       <source
                         src={
@@ -86,50 +84,55 @@ export function HowToPlay({ content, title }: Props) {
                         }
                         type="video/mp4"
                       />
-                      Browser Anda tidak mendukung video demo.
+                      Peramban Anda tidak mendukung pemutaran video.
                     </video>
                   ) : (
-                    <div className="relative w-full h-full flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-[#2f180a] to-[#1f1007]">
-                      {/* Thumbnail Latar */}
-                      <Image
-                        src="/media/baren-village-keyart.jpg"
-                        alt="Demo Gameplay BAREN"
-                        fill
-                        className="object-cover opacity-60"
-                        unoptimized
-                      />
-                      <div className="absolute inset-0 bg-[#2f180a]/40 backdrop-blur-[1px]" />
-                      <div className="relative z-10 flex flex-col items-center">
-                        <div className="w-16 h-16 rounded-full bg-[#c83820] text-white flex items-center justify-center shadow-lg mb-3 hover:scale-110 transition-transform">
-                          <Play className="w-8 h-8 fill-white ml-1" />
-                        </div>
-                        <span className="text-xs font-black uppercase tracking-wider text-white bg-[#2f180a]/80 px-4 py-1 rounded-full border border-white/20">
-                          VIDEO DEMO GAMEPLAY
-                        </span>
-                      </div>
-                    </div>
+                    <Image
+                      src="/art/feature-2.jpg"
+                      alt="Mekanisme Tag dan Zona Tahanan BAREN"
+                      fill
+                      sizes="(min-width: 1024px) 50vw, 100vw"
+                      className="object-cover"
+                      unoptimized
+                    />
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Kolom Kanan: 4 Langkah Bernomor */}
-            <div className="lg:col-span-6 flex flex-col gap-3.5 sm:gap-4">
+            {/* Daftar Langkah */}
+            <div className="flex flex-col gap-3.5 lg:col-span-6">
               {stepsToDisplay.map((step, idx) => (
                 <div
                   key={step.id || idx}
-                  className="flex items-start gap-4 p-4 sm:p-5 rounded-2xl bg-white border-2 border-[#2f180a]/12 shadow-sm hover:shadow-md transition-shadow"
+                  className="flex items-start gap-4 rounded-2xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-300 sm:p-5"
                 >
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#c83820] text-white font-black text-lg flex items-center justify-center shrink-0 shadow-md">
-                    {step.step || idx + 1}
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-900 text-sm font-bold text-white">
+                    {String(step.step || idx + 1).padStart(2, "0")}
                   </div>
-                  <div className="flex flex-col">
-                    <h3 className="text-base sm:text-lg font-black text-[#2f180a] tracking-tight">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-base font-bold tracking-tight text-zinc-950">
                       {step.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-[#542d14] leading-relaxed mt-0.5">
-                      {step.description}
-                    </p>
+                    {step.description && (
+                      <p className="mt-1 text-sm leading-relaxed text-zinc-600">
+                        {step.description}
+                      </p>
+                    )}
+                    {step.mediaUrl && (
+                      <div className="relative mt-3 aspect-video w-full max-w-xs overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
+                        <Image
+                          src={
+                            resolvePublicAssetUrl(step.mediaUrl) ||
+                            step.mediaUrl
+                          }
+                          alt={step.title}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

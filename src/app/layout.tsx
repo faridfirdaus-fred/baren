@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   description:
     "Party game lokal 2 vs 2 terinspirasi permainan tradisional Baren atau Bebentengan. Lari, sembunyi, dan rebut benteng lawan bersama sahabatmu!",
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL || "https://baren.example.com",
+    process.env.NEXT_PUBLIC_BASE_URL || "https://baren.fdiraf77.workers.dev",
   ),
   openGraph: {
     type: "website",

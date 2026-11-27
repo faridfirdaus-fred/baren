@@ -4,7 +4,6 @@ import { legalLinks, nav, site } from "@/content/baren";
 import { externalLinkProps } from "@/lib/external-link";
 import type { SocialItemResolved } from "@/lib/links-content";
 import { BrandLogo } from "./brand-logo";
-import { BatikDivider } from "./batik-divider";
 import {
   IconDiscord,
   IconGlobe,
@@ -40,72 +39,71 @@ export function SiteFooter({
   const listSocial = socialLinks && socialLinks.length > 0 ? socialLinks : [];
 
   return (
-    <footer className="relative overflow-x-clip bg-[#2f180a] text-[#faf6ee]">
-      {/* Pita Ornamen Batik Pemisah Atas */}
-      <BatikDivider />
-
-      <div className="container-baren py-16">
+    <footer
+      id="kontak"
+      className="border-t border-zinc-200 bg-zinc-50/70 text-zinc-700"
+    >
+      <div className="container-baren py-14">
         <div className="grid gap-10 md:grid-cols-3">
           <div className="min-w-0">
-            <div className="flex items-center gap-3">
-              <BrandLogo src={logoSrc} size={42} />
-              <span className="font-black text-2xl uppercase tracking-wider text-[#faf6ee]">
+            <div className="flex items-center gap-2.5">
+              <BrandLogo src={logoSrc} size={34} className="rounded-lg" />
+              <span className="text-xl font-extrabold tracking-tight text-zinc-950">
                 {brandName}
               </span>
             </div>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-[#faf6ee]/75">
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-zinc-500">
               {brandDescription}
             </p>
-            {/* Social Icons */}
-            <ul className="mt-6 flex flex-wrap items-center gap-3">
-              {listSocial.map((s) => {
-                const Icon = icons[s.icon] ?? IconGlobe;
-                return (
-                  <li key={s.label}>
-                    <a
-                      href={s.url}
-                      {...externalLinkProps(s.url)}
-                      aria-label={s.label}
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-[#c83820] text-white transition-transform hover:scale-110 hover:bg-[#a72d18] shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b]"
-                    >
-                      <Icon className="h-4 w-4" aria-hidden="true" />
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
+            {listSocial.length > 0 && (
+              <ul className="mt-5 flex flex-wrap items-center gap-2.5">
+                {listSocial.map((s) => {
+                  const Icon = icons[s.icon] ?? IconGlobe;
+                  return (
+                    <li key={s.label}>
+                      <a
+                        href={s.url}
+                        {...externalLinkProps(s.url)}
+                        aria-label={s.label}
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-600 transition-colors hover:border-zinc-300 hover:bg-zinc-900 hover:text-white"
+                      >
+                        <Icon className="h-4 w-4" aria-hidden="true" />
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
 
           <nav aria-label="Navigasi bawah" className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-wider text-[#f59e0b] mb-4">
+            <p className="mb-3.5 text-xs font-semibold uppercase tracking-wider text-zinc-400">
               Jelajahi
             </p>
-            <ul className="space-y-2.5">
-              {nav
-                .filter((n) => n.href.startsWith("#"))
-                .map((n) => (
-                  <li key={n.label}>
-                    <a
-                      href={n.href}
-                      className="text-sm font-semibold text-[#faf6ee]/80 transition-colors hover:text-[#f59e0b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b]"
-                    >
-                      {n.label}
-                    </a>
-                  </li>
-                ))}
+            <ul className="grid grid-cols-2 gap-2">
+              {nav.map((n) => (
+                <li key={n.label}>
+                  <Link
+                    href={n.href}
+                    className="text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-950"
+                  >
+                    {n.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </nav>
 
           <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-wider text-[#f59e0b] mb-4">
-              Kontak
+            <p className="mb-3.5 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+              Kontak Resmi
             </p>
             <a
               href={`mailto:${contactEmail}`}
-              className="inline-flex max-w-full items-center gap-2 break-words text-sm font-medium text-[#faf6ee]/80 transition-colors hover:text-[#f59e0b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b]"
+              className="inline-flex max-w-full items-center gap-2 break-words text-sm font-medium text-zinc-700 transition-colors hover:text-[#c83820]"
             >
               <IconMail
-                className="h-4 w-4 shrink-0 text-[#f59e0b]"
+                className="h-4 w-4 shrink-0 text-zinc-400"
                 aria-hidden="true"
               />
               {contactEmail}
@@ -113,19 +111,16 @@ export function SiteFooter({
           </div>
         </div>
 
-        <div className="mt-14 border-t border-[#422310] pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-[#faf6ee]/60">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-zinc-200/80 pt-6 text-xs text-zinc-500 sm:flex-row">
           <p>
             {"©"} 2026 {brandName}. Seluruh hak cipta dilindungi.
-          </p>
-          <p className="text-[#f59e0b] font-bold">
-            Dibuat dengan semangat Nusantara 🇮🇩
           </p>
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
             {legalLinks.map((l) => (
               <li key={l.label}>
                 <Link
                   href={l.href}
-                  className="hover:text-[#f59e0b] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b]"
+                  className="transition-colors hover:text-zinc-900"
                 >
                   {l.label}
                 </Link>

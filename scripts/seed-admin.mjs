@@ -20,61 +20,40 @@ const esc = (s) => s.replace(/'/g, "''");
 
 const settingsValues = [
   ["nama_game", "BAREN"],
-  ["tagline", "Rebut benteng. Kuasai arena."],
+  ["tagline", "Lari, sembunyi, dan rebut benteng lawan bersama sahabatmu!"],
   ["email_kontak", "halo@baren.game"],
-  ["features_eyebrow", "KEUNGGULAN"],
-  ["features_title", "FITUR UTAMA"],
-  [
-    "features_empty_message",
-    "Fitur belum tersedia. Tambahkan melalui panel admin.",
-  ],
-  ["how_to_play_title", "CARA BERMAIN"],
-  ["gallery_eyebrow", "MEDIA RESMI"],
-  ["gallery_title", "GALERI & AKSI"],
+  ["features_eyebrow", "FITUR GAME"],
+  ["features_title", "Kenapa BAREN seru dimainkan?"],
+  ["features_empty_message", "Fitur permainan sedang disiapkan."],
+  ["how_to_play_title", "Mudah dipelajari dalam semenit"],
+  ["gallery_eyebrow", "GALERI"],
+  ["gallery_title", "Intip serunya kampung BAREN"],
   [
     "gallery_description",
-    "Tangkapan layar, ilustrasi konsep, dan video cuplikan arena pertempuran BAREN langsung dari studio pengembangan.",
+    "Tangkapan layar langsung dari arena permainan dan keseruan acara komunitas BAREN.",
   ],
   ["gallery_empty_title", "Segera Hadir"],
-  [
-    "gallery_empty_message",
-    "Media resmi BAREN sedang disiapkan. Kunjungi kembali saat pembaruan dibuka.",
-  ],
-  ["news_title", "ARTIKEL TERBARU"],
-  ["news_cta_label", "LIHAT SEMUA BERITA"],
-  ["faq_eyebrow", "PERTANYAAN UMUM"],
-  ["faq_title", "SEMUA YANG PERLU KAMU KETAHUI"],
-  ["comments_title", "KOMENTAR KOMUNITAS"],
-  [
-    "comments_login_prompt",
-    "Masuk dengan akun Google untuk meninggalkan komentar dan bergabung dalam diskusi komunitas BAREN.",
-  ],
+  ["gallery_empty_message", "Dokumentasi visual BAREN sedang disiapkan."],
+  ["news_title", "Kabar & Event BAREN"],
+  ["news_cta_label", "Semua Berita"],
+  ["faq_eyebrow", "FAQ"],
+  ["faq_title", "Pertanyaan yang sering muncul"],
+  ["comments_title", "Bagaimana pendapatmu?"],
+  ["comments_login_prompt", "Masuk dengan Google untuk meninggalkan komentar"],
   [
     "comments_empty_message",
     "Belum ada komentar. Jadilah yang pertama memberikan masukan!",
   ],
-  ["comments_submit_label", "KIRIM KOMENTAR"],
+  ["comments_submit_label", "Kirim"],
   ["comments_submit_error", "Gagal mengirim komentar. Silakan coba lagi."],
-  ["contact_eyebrow", "HUBUNGI KAMI"],
-  ["contact_title", "TETAP TERHUBUNG"],
-  [
-    "contact_description",
-    "Punya pertanyaan seputar game, kemitraan, atau ingin bergabung dalam komunitas? Hubungi kami langsung melalui email atau saluran media sosial resmi.",
-  ],
-  ["contact_email_label", "EMAIL RESMI"],
-  ["contact_social_title", "IKUTI MEDIA SOSIAL"],
-  [
-    "contact_social_empty_message",
-    "Saluran media sosial resmi akan segera diumumkan.",
-  ],
 ]
   .map(([k, v]) => `('${esc(k)}', '${esc(v)}')`)
   .join(",");
 
 const sql = `INSERT INTO site_settings ("key", value) VALUES ${settingsValues} ON CONFLICT ("key") DO NOTHING;
 INSERT INTO users (id, name, email, role, password_hash) VALUES (gen_random_uuid(), '${esc(name)}', '${esc(email)}', 'admin', '${esc(hash)}') ON CONFLICT (email) DO UPDATE SET name=EXCLUDED.name, role='admin', password_hash=EXCLUDED.password_hash;
-INSERT INTO hero (title, subtitle, background_url, video_url, primary_cta_label, primary_cta_url, is_published)
-SELECT 'Rebut benteng. Kuasai arena.', 'Game aksi taktis multipemain berlatar benteng nusantara.', '/media/hero-poster.jpg', '/media/hero-loop.mp4', 'GABUNG WISHLIST', '#daftar', 1
+INSERT INTO hero (title, subtitle, background_url, video_url, primary_cta_label, primary_cta_url, secondary_cta_label, secondary_cta_url, is_published)
+SELECT 'Lari, sembunyi, dan rebut benteng lawan!', 'Party game lokal 2 vs 2 yang mengadaptasi keseruan permainan tradisional Baren/Bebentengan ke satu layar bersama.', '/media/hero-poster.jpg', '/media/hero-loop.mp4', 'Gabung Wishlist', '#daftar', 'Cara Bermain', '#cara-main', 1
 WHERE NOT EXISTS (SELECT 1 FROM hero);`;
 
 try {

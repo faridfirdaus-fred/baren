@@ -11,52 +11,82 @@ export type GallerySectionProps = {
   items?: GalleryItem[];
 };
 
+const DEFAULT_GALLERY_ITEMS: GalleryItem[] = [
+  {
+    id: 9101,
+    kind: "screenshot",
+    title: "Duel 2 vs 2 di Lapang Kampung",
+    fileUrl: "/art/feature-1.jpg",
+    sortOrder: 0,
+  },
+  {
+    id: 9102,
+    kind: "screenshot",
+    title: "Aksi Tag & Zona Tahanan",
+    fileUrl: "/art/about-art.jpg",
+    sortOrder: 1,
+  },
+  {
+    id: 9103,
+    kind: "artwork",
+    title: "Suasana Booth BAREN di Event",
+    fileUrl: "/art/event-art.jpg",
+    sortOrder: 2,
+  },
+  {
+    id: 9104,
+    kind: "screenshot",
+    title: "Arena Pasar Ramai",
+    fileUrl: "/art/feature-3.jpg",
+    sortOrder: 3,
+  },
+  {
+    id: 9105,
+    kind: "artwork",
+    title: "Keseruan Mabar 4 Pemain",
+    fileUrl: "/art/event-players.jpg",
+    sortOrder: 4,
+  },
+  {
+    id: 9106,
+    kind: "screenshot",
+    title: "Selebrasi Perebutan Benteng",
+    fileUrl: "/art/event-match.jpg",
+    sortOrder: 5,
+  },
+];
+
 export function GallerySection({
   eyebrow,
   title,
   description,
-  emptyTitle,
-  emptyMessage,
   items = [],
 }: GallerySectionProps) {
   const resolvedTitle = title?.trim() || "Intip serunya kampung BAREN";
   const resolvedEyebrow = eyebrow?.trim() || "GALERI";
   const resolvedDesc =
-    description?.trim() || "Tangkapan layar langsung dari gameplay.";
-  const kosong = items.length === 0;
+    description?.trim() ||
+    "Tangkapan layar langsung dari arena permainan dan dokumentasi acara komunitas BAREN.";
+  const displayItems = items.length > 0 ? items : DEFAULT_GALLERY_ITEMS;
 
   return (
     <ScrollRevealWrapper>
       <section
         id="galeri"
-        className="relative w-full py-16 sm:py-24 bg-[#2f180a] text-[#faf6ee] overflow-hidden"
+        className="w-full border-y border-zinc-100 bg-zinc-50/70 py-16 sm:py-24"
       >
         <div className="container-baren">
-          <div className="flex flex-col items-center text-center gap-3 mb-12 sm:mb-16">
+          <div className="mb-10 flex flex-col items-center gap-3 text-center sm:mb-12">
             <span className="pill-eyebrow">{resolvedEyebrow}</span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#faf6ee]">
+            <h2 className="text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
               {resolvedTitle}
             </h2>
-            <p className="text-base sm:text-lg text-[#faf6ee]/80 font-medium max-w-xl">
+            <p className="max-w-xl text-sm text-zinc-600 sm:text-base">
               {resolvedDesc}
             </p>
           </div>
 
-          <div>
-            {kosong ? (
-              <div className="rounded-3xl border-2 border-[#542d14] bg-[#1f1007]/60 p-12 text-center max-w-xl mx-auto shadow-xl">
-                <p className="text-2xl font-black uppercase tracking-wide text-[#f59e0b]">
-                  {emptyTitle?.trim() || "Segera Hadir"}
-                </p>
-                <p className="mt-2 text-sm text-[#faf6ee]/70">
-                  {emptyMessage?.trim() ||
-                    "Media resmi BAREN sedang disiapkan. Kunjungi kembali saat pembaruan dibuka."}
-                </p>
-              </div>
-            ) : (
-              <GalleryGrid items={items} />
-            )}
-          </div>
+          <GalleryGrid items={displayItems} />
         </div>
       </section>
     </ScrollRevealWrapper>

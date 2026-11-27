@@ -6,13 +6,9 @@ import { HeroCarousel } from "@/components/site/hero-carousel";
 import { joinWishlistAction } from "@/components/site/actions";
 import { getHeroContent } from "@/lib/hero-content";
 import { getHeroBanners } from "@/lib/hero-banners";
+import { HERO_VIDEO_FALLBACK } from "@/lib/hero-media";
 import { resolvePublicAssetUrl } from "@/lib/assets-url";
 
-// E6-1 & E14-1: hero dinamis dari tabel `hero` (video/poster/judul/CTA).
-// Tanpa fallback runtime: jika baris hero tidak terbit atau tidak siap render,
-// seluruh seksi disembunyikan (return null).
-// E6-2: banner dari tabel `hero_banners` (0 = hilang, 1 = statis,
-// >1 = carousel di <HeroCarousel />).
 export async function Hero() {
   const [content, banners, session] = await Promise.all([
     getHeroContent(),
@@ -34,91 +30,119 @@ export async function Hero() {
     content.secondaryCtaUrl &&
     content.secondaryCtaUrl !== "#"
       ? { label: content.secondaryCtaLabel, href: content.secondaryCtaUrl }
-      : null;
+      : { label: "Cara Bermain", href: "#cara-main" };
+
+  const posterSrc =
+    resolvePublicAssetUrl(content.poster) ||
+    content.poster ||
+    "/media/hero-poster.jpg";
+  const hasCustomVideo =
+    Boolean(content.videoSrc) && content.videoSrc !== HERO_VIDEO_FALLBACK;
 
   return (
-    <section className="relative isolate flex min-h-svh items-center justify-center overflow-hidden bg-ink pt-20">
-      <video
-        className="absolute inset-0 -z-10 h-full w-full object-cover"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        poster={
-          resolvePublicAssetUrl(content.poster) ||
-          content.poster ||
-          "/media/baren-village-keyart.jpg"
-        }
+    <section className="pattern-grid relative isolate overflow-hidden bg-white pt-24 pb-16 sm:pt-28 sm:pb-24">
+      <div
         aria-hidden="true"
-      >
-        <source
-          src={resolvePublicAssetUrl(content.videoSrc) || content.videoSrc}
-          type="video/mp4"
-        />
-      </video>
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#2f180a]/90 via-[#2f180a]/65 to-[#2f180a]/95" />
-      <div className="container-baren flex flex-col items-center py-14 text-center lg:py-20">
-        {/* Eyebrow Badge Pill */}
-        <div className="mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1f1007]/80 backdrop-blur-md border border-[#f59e0b]/40 text-[#f59e0b] text-xs font-bold uppercase tracking-wider shadow-md">
-          <span className="text-[#c83820]">●</span> PARTY GAME LOKAL 2 VS 2 •
-          SEGERA DI STEAM
-        </div>
+        className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-96 w-2xl -translate-x-1/2 rounded-full bg-[#c83820]/6 blur-3xl"
+      />
 
-        {/* 3D BAREN Wordmark */}
-        <Image
-          src="/brand/baren-wordmark.png"
-          width={533}
-          height={100}
-          priority
-          alt="BAREN"
-          className="h-auto w-[clamp(180px,26vw,340px)] drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)]"
-        />
+      <div className="container-baren">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
+          {/* Kolom Kiri: Copy & CTA */}
+          <div className="flex flex-col items-start text-left lg:col-span-6">
+            <span className="pill-eyebrow mb-5">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#c83820]" />
+              Party Game Lokal 2 vs 2 • Segera di Steam
+            </span>
 
-        <h1 className="mt-6 max-w-3xl text-xl sm:text-2xl font-black uppercase tracking-wide text-[#faf6ee] drop-shadow-sm">
-          {content.title}
-        </h1>
-        {content.subtitle ? (
-          <p className="mt-3 max-w-2xl text-base sm:text-lg leading-relaxed text-[#faf6ee]/90 font-medium">
-            {content.subtitle}
-          </p>
-        ) : (
-          <p className="mt-3 max-w-2xl text-base sm:text-lg leading-relaxed text-[#faf6ee]/90 font-medium">
-            Lari, sembunyi, dan rebut benteng lawan bersama sahabatmu!
-          </p>
-        )}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          {isWishlistCta ? (
-            isLoggedIn ? (
-              <CtaButton href="#unduh" variant="ember">
-                SUDAH TERDAFTAR
-              </CtaButton>
-            ) : (
-              <form action={joinWishlistAction} className="inline-flex">
-                <CtaButton type="submit" variant="ember">
+            <h1 className="text-4xl leading-[1.08] font-extrabold tracking-tight text-zinc-950 sm:text-5xl lg:text-[3.35rem]">
+              {content.title}
+            </h1>
+
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-zinc-600 sm:text-lg">
+              {content.subtitle ||
+                "Lari, sembunyi, dan rebut benteng lawan bersama sahabatmu dalam satu layar penuh tawa."}
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center gap-3.5">
+              {isWishlistCta ? (
+                isLoggedIn ? (
+                  <CtaButton href="#unduh" variant="ink">
+                    ✓ Sudah Terdaftar di Wishlist
+                  </CtaButton>
+                ) : (
+                  <form action={joinWishlistAction} className="inline-flex">
+                    <CtaButton type="submit" variant="ember">
+                      {content.primaryCtaLabel}
+                    </CtaButton>
+                  </form>
+                )
+              ) : (
+                <CtaButton href={content.primaryCtaUrl} variant="ember">
                   {content.primaryCtaLabel}
                 </CtaButton>
-              </form>
-            )
-          ) : (
-            <CtaButton href={content.primaryCtaUrl} variant="ember">
-              {content.primaryCtaLabel}
-            </CtaButton>
-          )}
-          {secondary ? (
-            <CtaButton href={secondary.href} variant="ghost">
-              {secondary.label}
-            </CtaButton>
-          ) : null}
+              )}
+              {secondary ? (
+                <CtaButton href={secondary.href} variant="ghost">
+                  {secondary.label}
+                </CtaButton>
+              ) : null}
+            </div>
+
+            <div
+              id="daftar"
+              className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-zinc-200/80 pt-5 text-xs font-medium text-zinc-500"
+            >
+              <span>4 Pemain Sekaligus</span>
+              <span aria-hidden="true" className="text-zinc-300">
+                •
+              </span>
+              <span>Layar Bersama (Couch Co-op)</span>
+              <span aria-hidden="true" className="text-zinc-300">
+                •
+              </span>
+              <span>PC via Steam (Segera Hadir)</span>
+            </div>
+          </div>
+
+          {/* Kolom Kanan: Showcase Visual Game BAREN */}
+          <div className="lg:col-span-6">
+            <div className="relative overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-100 p-2 shadow-xl shadow-zinc-900/5">
+              <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-zinc-900">
+                {hasCustomVideo ? (
+                  <video
+                    className="h-full w-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    poster={posterSrc}
+                  >
+                    <source
+                      src={
+                        resolvePublicAssetUrl(content.videoSrc) ||
+                        content.videoSrc
+                      }
+                      type="video/mp4"
+                    />
+                  </video>
+                ) : (
+                  <Image
+                    src={posterSrc}
+                    alt="Cuplikan permainan BAREN 2 vs 2"
+                    fill
+                    priority
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover"
+                    unoptimized
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-        <div id="daftar" className="mt-14 w-full border-t border-sand/15 pt-6">
-          <p className="eyebrow text-sand/50">Tersedia di</p>
-          <ul className="mt-3 flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
-            <li className="font-display text-lg uppercase tracking-wide text-sand/70">
-              PC <span className="text-ember">(Segera Hadir)</span>
-            </li>
-          </ul>
-        </div>
+
         <HeroCarousel banners={banners} />
       </div>
     </section>

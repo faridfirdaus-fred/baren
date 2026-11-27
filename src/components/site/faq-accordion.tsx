@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, HelpCircle } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useScrollReveal } from "@/lib/use-scroll-reveal";
 
 export type FaqItem = {
@@ -13,29 +13,29 @@ export type FaqAccordionProps = {
   eyebrow?: string | null;
   title?: string | null;
   items?: FaqItem[];
+  hideHeader?: boolean;
 };
 
-// Fallback FAQ items sesuai mockup BAREN-1
 const DEFAULT_FAQ: FaqItem[] = [
   {
     question: "Berapa pemain yang bisa bermain sekaligus?",
     answer:
-      "BAREN dimainkan 4 orang dalam dua tim, masing-masing berisi dua pemain, pada satu perangkat yang sama (shared screen co-op).",
+      "BAREN dimainkan 4 orang dalam dua tim (2 vs 2) pada satu perangkat yang sama (shared screen co-op).",
   },
   {
     question: "Kapan BAREN dirilis?",
     answer:
-      "BAREN dijadwalkan hadir segera di Steam! Tambahkan ke Wishlist sekarang untuk menerima kabar rilis dan akses uji coba pertama.",
+      "BAREN dijadwalkan hadir segera di Steam. Gabung ke Wishlist sekarang untuk menerima kabar rilis dan sesi uji main berikutnya.",
   },
   {
     question: "Di platform apa BAREN tersedia?",
     answer:
-      "Pada rilis perdana, BAREN hadir di PC melalui Steam dengan dukungan gamepad/controller serta keyboard lokal co-op.",
+      "Pada rilis perdana, BAREN hadir di PC melalui Steam dengan dukungan penuh controller maupun keyboard lokal.",
   },
   {
-    question: "Apakah BAREN bisa dimainkan online?",
+    question: "Apakah BAREN bisa dimainkan jarak jauh bersama teman?",
     answer:
-      "Fokus utama kami saat ini adalah pesta main bersama satu layar (local multiplayer), namun kamu juga bisa menggunakan Steam Remote Play Together untuk main bareng teman secara online!",
+      "Fokus utama kami adalah keseruan main satu layar bersama, dan di Steam kamu juga dapat memanfaatkan fitur Steam Remote Play Together.",
   },
 ];
 
@@ -43,6 +43,7 @@ export function FaqAccordion({
   eyebrow,
   title,
   items = [],
+  hideHeader = false,
 }: FaqAccordionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const ref = useScrollReveal<HTMLElement>();
@@ -51,72 +52,78 @@ export function FaqAccordion({
   const resolvedEyebrow = eyebrow?.trim() || "FAQ";
   const displayItems = items.length > 0 ? items : DEFAULT_FAQ;
 
+  const listContent = (
+    <div className="mx-auto flex max-w-3xl flex-col gap-3">
+      {displayItems.map((f, i) => {
+        const open = openIndex === i;
+        return (
+          <div
+            key={f.question}
+            className="overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-colors hover:border-zinc-300"
+          >
+            <button
+              type="button"
+              onClick={() => setOpenIndex(open ? null : i)}
+              aria-expanded={open}
+              aria-controls={`faq-panel-${i}`}
+              id={`faq-trigger-${i}`}
+              className="flex w-full cursor-pointer items-center justify-between gap-4 p-5 text-left transition-colors hover:bg-zinc-50/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            >
+              <span className="text-sm font-semibold text-zinc-950 sm:text-base">
+                {f.question}
+              </span>
+              <span
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-zinc-200 transition-transform duration-200 ${
+                  open
+                    ? "rotate-180 border-zinc-900 bg-zinc-900 text-white"
+                    : "bg-white text-zinc-600"
+                }`}
+              >
+                <ChevronDown className="h-4 w-4" />
+              </span>
+            </button>
+
+            <div
+              id={`faq-panel-${i}`}
+              role="region"
+              aria-labelledby={`faq-trigger-${i}`}
+              className={`grid transition-all duration-200 ${
+                open
+                  ? "grid-rows-[1fr] opacity-100"
+                  : "grid-rows-[0fr] opacity-0"
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div className="border-t border-zinc-100 px-5 pt-3 pb-5 text-sm leading-relaxed text-zinc-600">
+                  {f.answer}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  if (hideHeader) {
+    return listContent;
+  }
+
   return (
     <section
       ref={ref}
       id="faq"
-      className="scroll-reveal relative w-full py-16 sm:py-24 bg-[#faf6ee] text-[#2f180a] overflow-hidden"
+      className="scroll-reveal w-full border-t border-zinc-100 bg-zinc-50/70 py-16 sm:py-24"
     >
       <div className="container-baren">
-        <div className="flex flex-col items-center text-center gap-3 mb-12 sm:mb-16">
-          <span className="pill-eyebrow">
-            <HelpCircle className="w-3.5 h-3.5" /> {resolvedEyebrow}
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#2f180a]">
+        <div className="mb-10 flex flex-col items-center gap-3 text-center sm:mb-12">
+          <span className="pill-eyebrow">{resolvedEyebrow}</span>
+          <h2 className="text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
             {resolvedTitle}
           </h2>
         </div>
 
-        <div className="max-w-3xl mx-auto flex flex-col gap-3.5 sm:gap-4">
-          {displayItems.map((f, i) => {
-            const open = openIndex === i;
-            return (
-              <div
-                key={f.question}
-                className="rounded-2xl bg-white border-2 border-[#2f180a]/12 shadow-sm overflow-hidden transition-all duration-200"
-              >
-                <button
-                  type="button"
-                  onClick={() => setOpenIndex(open ? null : i)}
-                  aria-expanded={open}
-                  aria-controls={`faq-panel-${i}`}
-                  id={`faq-trigger-${i}`}
-                  className="flex w-full items-center justify-between gap-4 p-5 sm:p-6 text-left transition-colors hover:bg-[#faf6ee]/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b]"
-                >
-                  <span className="text-base sm:text-lg font-black text-[#2f180a] tracking-tight">
-                    {f.question}
-                  </span>
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ${
-                      open
-                        ? "bg-[#c83820] text-white rotate-180"
-                        : "bg-[#faf6ee] text-[#2f180a] border border-[#2f180a]/15"
-                    }`}
-                  >
-                    <ChevronDown className="w-4 h-4 stroke-[2.5]" />
-                  </div>
-                </button>
-
-                <div
-                  id={`faq-panel-${i}`}
-                  role="region"
-                  aria-labelledby={`faq-trigger-${i}`}
-                  className={`grid transition-all duration-300 ${
-                    open
-                      ? "grid-rows-[1fr] opacity-100"
-                      : "grid-rows-[0fr] opacity-0"
-                  }`}
-                >
-                  <div className="overflow-hidden">
-                    <div className="px-5 sm:px-6 pb-6 pt-1 text-sm sm:text-base leading-relaxed text-[#542d14] border-t border-[#2f180a]/8">
-                      {f.answer}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        {listContent}
       </div>
     </section>
   );

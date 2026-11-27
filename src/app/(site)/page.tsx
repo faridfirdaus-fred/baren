@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import { AboutGame } from "@/components/site/about-game";
-import { BatikDivider } from "@/components/site/batik-divider";
 import { CommentsSection } from "@/components/site/comments-section";
 import { DownloadSection } from "@/components/site/download-section";
 import { FaqAccordion } from "@/components/site/faq-accordion";
@@ -10,6 +9,8 @@ import { Hero } from "@/components/site/hero";
 import { HowToPlay } from "@/components/site/how-to-play";
 import { LandingCards } from "@/components/site/landing-cards";
 import { LatestNews } from "@/components/site/latest-news";
+import { getDb } from "@/db";
+import { about as aboutTable } from "@/db/schema";
 import { listComments } from "@/lib/api/comments";
 import { getFaqItems } from "@/lib/faq-content";
 import { getFeatures } from "@/lib/features-content";
@@ -30,9 +31,20 @@ import { getLandingSettings } from "@/lib/settings-content";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+async function getAboutRow() {
+  try {
+    const db = getDb();
+    const rows = await db.select().from(aboutTable).limit(1);
+    return rows[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function SiteHomePage() {
   const [
     settings,
+    aboutRow,
     faqs,
     news,
     cards,
@@ -43,6 +55,7 @@ export default async function SiteHomePage() {
     session,
   ] = await Promise.all([
     getLandingSettings(),
+    getAboutRow(),
     getFaqItems(),
     getLatestNews(),
     getLandingCards(),
@@ -69,20 +82,15 @@ export default async function SiteHomePage() {
   const commentsCopy = resolveCommentsCopy(settings);
 
   return (
-    <div className="flex flex-col w-full bg-[#faf6ee] text-[#2f180a]">
-      {/* 1. Hero Section */}
+    <div className="flex w-full flex-col bg-white text-zinc-900">
       <Hero />
 
-      {/* 2. Pembatas Batik */}
-      <BatikDivider />
+      <AboutGame
+        title={aboutRow?.title}
+        description={aboutRow?.body}
+        screenshotUrl={aboutRow?.imageUrl || undefined}
+      />
 
-      {/* 3. Tentang Game */}
-      <AboutGame />
-
-      {/* 4. Pembatas Batik */}
-      <BatikDivider />
-
-      {/* 5. Fitur Game */}
       <GameFeatures
         eyebrow={featuresCopy.eyebrow}
         title={featuresCopy.title}
@@ -90,21 +98,10 @@ export default async function SiteHomePage() {
         features={features}
       />
 
-      {/* 6. Karakter - Pilih Jagoanmu (Interactive Draggable Deck) */}
       <LandingCards cards={cards ?? []} />
 
-      {/* 7. Pembatas Batik */}
-      <BatikDivider />
+      <HowToPlay content={howToPlay} title={howToPlayCopy.title} />
 
-      {/* 8. Cara Main */}
-      {howToPlay && (
-        <HowToPlay content={howToPlay} title={howToPlayCopy.title} />
-      )}
-
-      {/* 9. Pembatas Batik */}
-      <BatikDivider />
-
-      {/* 10. Galeri */}
       <GallerySection
         eyebrow={galleryCopy.eyebrow}
         title={galleryCopy.title}
@@ -114,29 +111,20 @@ export default async function SiteHomePage() {
         items={galleryItems ?? []}
       />
 
-      {/* 11. Pembatas Batik */}
-      <BatikDivider />
+      <LatestNews
+        items={news}
+        title={newsCopy.title}
+        ctaLabel={newsCopy.ctaLabel}
+      />
 
-      {/* 12. Kabar Terbaru (News) */}
-      {news && (
-        <LatestNews
-          items={news}
-          title={newsCopy.title}
-          ctaLabel={newsCopy.ctaLabel}
-        />
-      )}
-
-      {/* 13. Banner Wishlist Steam */}
       <DownloadSection isLoggedIn={Boolean(session?.user?.email)} />
 
-      {/* 14. FAQ Accordion */}
       <FaqAccordion
         eyebrow={faqCopy.eyebrow}
         title={faqCopy.title}
         items={faqs ?? []}
       />
 
-      {/* 15. Komentar Komunitas */}
       <CommentsSection
         initialComments={comments}
         userSession={userSession}

@@ -12,109 +12,80 @@ type Props = {
   ctaLabel?: string | null;
 };
 
-// Kategori warna tag sesuai mockup
-const CATEGORY_TAGS = [
-  { label: "PENGUMUMAN", bg: "bg-[#0284c7] text-white" },
-  { label: "EVENT", bg: "bg-[#c83820] text-white" },
-  { label: "PENGEMBANGAN", bg: "bg-[#d97706] text-white" },
-];
-
 export function LatestNews({ items, title, ctaLabel }: Props) {
   if (items.length === 0) return null;
-  const resolvedTitle = title?.trim() || "Berita dari BAREN";
+  const resolvedTitle = title?.trim() || "Kabar & Event BAREN";
+  const resolvedCta = ctaLabel?.trim() || "Semua Berita";
 
   return (
     <ScrollRevealWrapper>
-      <section
-        id="berita"
-        className="relative w-full py-16 sm:py-24 bg-[#faf6ee] text-[#2f180a] overflow-hidden"
-      >
+      <section id="berita" className="w-full bg-white py-16 sm:py-24">
         <div className="container-baren">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
+          <div className="mb-12 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div className="flex flex-col items-start gap-3">
-              <span className="pill-eyebrow">KABAR TERBARU</span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#2f180a]">
+              <span className="pill-eyebrow">BERITA & EVENT</span>
+              <h2 className="text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
                 {resolvedTitle}
               </h2>
             </div>
-            {ctaLabel ? (
-              <Link
-                href="/berita"
-                className="inline-flex items-center gap-1.5 text-sm font-black uppercase tracking-wider text-[#c83820] hover:text-[#a72d18] bg-white border-2 border-[#2f180a]/15 px-5 py-2.5 rounded-full shadow-sm hover:shadow transition-all"
-              >
-                {ctaLabel}
-                <ArrowUpRight className="w-4 h-4" />
-              </Link>
-            ) : (
-              <Link
-                href="/berita"
-                className="inline-flex items-center gap-1.5 text-sm font-black uppercase tracking-wider text-[#c83820] hover:text-[#a72d18] bg-white border-2 border-[#2f180a]/15 px-5 py-2.5 rounded-full shadow-sm hover:shadow transition-all"
-              >
-                Semua Berita
-                <ArrowUpRight className="w-4 h-4" />
-              </Link>
-            )}
+            <Link
+              href="/berita"
+              className="inline-flex items-center gap-1.5 self-start rounded-full border border-zinc-200 bg-white px-5 py-2.5 text-xs font-semibold text-zinc-800 transition-colors hover:border-zinc-300 hover:bg-zinc-50 sm:self-auto"
+            >
+              <span>{resolvedCta}</span>
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
           </div>
 
-          <div className="grid gap-6 sm:gap-8 md:grid-cols-3">
-            {items.map((item, idx) => {
-              const catTag = CATEGORY_TAGS[idx % CATEGORY_TAGS.length];
+          <div className="grid gap-6 sm:gap-7 md:grid-cols-3">
+            {items.map((item) => {
+              const coverSrc =
+                (item.coverUrl && resolvePublicAssetUrl(item.coverUrl)) ||
+                item.coverUrl ||
+                "/art/event-art.jpg";
               return (
                 <Link
                   key={item.id}
                   href={`/berita/${item.slug}`}
-                  className="group flex flex-col rounded-3xl bg-white border-2 border-[#2f180a]/12 p-4 sm:p-5 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-200"
+                  className="group flex flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white transition-all duration-200 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-lg hover:shadow-zinc-900/5"
                 >
-                  {/* Thumbnail Berita */}
-                  <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-[#2f180a] mb-4">
-                    {item.coverUrl ? (
-                      <Image
-                        src={
-                          resolvePublicAssetUrl(item.coverUrl) || item.coverUrl
-                        }
-                        fill
-                        sizes="(min-width:768px) 33vw, 100vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        alt={item.title}
-                        unoptimized
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-[#faf6ee]/50 font-bold text-xs uppercase">
-                        BAREN NEWS
-                      </div>
-                    )}
-                    {/* Badge Kategori Mengambang */}
-                    <div className="absolute top-3 left-3 z-10">
-                      <span
-                        className={`text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md ${catTag.bg}`}
-                      >
-                        {catTag.label}
-                      </span>
-                    </div>
+                  <div className="relative aspect-video w-full overflow-hidden bg-zinc-100">
+                    <Image
+                      src={coverSrc}
+                      fill
+                      sizes="(min-width:768px) 33vw, 100vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      alt={item.title}
+                      unoptimized
+                    />
                   </div>
 
-                  {/* Tanggal & Judul */}
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#8c7b6d] mb-1">
-                    {item.publishedAt
-                      ? new Date(item.publishedAt).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })
-                      : "TANGGAL TERBIT"}
-                  </span>
-                  <h3 className="text-xl font-black text-[#2f180a] tracking-tight leading-snug group-hover:text-[#c83820] transition-colors line-clamp-2 mb-2">
-                    {item.title}
-                  </h3>
-                  {item.excerpt && (
-                    <p className="text-xs sm:text-sm text-[#542d14] line-clamp-2 leading-relaxed mb-4 flex-1">
-                      {item.excerpt}
-                    </p>
-                  )}
+                  <div className="flex flex-1 flex-col p-6">
+                    <span className="text-xs font-medium text-zinc-400">
+                      {item.publishedAt
+                        ? new Date(item.publishedAt).toLocaleDateString(
+                            "id-ID",
+                            {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            },
+                          )
+                        : "Pembaruan Terbaru"}
+                    </span>
+                    <h3 className="mt-1.5 line-clamp-2 text-lg font-bold leading-snug tracking-tight text-zinc-950 transition-colors group-hover:text-[#c83820]">
+                      {item.title}
+                    </h3>
+                    {item.excerpt && (
+                      <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-zinc-600">
+                        {item.excerpt}
+                      </p>
+                    )}
 
-                  <div className="mt-auto pt-3 border-t border-[#2f180a]/8 flex items-center justify-between text-xs font-black uppercase tracking-wider text-[#c83820] group-hover:translate-x-0.5 transition-transform">
-                    <span>Baca Selengkapnya</span>
-                    <ArrowUpRight className="w-4 h-4" />
+                    <div className="mt-5 flex items-center gap-1 text-xs font-semibold text-[#c83820]">
+                      <span>Baca & lihat foto</span>
+                      <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </div>
                   </div>
                 </Link>
               );
