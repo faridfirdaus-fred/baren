@@ -2,23 +2,18 @@ import { Skeleton, SkeletonText } from "@/components/ui/skeleton";
 
 export default function NewsDetailLoading() {
   return (
-    <main
+    <div
       role="status"
       aria-label="Memuat detail berita"
-      className="min-h-screen bg-sand py-12 px-4"
+      className="bg-white pt-24 pb-20 sm:pt-28"
     >
-      <article className="max-w-3xl mx-auto space-y-6">
-        <Skeleton variant="light" className="h-4 w-36" />
-        <Skeleton variant="light" className="w-full aspect-video rounded-lg" />
-        <Skeleton variant="light" className="h-10 w-4/5" />
-        <Skeleton variant="light" className="h-4 w-40" />
-        <Skeleton variant="light" className="h-6 w-full italic" />
-        <div className="space-y-4 pt-4">
-          <SkeletonText variant="light" lines={5} />
-          <SkeletonText variant="light" lines={6} />
-          <SkeletonText variant="light" lines={4} />
-        </div>
+      <article className="container-baren max-w-4xl space-y-5">
+        <Skeleton className="h-4 w-36" />
+        <Skeleton className="h-10 w-4/5" />
+        <Skeleton className="h-4 w-36" />
+        <Skeleton className="aspect-video w-full rounded-3xl" />
+        <SkeletonText lines={5} />
       </article>
-    </main>
+    </div>
   );
 }

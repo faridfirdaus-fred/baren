@@ -165,16 +165,14 @@ try {
   await page.getByText("Berita ditambahkan").waitFor();
   await page.getByText(newsTitle).waitFor();
 
-  const newsCard = page
-    .locator("div.p-4.border.rounded")
-    .filter({ hasText: newsTitle });
+  const newsCard = page.getByTestId("news-card").filter({ hasText: newsTitle });
   await newsCard.getByRole("button", { name: "Edit" }).click();
   await page.getByLabel("Judul").fill(`${newsTitle} Edit`);
   await page.getByRole("button", { name: "Simpan" }).click();
   await page.getByText("Berita diperbarui").waitFor();
 
   const editedNewsCard = page
-    .locator("div.p-4.border.rounded")
+    .getByTestId("news-card")
     .filter({ hasText: `${newsTitle} Edit` });
   await editedNewsCard.getByRole("button", { name: "Hapus" }).click();
   await page

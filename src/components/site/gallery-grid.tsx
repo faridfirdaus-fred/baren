@@ -10,9 +10,9 @@ import { resolvePublicAssetUrl } from "@/lib/assets-url";
 import { IconChevronLeft, IconChevronRight, IconClose, IconPlay } from "./icon";
 
 const LABEL_JENIS: Record<GalleryItem["kind"], string> = {
-  image: "Gambar",
-  screenshot: "Screenshot",
-  artwork: "Artwork",
+  image: "Foto",
+  screenshot: "Gameplay",
+  artwork: "Dokumentasi",
   banner: "Banner",
   video: "Video",
 };
@@ -21,17 +21,17 @@ function labelItem(item: GalleryItem, posisi: number): string {
   const judul = item.title?.trim();
   if (judul) return judul;
   return item.kind === "video"
-    ? `Video galeri BAREN ${posisi + 1}`
-    : `Gambar galeri BAREN ${posisi + 1}`;
+    ? `Video BAREN ${posisi + 1}`
+    : `Dokumentasi BAREN ${posisi + 1}`;
 }
 
-/**
- * E6-7 — Grid galeri responsif (1 kolom 360px → 2 kolom ≥640px →
- * 3 kolom ≥1024px). Tiap jenis media (foto/banner/video) tampil sesuai
- * urutan admin; gambar via R2Image lazy, video berupa pratinjau bisu
- * + lencana Video. Klik/ketuk membuka lightbox (E6-8).
- */
-export function GalleryGrid({ items }: { items: GalleryItem[] }) {
+export function GalleryGrid({
+  items,
+  showCaptions = true,
+}: {
+  items: GalleryItem[];
+  showCaptions?: boolean;
+}) {
   const [terpilih, setTerpilih] = useState<number | null>(null);
   const pemicuRef = useRef<HTMLElement | null>(null);
   const tutupRef = useRef<HTMLButtonElement>(null);
@@ -46,10 +46,6 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
   };
   const tutup = () => setTerpilih(null);
 
-  // E6-8: Escape menutup, panah pindah media, Tab dikunci di dialog,
-  // scroll badan dikunci, fokus kembali ke pemicu saat tutup.
-  // Video berhenti karena elemen <video> di-unmount saat dialog tutup
-  // atau saat pindah ke item gambar.
   useEffect(() => {
     if (!dialogTerbuka) return;
     const sisaOverflow = document.body.style.overflow;
@@ -97,7 +93,7 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
 
   return (
     <>
-      <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, i) => {
           const label = labelItem(item, i);
           const video = item.kind === "video";
@@ -108,9 +104,9 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                 onClick={() => buka(i)}
                 aria-haspopup="dialog"
                 aria-label={`Perbesar ${label}`}
-                className="group block w-full rounded-2xl overflow-hidden border-2 border-[#542d14] bg-[#1f1007] text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f59e0b]"
+                className="group block w-full cursor-pointer overflow-hidden rounded-2xl border border-zinc-200 bg-white text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-lg hover:shadow-zinc-900/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
               >
-                <span className="relative block aspect-video overflow-hidden bg-[#2f180a]">
+                <span className="relative block aspect-video overflow-hidden bg-zinc-100">
                   {video ? (
                     <>
                       <video
@@ -126,10 +122,10 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                       />
                       <span
                         aria-hidden="true"
-                        className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors"
+                        className="absolute inset-0 flex items-center justify-center bg-zinc-950/30 transition-colors group-hover:bg-zinc-950/20"
                       >
-                        <span className="w-12 h-12 rounded-full bg-[#c83820] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                          <IconPlay className="h-6 w-6 ml-0.5" />
+                        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-zinc-900 shadow-md transition-transform group-hover:scale-105">
+                          <IconPlay className="ml-0.5 h-5 w-5" />
                         </span>
                       </span>
                     </>
@@ -144,14 +140,16 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                     />
                   )}
                 </span>
-                <span className="block p-4 sm:p-5 bg-[#1f1007]">
-                  <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-[#f59e0b] bg-[#f59e0b]/10 px-2.5 py-0.5 rounded-full mb-2">
-                    {LABEL_JENIS[item.kind]}
+                {showCaptions && (
+                  <span className="block p-4">
+                    <span className="inline-block rounded-md bg-zinc-100 px-2 py-0.5 text-[11px] font-semibold text-zinc-600">
+                      {LABEL_JENIS[item.kind]}
+                    </span>
+                    <span className="mt-1.5 line-clamp-1 block text-sm font-semibold text-zinc-900">
+                      {label}
+                    </span>
                   </span>
-                  <span className="block text-base sm:text-lg font-bold leading-snug text-[#faf6ee] line-clamp-1">
-                    {label}
-                  </span>
-                </span>
+                )}
               </button>
             </li>
           );
@@ -164,33 +162,33 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
           onClick={(e) => {
             if (e.target === e.currentTarget) tutup();
           }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/90 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 p-4 backdrop-blur-xs"
         >
           <div
             ref={panelRef}
             role="dialog"
             aria-modal="true"
             aria-label={labelItem(aktif, terpilih ?? 0)}
-            className="w-full max-w-5xl border border-sand/20 bg-ink-800"
+            className="w-full max-w-5xl overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-2xl"
           >
-            <div className="flex items-center justify-between gap-4 border-b border-sand/15 p-4">
-              <p className="min-w-0 flex-1 truncate font-display text-lg uppercase text-sand">
+            <div className="flex items-center justify-between gap-4 border-b border-zinc-100 px-5 py-3.5">
+              <p className="min-w-0 flex-1 truncate text-sm font-bold text-zinc-900">
                 {labelItem(aktif, terpilih ?? 0)}
               </p>
-              <p aria-live="polite" className="shrink-0 text-sm text-sand/70">
-                {(terpilih ?? 0) + 1} dari {total}
+              <p aria-live="polite" className="shrink-0 text-xs text-zinc-500">
+                {(terpilih ?? 0) + 1} / {total}
               </p>
               <button
                 ref={tutupRef}
                 type="button"
                 onClick={tutup}
                 aria-label="Tutup pratinjau"
-                className="shrink-0 bg-ember p-3 text-sand transition-colors hover:bg-ember-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sand"
+                className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl bg-zinc-100 text-zinc-700 transition-colors hover:bg-zinc-200 hover:text-zinc-950"
               >
-                <IconClose className="h-5 w-5" />
+                <IconClose className="h-4 w-4" />
               </button>
             </div>
-            <div className="relative bg-black">
+            <div className="relative bg-zinc-950">
               {aktif.kind === "video" ? (
                 <video
                   key={aktif.id}
@@ -198,7 +196,7 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                   controls
                   preload="metadata"
                   aria-label={labelItem(aktif, terpilih ?? 0)}
-                  className="max-h-[70vh] w-full"
+                  className="max-h-[72vh] w-full"
                 >
                   Maaf, peramban Anda tidak mendukung pemutaran video.
                 </video>
@@ -210,12 +208,12 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                   width={1600}
                   height={900}
                   sizes="100vw"
-                  className="max-h-[70vh] w-full object-contain"
+                  className="max-h-[72vh] w-full object-contain"
                 />
               )}
               {total > 1 ? (
                 <>
-                  <div className="absolute inset-y-0 left-0 flex items-center p-2">
+                  <div className="absolute inset-y-0 left-0 flex items-center p-3">
                     <button
                       type="button"
                       onClick={() =>
@@ -224,12 +222,12 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                         )
                       }
                       aria-label="Tampilkan media sebelumnya"
-                      className="bg-ink/70 p-3 text-sand transition-colors hover:bg-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                      className="cursor-pointer rounded-full bg-white/90 p-2.5 text-zinc-900 shadow-md transition-colors hover:bg-white"
                     >
                       <IconChevronLeft className="h-5 w-5" />
                     </button>
                   </div>
-                  <div className="absolute inset-y-0 right-0 flex items-center p-2">
+                  <div className="absolute inset-y-0 right-0 flex items-center p-3">
                     <button
                       type="button"
                       onClick={() =>
@@ -238,7 +236,7 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                         )
                       }
                       aria-label="Tampilkan media berikutnya"
-                      className="bg-ink/70 p-3 text-sand transition-colors hover:bg-ember focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+                      className="cursor-pointer rounded-full bg-white/90 p-2.5 text-zinc-900 shadow-md transition-colors hover:bg-white"
                     >
                       <IconChevronRight className="h-5 w-5" />
                     </button>
@@ -246,9 +244,6 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
                 </>
               ) : null}
             </div>
-            <p className="p-4 text-sm leading-6 text-sand/70">
-              Tekan Escape untuk menutup.
-            </p>
           </div>
         </div>
       )}
