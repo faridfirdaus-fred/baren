@@ -59,7 +59,10 @@ export async function Hero() {
                 "Lari, sembunyi, dan rebut benteng lawan bersama sahabatmu dalam satu layar penuh tawa."}
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3.5">
+            <div
+              id="daftar"
+              className="mt-8 flex flex-wrap items-center gap-3.5"
+            >
               {isWishlistCta ? (
                 isLoggedIn ? (
                   <CtaButton href="#unduh" variant="ink">
@@ -82,21 +85,6 @@ export async function Hero() {
                   {secondary.label}
                 </CtaButton>
               ) : null}
-            </div>
-
-            <div
-              id="daftar"
-              className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-zinc-200/80 pt-5 text-xs font-medium text-zinc-500"
-            >
-              <span>4 Pemain Sekaligus</span>
-              <span aria-hidden="true" className="text-zinc-300">
-                •
-              </span>
-              <span>Layar Bersama (Couch Co-op)</span>
-              <span aria-hidden="true" className="text-zinc-300">
-                •
-              </span>
-              <span>PC via Steam (Segera Hadir)</span>
             </div>
           </div>
 
