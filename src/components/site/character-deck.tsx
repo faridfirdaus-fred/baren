@@ -136,7 +136,6 @@ export function CharacterDeck({ customCards }: CharacterDeckProps) {
     >
       <div className="container-baren">
         <div className="mb-12 flex flex-col items-center gap-3 text-center sm:mb-14">
-          <span className="pill-eyebrow">JAGOAN</span>
           <h2 className="text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
             Pilih Jagoanmu
           </h2>

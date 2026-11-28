@@ -337,7 +337,7 @@ export default function AdminLayout({
       <main
         id="konten-admin"
         tabIndex={-1}
-        className="mx-auto flex w-full max-w-6xl min-w-0 flex-1 flex-col p-5 outline-none sm:p-7 lg:p-8"
+        className="mx-auto flex w-full max-w-7xl min-w-0 flex-1 flex-col p-5 outline-none sm:p-7 lg:p-8"
       >
         {children}
       </main>

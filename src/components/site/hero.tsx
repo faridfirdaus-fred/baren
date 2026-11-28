@@ -40,21 +40,16 @@ export async function Hero() {
     Boolean(content.videoSrc) && content.videoSrc !== HERO_VIDEO_FALLBACK;
 
   return (
-    <section className="pattern-grid relative isolate overflow-hidden bg-white pt-24 pb-16 sm:pt-28 sm:pb-24">
+    <section className="pattern-grid relative isolate flex min-h-svh flex-col justify-center overflow-hidden bg-white pt-20 pb-12 sm:pt-24 sm:pb-16">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-96 w-2xl -translate-x-1/2 rounded-full bg-[#c83820]/6 blur-3xl"
       />
 
-      <div className="container-baren">
+      <div className="container-baren w-full">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
           {/* Kolom Kiri: Copy & CTA */}
-          <div className="flex flex-col items-start text-left lg:col-span-6">
-            <span className="pill-eyebrow mb-5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#c83820]" />
-              Party Game Lokal 2 vs 2 • Segera di Steam
-            </span>
-
+          <div className="flex flex-col items-start text-left lg:col-span-5">
             <h1 className="text-4xl leading-[1.08] font-extrabold tracking-tight text-zinc-950 sm:text-5xl lg:text-[3.35rem]">
               {content.title}
             </h1>
@@ -106,7 +101,7 @@ export async function Hero() {
           </div>
 
           {/* Kolom Kanan: Showcase Visual Game BAREN */}
-          <div className="lg:col-span-6">
+          <div className="lg:col-span-7">
             <div className="relative overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-100 p-2 shadow-xl shadow-zinc-900/5">
               <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-zinc-900">
                 {hasCustomVideo ? (

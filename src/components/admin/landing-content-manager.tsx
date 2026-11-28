@@ -56,7 +56,7 @@ const defaultSettings: LandingSettingsState = {
 };
 
 const defaultAbout: AboutState = {
-  title: "Permainan kampung, rasa pesta modern",
+  title: "Adu strategi Bebentengan dalam satu layar",
   body: "BAREN terinspirasi dari permainan tradisional Baren atau Bebentengan. Dua tim beranggotakan dua pemain berlomba menjaga markas sendiri sambil menyusup ke wilayah lawan dalam satu layar bersama.",
   imageUrl: "/art/about-art.jpg",
 };
@@ -374,7 +374,7 @@ export function LandingContentManager() {
                   onChange={(e) =>
                     setAboutData({ ...aboutData, title: e.target.value })
                   }
-                  placeholder="Permainan kampung, rasa pesta modern"
+                  placeholder="Adu strategi Bebentengan dalam satu layar"
                   className={adminInputClass}
                 />
                 {formErrors.title && (

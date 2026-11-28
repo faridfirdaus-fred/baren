@@ -57,13 +57,11 @@ const DEFAULT_GALLERY_ITEMS: GalleryItem[] = [
 ];
 
 export function GallerySection({
-  eyebrow,
   title,
   description,
   items = [],
 }: GallerySectionProps) {
   const resolvedTitle = title?.trim() || "Intip serunya kampung BAREN";
-  const resolvedEyebrow = eyebrow?.trim() || "GALERI";
   const resolvedDesc =
     description?.trim() ||
     "Tangkapan layar langsung dari arena permainan dan dokumentasi acara komunitas BAREN.";
@@ -77,7 +75,6 @@ export function GallerySection({
       >
         <div className="container-baren">
           <div className="mb-10 flex flex-col items-center gap-3 text-center sm:mb-12">
-            <span className="pill-eyebrow">{resolvedEyebrow}</span>
             <h2 className="text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
               {resolvedTitle}
             </h2>

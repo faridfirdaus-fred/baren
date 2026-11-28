@@ -60,7 +60,6 @@ export function HowToPlay({ content, title }: Props) {
       <section id="cara-main" className="w-full bg-white py-16 sm:py-24">
         <div className="container-baren">
           <div className="mb-12 flex flex-col items-center gap-3 text-center sm:mb-14">
-            <span className="pill-eyebrow">CARA BERMAIN</span>
             <h2 className="text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
               {resolvedTitle}
             </h2>

@@ -8,9 +8,10 @@ interface AboutGameProps {
   screenshotUrl?: string;
 }
 
+const DEFAULT_TITLE = "Adu strategi Bebentengan dalam satu layar";
+
 export function AboutGame({
-  eyebrow = "TENTANG GAME",
-  title = "Permainan kampung, rasa pesta modern",
+  title = DEFAULT_TITLE,
   description,
   screenshotUrl = "/art/about-art.jpg",
 }: AboutGameProps) {
@@ -18,7 +19,7 @@ export function AboutGame({
     "BAREN terinspirasi dari permainan tradisional Baren atau Bebentengan. Dua tim berlomba menjaga benteng sendiri sambil menyusup ke wilayah lawan dalam satu layar bersama teman dan keluarga. Aturannya cepat dipahami, namun penuh strategi kejutan di setiap ronde.";
 
   const content = description?.trim() || defaultDesc;
-  const resolvedTitle = title?.trim() || "Permainan kampung, rasa pesta modern";
+  const resolvedTitle = title?.trim() || DEFAULT_TITLE;
   const resolvedImage =
     resolvePublicAssetUrl(screenshotUrl) ||
     screenshotUrl ||
@@ -32,8 +33,6 @@ export function AboutGame({
       <div className="container-baren">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
           <div className="flex flex-col items-start gap-5 lg:col-span-6">
-            <span className="pill-eyebrow">{eyebrow}</span>
-
             <h2 className="text-3xl leading-tight font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
               {resolvedTitle}
             </h2>

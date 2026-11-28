@@ -9,7 +9,7 @@ import { AdminLoginForm } from "@/components/admin/login-form";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Masuk Panel Admin — BAREN",
+  title: "Masuk Panel Admin | BAREN",
   description: "Halaman masuk khusus administrator BAREN.",
 };
 

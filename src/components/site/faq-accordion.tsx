@@ -40,7 +40,6 @@ const DEFAULT_FAQ: FaqItem[] = [
 ];
 
 export function FaqAccordion({
-  eyebrow,
   title,
   items = [],
   hideHeader = false,
@@ -49,7 +48,6 @@ export function FaqAccordion({
   const ref = useScrollReveal<HTMLElement>();
 
   const resolvedTitle = title?.trim() || "Pertanyaan yang sering muncul";
-  const resolvedEyebrow = eyebrow?.trim() || "FAQ";
   const displayItems = items.length > 0 ? items : DEFAULT_FAQ;
 
   const listContent = (
@@ -117,7 +115,6 @@ export function FaqAccordion({
     >
       <div className="container-baren">
         <div className="mb-10 flex flex-col items-center gap-3 text-center sm:mb-12">
-          <span className="pill-eyebrow">{resolvedEyebrow}</span>
           <h2 className="text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
             {resolvedTitle}
           </h2>

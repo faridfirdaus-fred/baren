@@ -59,9 +59,6 @@ export function LandingCards({ cards }: Props) {
                     : "mx-auto max-w-3xl lg:col-span-12"
                 }
               >
-                {card.eyebrow && (
-                  <span className="pill-eyebrow mb-4">{card.eyebrow}</span>
-                )}
                 <h2 className="text-3xl leading-tight font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
                   {card.title}
                 </h2>

@@ -93,7 +93,6 @@ export function CommentsSection({
     >
       <div className="container-baren">
         <div className="mb-10 flex flex-col items-center gap-3 text-center sm:mb-12">
-          <span className="pill-eyebrow">KOMENTAR</span>
           <h2 className="text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
             {resolvedTitle}
           </h2>

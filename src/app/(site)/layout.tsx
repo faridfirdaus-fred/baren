@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const branding = await getSiteBranding();
   const iconUrl = branding.faviconUrl;
   return {
-    title: `${branding.brandName} — Party Game Lokal 2 vs 2`,
+    title: `${branding.brandName} | Party Game Lokal 2 vs 2`,
     description: branding.tagline,
     icons: {
       icon: [{ url: iconUrl }],
@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
       apple: branding.logoSrc || iconUrl,
     },
     openGraph: {
-      title: `${branding.brandName} — Party Game Lokal 2 vs 2`,
+      title: `${branding.brandName} | Party Game Lokal 2 vs 2`,
       description: branding.tagline,
       images: [branding.logoSrc],
     },

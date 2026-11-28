@@ -14,8 +14,6 @@ export function DownloadSection({
         <div id="wishlist" className="container-baren">
           <div className="grid grid-cols-1 items-center gap-8 overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-50 p-7 sm:p-10 lg:grid-cols-12 lg:p-12">
             <div className="flex flex-col items-start gap-4 lg:col-span-7">
-              <span className="pill-eyebrow">Segera Hadir di Steam</span>
-
               <h2 className="text-3xl leading-tight font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
                 Jadilah pemain pertama saat BAREN rilis
               </h2>

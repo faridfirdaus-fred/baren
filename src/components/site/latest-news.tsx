@@ -23,7 +23,6 @@ export function LatestNews({ items, title, ctaLabel }: Props) {
         <div className="container-baren">
           <div className="mb-12 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div className="flex flex-col items-start gap-3">
-              <span className="pill-eyebrow">BERITA & EVENT</span>
               <h2 className="text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
                 {resolvedTitle}
               </h2>

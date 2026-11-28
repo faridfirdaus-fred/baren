@@ -125,8 +125,7 @@ export default async function NewsDetailPage({ params }: PageProps) {
         {eventGalleryItems.length > 0 && (
           <section className="mt-12 border-t border-zinc-200 pt-10">
             <div className="mb-6">
-              <span className="pill-eyebrow">DOKUMENTASI EVENT</span>
-              <h2 className="mt-2.5 text-2xl font-bold tracking-tight text-zinc-950">
+              <h2 className="text-2xl font-bold tracking-tight text-zinc-950">
                 Galeri Foto Event BAREN
               </h2>
               <p className="mt-1 text-sm text-zinc-500">

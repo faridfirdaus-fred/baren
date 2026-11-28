@@ -31,9 +31,6 @@ export default async function FaqPage() {
           >
             &larr; Kembali ke Beranda
           </Link>
-          <div className="mt-4">
-            <span className="pill-eyebrow">{faqCopy.eyebrow || "FAQ"}</span>
-          </div>
           <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl">
             {faqCopy.title || "Pertanyaan yang Sering Muncul"}
           </h1>
